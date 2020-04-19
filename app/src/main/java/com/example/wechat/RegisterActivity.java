@@ -76,11 +76,13 @@ public class RegisterActivity extends AppCompatActivity {
                         sendUserToLoginActivity();
                         Toast.makeText(RegisterActivity.this, "Account Created Successfuly!", Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
+                        mAuth.signOut();
                     }
                     else{
                         String message = task.getException().toString();
                         Toast.makeText(RegisterActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
+                        mAuth.signOut();
                     }
                 }
             });
