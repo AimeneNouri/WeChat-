@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/gradientlogin"
+    android:gravity="center"
+    tools:context=".SplashScreen">
+
+    <ImageView
+        android:id="@+id/logo_wechat"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/logowechat"
+        />
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="We"
+        android:layout_marginRight="79sp"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        android:textColor="#CED9ED"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:layout_below="@+id/logo_wechat"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chat"
+        android:layout_marginLeft="44sp"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        android:textColor="#EACD98"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:layout_below="@+id/logo_wechat"/>
+
+</RelativeLayout>
