@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -105,5 +106,34 @@ public class MainActivity extends AppCompatActivity {
     private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(loginIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        if (item.getItemId() == R.id.main_settings_option){
+
+        }
+
+        if (item.getItemId() == R.id.main_logout_option){
+            mAuth.signOut();
+            sendUserToLoginActivity();
+        }
+
+        if (item.getItemId() == R.id.main_find_friends_option){
+
+        }
+        return true;
     }
 }
