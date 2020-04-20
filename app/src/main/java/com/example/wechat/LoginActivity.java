@@ -36,7 +36,13 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        InitializeFields();
+        LoginButton = (Button) findViewById(R.id.button_login);
+        PhoneLoginButton = (Button) findViewById(R.id.phone_login_button);
+        UserEmail = (EditText) findViewById(R.id.loginEmail);
+        UserPassword = (EditText) findViewById(R.id.pass_login);
+        NeedNewAccountLink = (TextView) findViewById(R.id.need_new_account);
+        ForgotPassword = (TextView) findViewById(R.id.forget_password);
+        loadingBar = new ProgressDialog(this) ;
 
         NeedNewAccountLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,16 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    private void InitializeFields() {
-        LoginButton = (Button) findViewById(R.id.button_login);
-        PhoneLoginButton = (Button) findViewById(R.id.phone_login_button);
-        UserEmail = (EditText) findViewById(R.id.loginEmail);
-        UserPassword = (EditText) findViewById(R.id.pass_login);
-        NeedNewAccountLink = (TextView) findViewById(R.id.need_new_account);
-        ForgotPassword = (TextView) findViewById(R.id.forget_password);
-        loadingBar = new ProgressDialog(this) ;
     }
 
 

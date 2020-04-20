@@ -12,10 +12,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
+    private DatabaseReference RootRef;
 
     private ChatsFragment chatsFragment;
     private GroupsFragment groupsFragment;
@@ -39,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        mAuth.signOut();
+        RootRef = FirebaseDatabase.getInstance().getReference();
 
         mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
@@ -101,11 +108,39 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser == null){
             sendUserToLoginActivity();
         }
+        else{
+            VerifyUserExist();
+        }
+    }
+
+    private void VerifyUserExist() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        RootRef.child("Users").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if ((dataSnapshot.child("name").exists()))
+                {
+
+                }
+                else
+                {
+                    sendUserToSettingsActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
+        finish();
     }
 
     @Override
@@ -123,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if (item.getItemId() == R.id.main_settings_option){
-
+            sendUserToSettingsActivity();
         }
 
         if (item.getItemId() == R.id.main_logout_option){
@@ -135,5 +170,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return true;
+    }
+
+    private void sendUserToSettingsActivity() {
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(settingsIntent);
     }
 }

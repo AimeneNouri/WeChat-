@@ -9,7 +9,7 @@
         app:showAsAction="never">
     </item>
     <item
-        android:title="Settings"
+        android:title="Account"
         android:id="@+id/main_settings_option"
         app:showAsAction="never">
     </item>

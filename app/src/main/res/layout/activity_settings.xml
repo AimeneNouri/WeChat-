@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/colorPrimaryDark">
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="150dp"
+        android:layout_height="190dp"
+        android:src="@drawable/profile_image"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        app:civ_border_color="#E052F3"
+        app:civ_border_width="3dp" />
+
+    <EditText
+        android:id="@+id/Profile_username"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/profile_image"
+        android:inputType="textMultiLine"
+        android:hint="username"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:background="@drawable/username"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
+
+    <EditText
+        android:id="@+id/profile_status"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/Profile_username"
+        android:inputType="textMultiLine"
+        android:hint="je suis disponible maintenant"
+        android:textAlignment="center"
+        android:textSize="17sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:background="@drawable/inputstatus"
+        android:drawableStart="@drawable/ic_event_note_black_24dp"
+        android:padding="5dp"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/User_mail_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_status"
+        android:inputType="textMultiLine"
+        android:hint="mail@mail.com"
+        android:textAlignment="center"
+        android:textSize="17sp"
+        android:textColor="#555555"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:drawableStart="@drawable/ic_email_black_24dp"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/User_phoneNumber_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/User_mail_profile"
+        android:inputType="textMultiLine"
+        android:hint="+212 0000000000"
+        android:textAlignment="center"
+        android:textSize="17sp"
+        android:textColor="#555555"
+        android:layout_marginStart="29dp"
+        android:layout_marginEnd="30dp"
+        android:textColorHint="#555555"
+        android:drawableStart="@drawable/ic_phone_iphone_black_24dp"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/updateSetting_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/User_phoneNumber_profile"
+        android:inputType="textMultiLine"
+        android:text="Update"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:background="@drawable/btn_update"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"/>
+
+</RelativeLayout>

@@ -38,7 +38,11 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Rootref = FirebaseDatabase.getInstance().getReference();
 
-        InitializeFields();
+        SignUpButton = (Button) findViewById(R.id.button_Register);
+        UserEmail = (EditText) findViewById(R.id.RegisterEmail);
+        UserPassword = (EditText) findViewById(R.id.pass_register);
+        AlreadyAccount = (TextView) findViewById(R.id.already_have_account_link);
+        loadingBar = new ProgressDialog(this) ;
 
         AlreadyAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,13 +102,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void InitializeFields() {
-        SignUpButton = (Button) findViewById(R.id.button_Register);
-        UserEmail = (EditText) findViewById(R.id.RegisterEmail);
-        UserPassword = (EditText) findViewById(R.id.pass_register);
-        AlreadyAccount = (TextView) findViewById(R.id.already_have_account_link);
-        loadingBar = new ProgressDialog(this) ;
-    }
 
     private void sendUserToLoginActivity() {
         Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
