@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PhoneVerification">
+
+    <ImageView
+        android:id="@+id/logoPhone_activity"
+        android:layout_width="300dp"
+        android:layout_height="220dp"
+        android:src="@drawable/confirmed_otp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:id="@+id/enter_otp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:text="Enter OTP"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/logoPhone_activity"
+        android:layout_marginEnd="30dp"/>
+
+    <TextView
+        android:id="@+id/your_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="70dp"
+        android:text="We have sent you a verification"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/logoPhone_activity"
+        android:layout_marginEnd="30dp"/>
+
+    <EditText
+        android:id="@+id/otp_number_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/phone_number"
+        android:hint="Verification code!"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_below="@+id/your_phone_number"
+        android:drawableStart="@drawable/ic_phone_iphone_black_24dp"
+        android:inputType="phone"
+        android:padding="15dp"/>
+
+    <Button
+        android:id="@+id/verify_button"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/phone_btn"
+        android:text="VERIFY"
+        android:layout_below="@+id/otp_number_input"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
+
+    <ProgressBar
+        android:id="@+id/otp_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignTop="@+id/verify_button"
+        android:layout_alignBottom="@+id/verify_button"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="18dp"
+        android:indeterminateTint="@color/colorPrimaryDark"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/otp_form_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/verify_button"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:text="Working..."
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_light"
+        android:visibility="invisible" />
+
+</RelativeLayout>

@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupsChat"></activity>
+        <activity android:name=".PhoneVerification"></activity>
+        <activity android:name=".loginByPhone" />
+        <activity android:name=".GroupsChat" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".SplashScreen">
             <intent-filter>

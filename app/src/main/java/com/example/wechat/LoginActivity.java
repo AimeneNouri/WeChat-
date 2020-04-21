@@ -57,7 +57,15 @@ public class LoginActivity extends AppCompatActivity {
                 AllowUserToLogin();
             }
         });
+        PhoneLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendUserToLoginByPhone();
+            }
+        });
     }
+
+
 
     private void AllowUserToLogin() {
         String email = UserEmail.getText().toString();
@@ -96,7 +104,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
+    private void sendUserToLoginByPhone() {
+        Intent phoneIntent = new Intent(LoginActivity.this, loginByPhone.class);
+        startActivity(phoneIntent);
+    }
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
