@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <RelativeLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="12dp"
+        android:elevation="3dp">
+
+
+
+        <EditText
+            android:id="@+id/groupName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="17dp"
+            android:elevation="3dp"
+            android:gravity="center"
+            android:hint="Group name"
+            android:inputType="textEmailAddress"
+            android:padding="4dp"
+            android:textSize="20sp" />
+
+
+        <Button
+            android:id="@+id/createGroup"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/groupName"
+            android:layout_marginLeft="19dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="19dp"
+            android:elevation="3dp"
+            android:padding="4dp"
+            android:text="Create"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_light"
+            android:textSize="24sp" />
+
+    </RelativeLayout>
+</RelativeLayout>
