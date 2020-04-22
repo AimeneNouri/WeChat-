@@ -94,7 +94,7 @@
         android:hint="+212"
         android:textStyle="bold"
         android:inputType="number"
-        android:padding="14dp" />
+        android:padding="15dp" />
 
     <TextView
         android:id="@+id/login_form_feedback"
