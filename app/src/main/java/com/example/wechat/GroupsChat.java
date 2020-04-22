@@ -56,6 +56,8 @@ public class GroupsChat extends AppCompatActivity {
 
         mToolbar = (Toolbar) findViewById(R.id.group_chat_bar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(currentGroupName);
 
         sendMessageButton = (ImageButton) findViewById(R.id.send_msg_button);

@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int galleryPick = 1;
 
     private CircleImageView UserImage;
-    private TextView UserEmail, phone_number;
+    private TextView BackToMain, UserEmail, phone_number;
     private EditText UserName, UserStatus;
     private Button UpdateAccount;
     private ProgressDialog loadingBar;
@@ -65,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
         RootRef = FirebaseDatabase.getInstance().getReference();
         UserImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
+        BackToMain = findViewById(R.id.backToMainActivity);
         UserImage = (CircleImageView) findViewById(R.id.profile_image);
         UserName = (EditText) findViewById(R.id.Profile_username);
         UserEmail = (TextView) findViewById(R.id.User_mail_profile);
@@ -84,6 +85,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         UserEmail.setText(user.getEmail());
         phone_number.setText(user.getPhoneNumber());
+
+        BackToMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent homeIntent = new Intent(SettingsActivity.this, MainActivity.class);
+                startActivity(homeIntent);
+            }
+        });
 
         UserImage.setOnClickListener(new View.OnClickListener() {
             @Override

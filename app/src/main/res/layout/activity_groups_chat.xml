@@ -56,14 +56,17 @@
             android:background="@drawable/inputdiscussion"
             android:padding="13dp"
             android:layout_marginStart="2dp"
+            android:layout_marginBottom="3dp"
             android:layout_marginEnd="2dp"/>
 
         <ImageButton
             android:id="@+id/send_msg_button"
-            android:layout_width="58dp"
-            android:layout_height="55dp"
+            android:layout_width="45dp"
+            android:layout_marginTop="2dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="2dp"
             android:src="@drawable/ic_send_black_24dp"
-            android:background="@drawable/btn"/>
+            android:background="@drawable/sendmessagebtn"/>
 
     </LinearLayout>
 

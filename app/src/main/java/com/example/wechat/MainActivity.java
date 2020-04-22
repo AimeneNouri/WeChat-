@@ -177,7 +177,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (item.getItemId() == R.id.main_find_friends_option){
-
+            Intent findFriendIntent = new Intent(MainActivity.this, FindFriends.class);
+            startActivity(findFriendIntent);
         }
         if (item.getItemId() == R.id.creat_groups){
            NewGroupRequest();
