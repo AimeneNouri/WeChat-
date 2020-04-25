@@ -1,18 +1,26 @@
 package com.example.wechat;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -23,6 +31,7 @@ import com.example.wechat.Fragments.ChatsFragment;
 import com.example.wechat.Fragments.ContactsFragment;
 import com.example.wechat.Fragments.GroupsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +41,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.security.Principal;
+import java.security.acl.Group;
+import java.util.Enumeration;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
     private GroupsFragment groupsFragment;
     private ContactsFragment contactsFragment;
     private CallFragment callFragment;
-    private ImageView theGroupPhoto = null;
+
+    private ProgressDialog loadingBar;
+    private ImageView groupPhoto;
+    private String GroupPhotoCreated;
+    private ImageView GroupImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,32 +209,53 @@ public class MainActivity extends AppCompatActivity {
 
     private void NewGroupRequest() {
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialog);
-        mBuilder.setTitle("Enter Group Name :");
-        final EditText groupNameField = new EditText(MainActivity.this);
-        groupNameField.setHint("EX : WeChat");
-        mBuilder.setView(groupNameField);
-        mBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(R.layout.newgroup);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        final EditText name = dialog.findViewById(R.id.groupName);
+        groupPhoto = dialog.findViewById(R.id.groupPhoto);
+        Button Create = dialog.findViewById(R.id.createGroup);
+        Button cancel = dialog.findViewById(R.id.cancel);
+
+        groupPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String groupName = groupNameField.getText().toString();
-                if (TextUtils.isEmpty(groupName)) {
-                    Toast.makeText(MainActivity.this, "Please write a name for your group...", Toast.LENGTH_SHORT).show();
-                } else {
-                    CreateNewGroup(groupName);
-                }
+            public void onClick(View v) {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(MainActivity.this);
             }
         });
-        mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        Create.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
+            public void onClick(View v) {
+                 String groupName = name.getText().toString();
+                 if(TextUtils.isEmpty(groupName))
+                 {
+                     Toast.makeText(MainActivity.this, "Please write a name for your group", Toast.LENGTH_SHORT).show();
+                 }
+                 else
+                 {
+                    CreateNewGroup(groupName, GroupPhotoCreated);
+                 }
+
+                 dialog.dismiss();
             }
         });
-        mBuilder.show();
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
-    private void CreateNewGroup(final String groupName) {
+    private void CreateNewGroup(final String groupName, final String photo) {
+
         RootRef.child("Groups").child(groupName).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -229,4 +271,25 @@ public class MainActivity extends AppCompatActivity {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
     }
+
+   /* @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if(resultCode == RESULT_OK)
+            {
+                loadingBar.setTitle("Profile Image");
+                loadingBar.setMessage("Please wait until we updating you profile image");
+                loadingBar.setCanceledOnTouchOutside(false);
+                loadingBar.show();
+
+                Uri resultUri = result.getUri();
+
+
+            }
+        }
+    }*/
 }

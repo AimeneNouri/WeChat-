@@ -40,6 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int galleryPick = 1;
+    private String photoUrl = " ";
 
     private CircleImageView UserImage;
     private TextView BackToMain, UserEmail, phone_number;
@@ -190,6 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
                 profileMap.put("uid", currentUserId);
                 profileMap.put("name", setUserName);
                 profileMap.put("status", setUserstatus);
+                profileMap.put("image",photoUrl);
 
             RootRef.child("Users")
                     .child(currentUserId)
@@ -222,6 +224,8 @@ public class SettingsActivity extends AppCompatActivity {
                     String retrieveUserStatus = dataSnapshot.child("status").getValue().toString();
                     String retrieveUserImage = dataSnapshot.child("image").getValue().toString();
 
+                    photoUrl = retrieveUserImage;
+
                     UserName.setText(retrieveUserName);
                     UserStatus.setText(retrieveUserStatus);
                     Picasso.get().load(retrieveUserImage).into(UserImage);
@@ -236,7 +240,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 else
                 {
-
                     Toast.makeText(SettingsActivity.this, "Please update your profile information", Toast.LENGTH_SHORT).show();
                 }
             }

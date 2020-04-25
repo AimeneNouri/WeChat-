@@ -69,7 +69,7 @@
         android:layout_marginRight="65dp"
         android:elevation="4dp"
         android:background="@drawable/send_message_request"
-        android:text="Send Chat Request"
+        android:text="Send Friend Request"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="20sp"
