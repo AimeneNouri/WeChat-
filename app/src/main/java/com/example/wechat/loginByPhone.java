@@ -46,11 +46,11 @@ public class loginByPhone extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        countryCode = (EditText) findViewById(R.id.country_code);
-        mPhoneNumber = (EditText) findViewById(R.id.phone_number_input);
-        SendVerification_Btn = (Button) findViewById(R.id.send_verification_btn);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mLoginFeedback = (TextView) findViewById(R.id.login_form_feedback);
+        countryCode = findViewById(R.id.country_code);
+        mPhoneNumber = findViewById(R.id.phone_number_input);
+        SendVerification_Btn = findViewById(R.id.send_verification_btn);
+        mProgressBar = findViewById(R.id.progressBar);
+        mLoginFeedback = findViewById(R.id.login_form_feedback);
 
         SendVerification_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,17 +65,8 @@ public class loginByPhone extends AppCompatActivity {
                     mLoginFeedback.setText("Please Fill in the form to continue...");
                     mLoginFeedback.setVisibility(View.VISIBLE);
 
-                } else if(country_code.isEmpty())
-                {
-                    mLoginFeedback.setText("Please Enter your country code !");
-                    mLoginFeedback.setVisibility(View.VISIBLE);
-
-                } else if(phone_number.isEmpty())
-                {
-                    mLoginFeedback.setText("Please Enter your phone number !");
-                    mLoginFeedback.setVisibility(View.VISIBLE);
-
-                }else
+                }
+                else
                 {
                     mProgressBar.setVisibility(View.VISIBLE);
                     SendVerification_Btn.setEnabled(false);
@@ -85,8 +76,8 @@ public class loginByPhone extends AppCompatActivity {
                             60,
                             TimeUnit.SECONDS,
                             loginByPhone.this,
-                            mCallbacks);
-
+                            mCallbacks
+                    );
                 }
             }
         });
@@ -110,18 +101,15 @@ public class loginByPhone extends AppCompatActivity {
                 super.onCodeSent(s, forceResendingToken);
 
                 new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent OTPIntent = new Intent(loginByPhone.this, PhoneVerification.class);
-                                OTPIntent.putExtra("AuthCredentials", s);
-                                startActivity(OTPIntent);
-                                Toast.makeText(loginByPhone.this, "Code has been sent, Please check and verify", Toast.LENGTH_SHORT).show();
-                            }
-                        },
+                    new Runnable() {
+                        public void run() {
+                        Intent OTPIntent = new Intent(loginByPhone.this, PhoneVerification.class);
+                        OTPIntent.putExtra("AuthCredentials", s);
+                        startActivity(OTPIntent);
+                        Toast.makeText(loginByPhone.this, "Code has been sent, Please check and verify", Toast.LENGTH_SHORT).show();
+                    }
+                },
                 10000);
-
-
             }
         };
     }
@@ -143,9 +131,11 @@ public class loginByPhone extends AppCompatActivity {
                 .addOnCompleteListener(loginByPhone.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful())
+                        {
                             sendUserToMainActivity();
-                        } else
+                        }
+                        else
                         {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
 

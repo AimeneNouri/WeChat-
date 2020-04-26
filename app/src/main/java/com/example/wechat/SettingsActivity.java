@@ -2,11 +2,13 @@ package com.example.wechat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,12 +31,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static final int galleryPick = 1;
     private String photoUrl = " ";
+    private StorageTask uploadTask;
 
     private CircleImageView UserImage;
     private TextView BackToMain, UserEmail, phone_number;
@@ -75,36 +85,80 @@ public class SettingsActivity extends AppCompatActivity {
         UpdateAccount = (Button) findViewById(R.id.updateSetting_button);
         loadingBar = new ProgressDialog(this);
 
+        UserEmail.setText(user.getEmail());
+        phone_number.setText(user.getPhoneNumber());
+
         UpdateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UpdateSettings();
+               UpdateSettings();
             }
         });
 
         RetrieveUserInfo();
 
-        UserEmail.setText(user.getEmail());
-        phone_number.setText(user.getPhoneNumber());
-
         BackToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent homeIntent = new Intent(SettingsActivity.this, MainActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(homeIntent);
+                finish();
             }
         });
 
         UserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent galleryIntent = new Intent();
+               /* Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, galleryPick);
+                startActivityForResult(galleryIntent, galleryPick);*/
+
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(SettingsActivity.this);
             }
         });
 
+    }
+
+    private void RetrieveUserInfo() {
+        RootRef.child("Users").child(currentUserId)
+                .addValueEventListener(new ValueEventListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if((dataSnapshot.exists()) && (dataSnapshot.hasChild("name") && (dataSnapshot.hasChild("image"))))
+                        {
+                            String retrieveUserName = dataSnapshot.child("name").getValue().toString();
+                            String retrieveStatus = dataSnapshot.child("status").getValue().toString();
+                            String retrieveProfileImage= dataSnapshot.child("image").getValue().toString();
+
+                            UserName.setText(retrieveUserName);
+                            UserStatus.setText(retrieveStatus);
+                            Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(UserImage);
+                        }
+                        else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")))
+                        {
+                            String retrieveUserName = Objects.requireNonNull(dataSnapshot.child("name").getValue()).toString();
+                            String retrieveStatus = Objects.requireNonNull(dataSnapshot.child("status").getValue()).toString();
+
+                            UserName.setText(retrieveUserName);
+                            UserStatus.setText(retrieveStatus);
+                        }
+                        else
+                        {
+                            Toast.makeText(SettingsActivity.this, "Please set & update your profile information", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -133,24 +187,49 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Uri resultUri = result.getUri();
 
-                StorageReference filePath = UserImageRef.child(currentUserId + ".jpg");
+                //StorageReference filePath = UserImageRef.child(currentUserId + ".jpg");
 
-                filePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
+
+                final StorageReference mountainImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
+
+                InputStream stream = null;
+                try {
+                    stream = new FileInputStream(new File(resultUri.getPath()));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                uploadTask = mountainImagesRef.putStream(stream);
+
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(SettingsActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        String message = e.toString();
+                        Toast.makeText(SettingsActivity.this, "ERROR: " + message, Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        final Task<Uri> firebaseUri = taskSnapshot.getStorage().getDownloadUrl();
-                        firebaseUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        Toast.makeText(SettingsActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                        mountainImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                final String downloadUrl = uri.toString();
+                                final String link = uri.toString();
 
                                 RootRef.child("Users").child(currentUserId).child("image")
-                                        .setValue(downloadUrl)
+                                        .setValue(uri.toString())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
+                                                    Toast.makeText(SettingsActivity.this, "Photo saved Successfully", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
+                                                    Picasso.get().load(link).into(UserImage);
                                                 }
                                                 else{
                                                     String message = task.getException().toString();
@@ -159,7 +238,12 @@ public class SettingsActivity extends AppCompatActivity {
 
                                                 }
                                             }
-                                        });
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                    }
+                                });
                             }
                         });
                     }
@@ -173,10 +257,10 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(mainIntent);
     }
 
-    private void UpdateSettings() {
+  private void UpdateSettings() {
         String setUserName = UserName.getText().toString();
         String setUserstatus = UserStatus.getText().toString();
-        
+
         if (TextUtils.isEmpty(setUserName))
         {
             Toast.makeText(this, "Please Write your Username", Toast.LENGTH_SHORT).show();
@@ -187,68 +271,31 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else
         {
-            HashMap<String, String> profileMap = new HashMap<>();
-                profileMap.put("uid", currentUserId);
-                profileMap.put("name", setUserName);
-                profileMap.put("status", setUserstatus);
-                profileMap.put("image",photoUrl);
+            HashMap<String, Object> profileMap = new HashMap<>();
+            profileMap.put("uid", currentUserId);
+            profileMap.put("name", setUserName);
+            profileMap.put("status", setUserstatus);
+            //profileMap.put("image",photoUrl);
 
             RootRef.child("Users")
                     .child(currentUserId)
-                    .setValue(profileMap)
+                    .updateChildren(profileMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful())
-                    {
-                        sendUserToMainActivity();
-                        Toast.makeText(SettingsActivity.this, "Profile was updated Successfully", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        String message = task.getException().toString();
-                        Toast.makeText(SettingsActivity.this, "Error : "+ message, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful())
+                            {
+                                sendUserToMainActivity();
+                                Toast.makeText(SettingsActivity.this, "Profile was updated Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                String message = task.getException().toString();
+                                Toast.makeText(SettingsActivity.this, "Error : "+ message, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
-    }
-
-    private void RetrieveUserInfo() {
-        RootRef.child("Users").child(currentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name") && (dataSnapshot.hasChild("image"))))
-                {
-                    String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                    String retrieveUserStatus = dataSnapshot.child("status").getValue().toString();
-                    String retrieveUserImage = dataSnapshot.child("image").getValue().toString();
-
-                    photoUrl = retrieveUserImage;
-
-                    UserName.setText(retrieveUserName);
-                    UserStatus.setText(retrieveUserStatus);
-                    Picasso.get().load(retrieveUserImage).into(UserImage);
-                }
-                else if ((dataSnapshot.exists()) && (dataSnapshot.hasChild("name")))
-                {
-                    String retrieveUserName = dataSnapshot.child("name").getValue().toString();
-                    String retrieveUserStatus = dataSnapshot.child("status").getValue().toString();
-
-                    UserName.setText(retrieveUserName);
-                    UserStatus.setText(retrieveUserStatus);
-                }
-                else
-                {
-                    Toast.makeText(SettingsActivity.this, "Please update your profile information", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
 }

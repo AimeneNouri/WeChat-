@@ -30,6 +30,7 @@ import com.example.wechat.Fragments.CallFragment;
 import com.example.wechat.Fragments.ChatsFragment;
 import com.example.wechat.Fragments.ContactsFragment;
 import com.example.wechat.Fragments.GroupsFragment;
+import com.example.wechat.Fragments.Requests;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private GroupsFragment groupsFragment;
     private ContactsFragment contactsFragment;
     private CallFragment callFragment;
+    private Requests chatRequestFragment;
 
     private ProgressDialog loadingBar;
     private ImageView groupPhoto;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         groupsFragment = new GroupsFragment();
         contactsFragment = new ContactsFragment();
         callFragment = new CallFragment();
+        chatRequestFragment = new Requests();
 
         setFragment(chatsFragment);
 
@@ -114,6 +117,10 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.nav_calls:
                         setFragment(callFragment);
+                        return true;
+
+                    case R.id.requests:
+                        setFragment(chatRequestFragment);
                         return true;
 
                     default:

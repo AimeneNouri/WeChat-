@@ -27,6 +27,7 @@ public class PhoneVerification extends AppCompatActivity {
     private FirebaseUser currentUser;
 
     private String mAuthVerificationID;
+
     private EditText mOtp_number;
     private Button mVerifyBtn;
     private ProgressBar mOtpProgressBar;

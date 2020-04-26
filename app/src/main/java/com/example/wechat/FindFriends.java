@@ -64,7 +64,6 @@ public class FindFriends extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         String visit_user_id = getRef(position).getKey();
-
                         Intent profileIntent = new Intent(FindFriends.this, UsersProfile.class);
                         profileIntent.putExtra("visit_user_id", visit_user_id);
                         startActivity(profileIntent);

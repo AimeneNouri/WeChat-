@@ -23,9 +23,9 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/main_tabs"
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="48dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/gradientlogin"
+        android:background="@drawable/nav_bottom"
         app:menu="@menu/bottom_nav"
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/white"
