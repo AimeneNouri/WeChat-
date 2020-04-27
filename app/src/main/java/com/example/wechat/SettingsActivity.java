@@ -110,11 +110,6 @@ public class SettingsActivity extends AppCompatActivity {
         UserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* Intent galleryIntent = new Intent();
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, galleryPick);*/
-
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(1, 1)
@@ -181,7 +176,7 @@ public class SettingsActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK)
             {
                 loadingBar.setTitle("Profile Image");
-                loadingBar.setMessage("Please wait until we updating you profile image");
+                loadingBar.setMessage("Please wait until we update your profile image");
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
 
