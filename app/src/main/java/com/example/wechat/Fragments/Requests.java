@@ -103,13 +103,13 @@ public class Requests extends Fragment {
                                             {
                                                 if (dataSnapshot.hasChild("image"))
                                                 {
-                                                    final String requestProfileImage= dataSnapshot.child("image").getValue().toString();
+                                                    final String requestProfileImage = dataSnapshot.child("image").getValue().toString();
 
                                                     Picasso.get().load(requestProfileImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
                                                 }
 
-                                                final String requestUserName = dataSnapshot.child("name").getValue().toString();
-                                                final String requestUserStatus = dataSnapshot.child("status").getValue().toString();
+                                                final String requestUserName = dataSnapshot.child("name").getValue(String.class);
+                                                final String requestUserStatus = dataSnapshot.child("status").getValue(String.class);
 
                                                 holder.userName.setText(requestUserName);
                                                 holder.userStatus.setText("Let's be friend");
@@ -218,8 +218,83 @@ public class Requests extends Fragment {
                                                             }
                                                         });
 
+                                            }
 
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                            }
+                                        });
+                                    }
+
+                                    else if (type.equals("sent"))
+                                    {
+                                        Button request_sent_btn = holder.itemView.findViewById(R.id.CancelBtn);
+                                        request_sent_btn.setText("Cancel");
+                                        request_sent_btn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                ChatRequestsRef.child(list_user_id).child(currentUserId)
+                                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task)
+                                                    {
+                                                        if (task.isSuccessful())
+                                                        {
+                                                            ChatRequestsRef.child(currentUserId).child(list_user_id)
+                                                                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task)
+                                                                {
+                                                                    if (task.isSuccessful())
+                                                                    {
+                                                                        Toast.makeText(getContext(), "Request cancelled", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                        holder.itemView.findViewById(R.id.acceptButton).setVisibility(View.GONE);
+
+                                        UsersRef.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.hasChild("image"))
+                                                {
+                                                    final String requestProfileImage= dataSnapshot.child("image").getValue().toString();
+                                                    Picasso.get().load(requestProfileImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
+                                                }
+
+                                                final String requestUserName = dataSnapshot.child("name").getValue().toString();
+                                                final String requestUserStatus = dataSnapshot.child("status").getValue().toString();
+
+                                                holder.userName.setText(requestUserName);
+                                                holder.userStatus.setText("you've sent new request to " + requestUserName);
+
+                                                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v)
+                                                    {
+                                                        CharSequence options[] = new CharSequence[]
+                                                                {
+                                                                        "Cancel friends request"
+                                                                };
+                                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                        builder.setTitle("Already Sent Request");
+                                                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                if(which == 0) {}
+                                                            }
+                                                        });
+
+                                                        builder.show();
+                                                    }
+                                                });
                                             }
 
                                             @Override
