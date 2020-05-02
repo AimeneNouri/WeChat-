@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradientlogin">
+
+    <ImageButton
+        android:id="@+id/backToMainActivity"
+        android:layout_width="13dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/chevron"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image_receiver"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/profile_image"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="10dp"
+        android:cropToPadding="true"/>
+
+    <TextView
+        android:id="@+id/receiverName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Name"
+        android:textSize="19dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginStart="89dp"
+        android:layout_marginTop="2dp"
+        />
+    <TextView
+        android:id="@+id/receiver_last_seen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last Seen today at 15:00 "
+        android:layout_below="@+id/receiverName"
+        android:textSize="10dp"
+        android:textColor="@color/grayblack"
+        android:textStyle="bold"
+        android:layout_marginStart="90dp" />
+
+</RelativeLayout>

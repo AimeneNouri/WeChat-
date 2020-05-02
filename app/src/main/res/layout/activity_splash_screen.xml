@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:background="@drawable/gradientlogin"
     android:gravity="center"
-    tools:context=".SplashScreen">
+    tools:context=".activities.SplashScreen">
 
     <ImageView
         android:id="@+id/logo_wechat"

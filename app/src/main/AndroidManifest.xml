@@ -18,27 +18,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Chat"></activity>
-        <activity android:name=".UsersProfile" />
+        <activity android:name=".activities.Chat"
+            android:parentActivityName=".activities.MainActivity" ></activity>
+        <activity android:name=".activities.UsersProfile" />
         <activity
-            android:name=".FindFriends"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".PhoneVerification" />
-        <activity android:name=".loginByPhone" />
+            android:name=".activities.FindFriends"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.PhoneVerification" />
+        <activity android:name=".activities.loginByPhone" />
         <activity
-            android:name=".GroupsChat"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".SplashScreen">
+            android:name=".activities.GroupsChat"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.MainActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

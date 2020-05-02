@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.wechat.GroupsChat;
+import com.example.wechat.activities.GroupsChat;
 import com.example.wechat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -54,7 +54,7 @@ public class GroupsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         GroupsRef = FirebaseDatabase.getInstance().getReference().child("Groups");
 
-        listView = (ListView) groupsView.findViewById(R.id.list_view);
+        listView = groupsView.findViewById(R.id.list_view);
         arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, listOfGroups);
         listView.setAdapter(arrayAdapter);
 
@@ -65,7 +65,6 @@ public class GroupsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 String currentGroupsName = parent.getItemAtPosition(position).toString();
-
                 Intent groupChatIntent = new Intent(getContext(), GroupsChat.class);
                 groupChatIntent.putExtra("groupName", currentGroupsName);
                 startActivity(groupChatIntent);
@@ -74,6 +73,7 @@ public class GroupsFragment extends Fragment {
 
         return groupsView;
     }
+
 
     private void DisplayGroups() {
         GroupsRef.addValueEventListener(new ValueEventListener() {
