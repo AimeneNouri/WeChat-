@@ -30,6 +30,26 @@
         android:textStyle="bold"
         />
 
+    <ImageView
+        android:id="@+id/message_sender_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bordersender"
+        android:scaleType="center"/>
+
+    <ImageView
+        android:id="@+id/message_receiver_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:background="@drawable/borderreceiver"
+        android:scaleType="center"/>
+
     <TextView
         android:id="@+id/sender_message_text"
         android:layout_width="wrap_content"

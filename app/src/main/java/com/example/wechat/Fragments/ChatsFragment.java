@@ -29,6 +29,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -92,11 +94,45 @@ public class ChatsFragment extends Fragment {
                                 userImage[0] = dataSnapshot.child("image").getValue().toString();
                                 Picasso.get().load(userImage[0]).placeholder(R.drawable.profile_image).into(holder.profileImage);
                             }
+
                             final String profileName = dataSnapshot.child("name").getValue().toString();
                             final String profileStatus = dataSnapshot.child("status").getValue().toString();
 
                             holder.userName.setText(profileName);
-                            holder.userStatus.setText("Last seen: " + "\t\t\t\t\t\t\t\t\t\t\t\t" + " Date " + " Time");
+
+                            if (dataSnapshot.child("UsersState").hasChild("state"))
+                            {
+                                String state = dataSnapshot.child("UsersState").child("state").getValue().toString();
+                                String date = dataSnapshot.child("UsersState").child("date").getValue().toString();
+                                String time = dataSnapshot.child("UsersState").child("time").getValue().toString();
+
+                                if (state.equals("online"))
+                                {
+                                    holder.userStatus.setText("online");
+                                }
+                                else if (state.equals("offline"))
+                                {
+                                    Calendar calendar = Calendar.getInstance();
+                                    SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+                                    String current_Date = currentDate.format(calendar.getTime());
+
+                                    calendar.add(Calendar.DATE, -1);
+                                    SimpleDateFormat yesterdayDate = new SimpleDateFormat("dd/MM/yyyy");
+                                    String yesterday_Date = yesterdayDate.format(calendar.getTime());
+
+                                    if (current_Date.equals(date)) {
+                                        date = "Today";
+                                    } else if (yesterday_Date.equals(date)) {
+                                        date = "Yesterday";
+                                    }
+
+                                    holder.userStatus.setText("Last Seen " + date + " at " + time);
+                                }
+                            }
+                            else
+                            {
+                                holder.userStatus.setText("offline");
+                            }
 
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override

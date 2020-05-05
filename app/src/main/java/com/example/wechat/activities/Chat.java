@@ -30,9 +30,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +67,13 @@ public class Chat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        msgReceiverId = getIntent().getExtras().get("visit_user_id").toString();
-        msgReceiverName = getIntent().getExtras().get("visit_user_name").toString();
-        msgReceiverImage = getIntent().getExtras().get("visit_user_image").toString();
-
         mAuth = FirebaseAuth.getInstance();
         msgSenderId = mAuth.getCurrentUser().getUid();
         RootRef = FirebaseDatabase.getInstance().getReference();
+
+        msgReceiverId = getIntent().getExtras().get("visit_user_id").toString();
+        msgReceiverName = getIntent().getExtras().get("visit_user_name").toString();
+        msgReceiverImage = getIntent().getExtras().get("visit_user_image").toString();
 
         Initialisation();
 
@@ -123,6 +126,61 @@ public class Chat extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         UsersMessagesList.setLayoutManager(linearLayoutManager);
         UsersMessagesList.setAdapter(messagesAdapter);
+
+        DisplayLastSeen();
+    }
+
+    private void DisplayLastSeen()
+    {
+        RootRef.child("Users").child(msgReceiverId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if (dataSnapshot.child("UsersState").hasChild("state"))
+                {
+                    String state = "" + dataSnapshot.child("UsersState").child("state").getValue();
+                    String date = dataSnapshot.child("UsersState").child("date").getValue().toString();
+                    String time = dataSnapshot.child("UsersState").child("time").getValue().toString();
+
+                    if (state.equals("online"))
+                    {
+                       userLastSeen.setText("online");
+                    }
+                    else if (state.equals("offline"))
+                    {
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+                        String current_Date = currentDate.format(calendar.getTime());
+
+                        calendar.add(Calendar.DATE, -1);
+                        SimpleDateFormat yesterdayDate = new SimpleDateFormat("dd/MM/yyyy");
+                        String yesterday_Date = yesterdayDate.format(calendar.getTime());
+
+                        if (current_Date.equals(date)) {
+                            date = "Today";
+                        } else if (yesterday_Date.equals(date)) {
+                            date = "Yesterday";
+                        }
+
+                        userLastSeen.setText("Last Seen " + date + " at " + time);
+                    }
+                    /*else if (state.equals("Typing"))
+                    {
+                        userLastSeen.setText("Typing...");
+                    }*/
+                }
+                else
+                {
+                    userLastSeen.setText("offline");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

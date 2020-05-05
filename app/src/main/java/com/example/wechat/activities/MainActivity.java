@@ -41,6 +41,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
+    private String currentUserID;
 
     private ChatsFragment chatsFragment;
     private GroupsFragment groupsFragment;
@@ -132,11 +139,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         if(currentUser == null){
             sendUserToLoginActivity();
         }
         else{
+            updateUserStatus("online");
             VerifyUserExist();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null)
+        {
+            updateUserStatus("offline");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null)
+        {
+            updateUserStatus("offline");
         }
     }
 
@@ -188,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (item.getItemId() == R.id.main_logout_option){
+            updateUserStatus("offline");
             mAuth.signOut();
             sendUserToLoginActivity();
         }
@@ -269,24 +301,25 @@ public class MainActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
-        {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+   private void updateUserStatus(String state)
+   {
+       String saveCurrentTime, saveCurrentDate;
+       Calendar calendar = Calendar.getInstance();
 
-            if(resultCode == RESULT_OK)
-            {
-                loadingBar.setTitle("Profile Image");
-                loadingBar.setMessage("Please wait until we updating you profile image");
-                loadingBar.setCanceledOnTouchOutside(false);
-                loadingBar.show();
+       SimpleDateFormat currentDate = new SimpleDateFormat("EEEE", Locale.US);
+       saveCurrentDate = currentDate.format(calendar.getTime());
 
-                Uri resultUri = result.getUri();
+       SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+       saveCurrentTime = currentTime.format(calendar.getTime());
 
+       HashMap<String, Object> onlineStatusMap = new HashMap<>();
+       onlineStatusMap.put("time", saveCurrentTime);
+       onlineStatusMap.put("date", saveCurrentDate);
+       onlineStatusMap.put("state", state);
 
-            }
-        }
-    }*/
+        currentUserID = mAuth.getCurrentUser().getUid();
+
+        RootRef.child("Users").child(currentUserID).child("UsersState")
+                .updateChildren(onlineStatusMap);
+   }
 }
