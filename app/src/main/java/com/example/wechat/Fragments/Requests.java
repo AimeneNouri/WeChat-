@@ -93,7 +93,7 @@ public class Requests extends Fragment {
                             {
                                 if (dataSnapshot.exists())
                                 {
-                                    String type =dataSnapshot.getValue().toString();
+                                    String type = dataSnapshot.getValue().toString();
 
                                     if (type.equals("received"))
                                     {
