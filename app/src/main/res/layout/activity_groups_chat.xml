@@ -80,10 +80,10 @@
 
         <ImageButton
             android:id="@+id/send_msg_button"
-            android:layout_width="40dp"
+            android:layout_width="35dp"
             android:layout_marginTop="8dp"
-            android:layout_height="38dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="9dp"
             android:layout_marginStart="2dp"
             android:layout_gravity="bottom"
             android:src="@drawable/ic_send_black_24dp"

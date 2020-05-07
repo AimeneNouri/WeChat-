@@ -21,7 +21,7 @@
         android:layout_above="@+id/mLinearLayout">
     </androidx.recyclerview.widget.RecyclerView>
 
-    <LinearLayout
+    <RelativeLayout
         android:padding="3dp"
         android:id="@+id/mLinearLayout"
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             android:layout_width="35dp"
             android:layout_height="50dp"
             android:padding="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="3dp"
             android:layout_gravity="bottom"
             android:layout_alignParentStart="true"
             android:background="@drawable/send_files"
@@ -57,21 +57,21 @@
             android:padding="10dp"
             android:layout_marginTop="6dp"
             android:layout_marginStart="2dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toEndOf="@+id/send_files_btn"
             android:layout_marginEnd="2dp"/>
 
         <at.markushi.ui.CircleButton
             android:id="@+id/send_msg_button"
             android:layout_width="37dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="9dp"
             android:layout_height="37dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="2dp"
             android:layout_gravity="bottom"
             android:src="@drawable/ic_send_black_24dp"
-            app:cb_color="@color/white"
-            android:background="@drawable/sendmessagebtn"
-            app:cb_pressedRingWidth="1dip"/>
+            app:cb_color="@color/colorPrimaryDark"
+            android:layout_toEndOf="@+id/input_chat_message"
+            app:cb_pressedRingWidth="2dip"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

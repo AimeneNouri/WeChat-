@@ -26,29 +26,27 @@
         android:text="receiver message !! "
         android:padding="10dp"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         />
 
     <ImageView
         android:id="@+id/message_sender_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/bordersender"
-        android:scaleType="center"/>
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"/>
 
     <ImageView
         android:id="@+id/message_receiver_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="2dp"
-        android:background="@drawable/borderreceiver"
-        android:scaleType="center"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="47dp"
+        android:scaleType="centerCrop"/>
 
     <TextView
         android:id="@+id/sender_message_text"
@@ -59,10 +57,10 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/sender_message"
         android:text="sender message !!"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:padding="10dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginRight="5dp"
         android:textColor="@color/white"/>
 
 </RelativeLayout>

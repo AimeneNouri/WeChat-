@@ -6,16 +6,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wechat.R;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,11 +41,12 @@ public class GroupsChat extends AppCompatActivity {
     private EditText userMessageInput;
     private ScrollView mScrollView;
     private TextView displayTextMessages;
+    private ImageView Send_File_Btn;
 
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef;
 
-    private String currentGroupName, currentUserId, currentUserName, currentDate, currentTime;
+    private String currentGroupName, currentUserId, currentUserName, currentDate, currentTime, checker = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +71,7 @@ public class GroupsChat extends AppCompatActivity {
         userMessageInput = (EditText) findViewById(R.id.input_groups_message);
         displayTextMessages = (TextView) findViewById(R.id.group_chat_text);
         mScrollView =(ScrollView) findViewById(R.id.scroll_view);
-
+        Send_File_Btn = findViewById(R.id.send_files_btn);
 
         GetUserInfo();
 
@@ -79,11 +85,73 @@ public class GroupsChat extends AppCompatActivity {
                 mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        Send_File_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
+
+                View bottomSheet = LayoutInflater.from(getApplicationContext())
+                        .inflate(R.layout.bottom_sheet_layout_chat, (RelativeLayout) findViewById(R.id.bottomSheet_Cont));
+
+                //Camera
+                bottomSheet.findViewById(R.id.camera).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checker = "camera";
+                    }
+                });
+
+                //Images
+                bottomSheet.findViewById(R.id.images).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        checker = "image";
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        startActivityForResult(intent.createChooser(intent, "Select Image"), 438);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                //PDF Files
+                bottomSheet.findViewById(R.id.pdf).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        checker = "pdf";
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.setType("application/pdf");
+                        startActivityForResult(intent.createChooser(intent, "Select PDF File"), 438);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                //Ms Word Files
+                bottomSheet.findViewById(R.id.word).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checker = "docx";
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.setType("application/docx");
+                        startActivityForResult(intent.createChooser(intent, "Select Ms Word File"), 438);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                bottomSheetDialog.setContentView(bottomSheet);
+                bottomSheetDialog.show();
+
+            }
+        });
+
         GroupNameRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

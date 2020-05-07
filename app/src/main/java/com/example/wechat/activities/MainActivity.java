@@ -304,9 +304,10 @@ public class MainActivity extends AppCompatActivity {
    private void updateUserStatus(String state)
    {
        String saveCurrentTime, saveCurrentDate;
+
        Calendar calendar = Calendar.getInstance();
 
-       SimpleDateFormat currentDate = new SimpleDateFormat("EEEE", Locale.US);
+       SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
        saveCurrentDate = currentDate.format(calendar.getTime());
 
        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");

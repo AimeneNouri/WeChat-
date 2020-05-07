@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/deleteImage"
+    android:layout_marginTop="20dp"
+    android:padding="10dp">
+
+
+    <Button
+        android:id="@+id/delete_for_me_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Delete for me"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="20sp"
+        android:background="@drawable/deletefor_me"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/cancel_delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/delete_for_me_button"
+        android:text="Cancel"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:background="@drawable/deletefor_me"
+        android:gravity="center"/>
+
+</RelativeLayout>
