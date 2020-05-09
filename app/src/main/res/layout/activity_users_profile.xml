@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/visit_profile_status"
         android:layout_marginLeft="65dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:layout_marginRight="65dp"
         android:elevation="4dp"
         android:background="@drawable/send_message_request"

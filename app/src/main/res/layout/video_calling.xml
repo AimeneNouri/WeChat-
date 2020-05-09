@@ -5,30 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.VideoCalling">
-<!--
-    <RelativeLayout
-        android:id="@+id/remote_video_view_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/remoteBackground">
-        <RelativeLayout
+
+        <ImageView
+            android:id="@+id/profile_image_calling"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/icon_padding">
-            <ImageView
-                android:layout_width="@dimen/remote_back_icon_size"
-                android:layout_height="@dimen/remote_back_icon_size"
-                android:layout_centerInParent="true"
-                android:background="@drawable/profile_image"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/icon_padding"
+            android:background="@drawable/profile_image"
+            android:scaleType="centerCrop"/>
+        <TextView
+            android:id="@+id/name_calling"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/remote_back_icon_margin_bottom"
-            android:layout_alignParentBottom="true"/>
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:text="username"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:maxLines="5"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_above="@+id/txt"/>
 
-    <FrameLayout
+        <TextView
+            android:id="@+id/txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="120dp"
+            android:gravity="center"
+            android:maxLines="5"
+            android:text="calling..."
+            android:textColor="#777676"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/icon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/remote_back_icon_margin_bottom"
+        android:layout_alignParentBottom="true" />
+
+    <!--<FrameLayout
         android:id="@+id/local_video_view_container"
         android:layout_width="@dimen/local_preview_width"
         android:layout_height="@dimen/local_preview_height"
@@ -41,12 +56,12 @@
         android:background="@color/localBackground">
 
         <ImageView
-            android:layout_width="@dimen/local_back_icon_size"
-            android:layout_height="@dimen/local_back_icon_size"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:background="@drawable/profile_image"/>
-    </FrameLayout>
+    </FrameLayout>-->
 
     <RelativeLayout
         android:id="@+id/control_panel"
@@ -55,43 +70,31 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/control_bottom_margin">
 
-        <ImageView
-            android:id="@+id/btn_call"
+        <ImageButton
+            android:id="@+id/btn_end_call"
             android:layout_width="@dimen/call_button_size"
             android:layout_height="@dimen/call_button_size"
-            android:layout_centerInParent="true"
-            android:src="@drawable/btn_endcall"
-            android:scaleType="centerCrop"/>
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/btn_endcall" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/btn_switch_camera"
             android:layout_width="@dimen/other_button_size"
             android:layout_height="@dimen/other_button_size"
-            android:layout_toRightOf="@id/btn_call"
-            android:layout_toEndOf="@id/btn_call"
-            android:layout_marginLeft="@dimen/control_bottom_horizontal_margin"
+            android:layout_toRightOf="@id/btn_end_call"
+            android:layout_toEndOf="@id/btn_end_call"
+            android:layout_marginLeft="20dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/btn_switch_camera"
+            android:background="@drawable/btn_switch_camera"
             android:scaleType="centerCrop"/>
 
-        <ImageView
-            android:id="@+id/btn_mute"
-            android:layout_width="@dimen/other_button_size"
-            android:layout_height="@dimen/other_button_size"
-            android:layout_toLeftOf="@id/btn_call"
-            android:layout_toStartOf="@id/btn_call"
-            android:layout_marginRight="@dimen/control_bottom_horizontal_margin"
-            android:layout_centerVertical="true"
-            android:src="@drawable/btn_unmute"
-            android:scaleType="centerCrop"/>
+        <ImageButton
+            android:id="@+id/btn_make_cal"
+            android:layout_width="@dimen/call_button_size"
+            android:layout_height="@dimen/call_button_size"
+            android:layout_marginLeft="90dp"
+            android:background="@drawable/btn_startcall"
+            android:visibility="gone"/>
     </RelativeLayout>
 
-    <io.agora.uikit.logger.LoggerRecyclerView
-        android:id="@+id/log_recycler_view"
-        android:layout_width="@dimen/log_container_width"
-        android:layout_height="@dimen/log_container_height"
-        android:layout_above="@+id/control_panel"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin" />-->
 </RelativeLayout>

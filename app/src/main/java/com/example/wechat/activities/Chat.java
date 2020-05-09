@@ -109,7 +109,7 @@ public class Chat extends AppCompatActivity {
         Initialisation();
 
         userName.setText(msgReceiverName);
-        Picasso.get().load(msgReceiverImage).into(userImage);
+        Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
         userName.setOnClickListener(new View.OnClickListener() {
             @Override

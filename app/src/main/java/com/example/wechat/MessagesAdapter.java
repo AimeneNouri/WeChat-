@@ -143,7 +143,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     {
                         Intent intent = new Intent(holder.itemView.getContext(), ImageViewer.class);
                         intent.putExtra("url", userMessagesList.get(position).getMessage());
-                        holder.itemView.getContext().startActivity(intent);
+                        holder.itemView.getContext().startActivity(intent); 
                     }
                 });
             }

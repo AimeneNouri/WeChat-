@@ -28,6 +28,7 @@
             android:text="Images"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:gravity="center_vertical"/>
 
     </LinearLayout>
@@ -53,6 +54,7 @@
             android:text="PDF Files"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:gravity="center_vertical"/>
 
     </LinearLayout>
@@ -77,6 +79,7 @@
             android:layout_height="wrap_content"
             android:text="Ms Word Files"
             android:textSize="15sp"
+            android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark"
             android:gravity="center_vertical"/>
 

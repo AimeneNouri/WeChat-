@@ -12,15 +12,6 @@
         android:layout_height="270dp"
         android:background="@drawable/gradientlogin">
 
-        <ImageButton
-            android:id="@+id/backToChatActivity"
-            android:layout_width="13dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/chevron"/>
-
         <TextView
             android:id="@+id/Receiver_name"
             android:layout_width="wrap_content"

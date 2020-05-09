@@ -29,8 +29,7 @@
         <activity android:name=".activities.ContactProfile" />
         <activity android:name=".activities.ImageViewer" />
         <activity
-            android:name=".activities.Chat"
-            android:parentActivityName=".activities.MainActivity" />
+            android:name=".activities.Chat"/>
         <activity android:name=".activities.UsersProfile" />
         <activity
             android:name=".activities.FindFriends"
