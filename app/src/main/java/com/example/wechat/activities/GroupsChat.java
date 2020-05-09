@@ -94,14 +94,6 @@ public class GroupsChat extends AppCompatActivity {
                 View bottomSheet = LayoutInflater.from(getApplicationContext())
                         .inflate(R.layout.bottom_sheet_layout_chat, (RelativeLayout) findViewById(R.id.bottomSheet_Cont));
 
-                //Camera
-                bottomSheet.findViewById(R.id.camera).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        checker = "camera";
-                    }
-                });
-
                 //Images
                 bottomSheet.findViewById(R.id.images).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -186,6 +178,7 @@ public class GroupsChat extends AppCompatActivity {
     }
 
 
+
     private void GetUserInfo() {
         usersRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -245,7 +238,7 @@ public class GroupsChat extends AppCompatActivity {
             String chatName = (String) ((DataSnapshot) iterator.next()).getValue();
             String chatTime = (String) ((DataSnapshot) iterator.next()).getValue();
 
-            displayTextMessages.append(chatName + " :\n" + chatMessage + "\n" + chatTime + "     " + chatDate + "\n\n\n");
+            displayTextMessages.append(chatName + "\n" + chatMessage + "\n\n" + chatTime);
 
             mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
         }

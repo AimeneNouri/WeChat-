@@ -7,10 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".activities.ImageViewer">
 
+
     <ImageView
         android:id="@+id/image_viewer"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
         android:layout_above="@+id/mLinearLayout"
         android:src="@drawable/crop_image_menu_flip"/>
 

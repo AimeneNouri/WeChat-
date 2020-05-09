@@ -63,6 +63,7 @@ public class UsersProfile extends AppCompatActivity {
             public void onClick(View v) {
                 Intent FriendsIntent = new Intent(UsersProfile.this, FindFriends.class);
                 startActivity(FriendsIntent);
+                finish();
             }
         });
     }

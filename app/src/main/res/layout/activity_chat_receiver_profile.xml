@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.chat_receiver_profile">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/mLayout"
+        android:layout_height="270dp"
+        android:background="@drawable/gradientlogin">
+
+        <ImageButton
+            android:id="@+id/backToChatActivity"
+            android:layout_width="13dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/chevron"/>
+
+        <TextView
+            android:id="@+id/Receiver_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aimene Nouri"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/receiver_profile_image"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="170dp"
+        android:src="@drawable/profile_image" />
+
+
+</RelativeLayout>

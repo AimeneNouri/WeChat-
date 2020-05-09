@@ -25,7 +25,7 @@
         android:id="@+id/forward"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Forward"
+        android:text="Share"
         android:textStyle="bold"
         android:layout_below="@+id/save"
         android:textSize="20sp"

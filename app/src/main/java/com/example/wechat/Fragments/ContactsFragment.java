@@ -1,5 +1,6 @@
 package com.example.wechat.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,9 @@ import android.widget.TextView;
 
 import com.example.wechat.Contacts;
 import com.example.wechat.R;
+import com.example.wechat.activities.ContactProfile;
+import com.example.wechat.activities.FindFriends;
+import com.example.wechat.activities.UsersProfile;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,8 +75,17 @@ public class ContactsFragment extends Fragment {
 
         FirebaseRecyclerAdapter<Contacts, ContactsViewHolder> adapter = new FirebaseRecyclerAdapter<Contacts, ContactsViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final ContactsViewHolder holder, int position, @NonNull Contacts model) {
+            protected void onBindViewHolder(@NonNull final ContactsViewHolder holder, final int position, @NonNull Contacts model) {
              String userIDs = getRef(position).getKey();
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String visit_user_id = getRef(position).getKey();
+                        Intent profileIntent = new Intent(getContext(), ContactProfile.class);
+                        profileIntent.putExtra("visit_user_id", visit_user_id);
+                        startActivity(profileIntent);
+                    }
+                });
 
              UsersRef.child(userIDs).addValueEventListener(new ValueEventListener() {
                  @Override

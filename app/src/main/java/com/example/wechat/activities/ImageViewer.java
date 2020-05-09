@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -99,7 +101,14 @@ public class ImageViewer extends AppCompatActivity {
                 bottomSheet.findViewById(R.id.forward).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(ImageViewer.this, "Its working", Toast.LENGTH_SHORT).show();
+
+                        Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
+
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                        shareIntent.setType("image/*");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUrl);
+                        startActivity(Intent.createChooser(shareIntent, "Share via"));
 
                         bottomSheetDialog.dismiss();
                     }

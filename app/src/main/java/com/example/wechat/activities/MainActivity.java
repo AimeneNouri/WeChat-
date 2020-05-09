@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference RootRef;
     private String currentUserID;
 
+    public static boolean isMainActivityRunning;
+
     private ChatsFragment chatsFragment;
     private GroupsFragment groupsFragment;
     private ContactsFragment contactsFragment;
@@ -138,8 +140,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        isMainActivityRunning = true;
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
             sendUserToLoginActivity();
         }
@@ -152,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        isMainActivityRunning = false;
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
         {
             updateUserStatus("offline");
@@ -163,8 +167,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        isMainActivityRunning = false;
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
         {
             updateUserStatus("offline");

@@ -8,4 +8,7 @@
     <color name="gradStart">#00FFBC</color>
     <color name="grayblack">#D6D6D6</color>
     <color name="lightgray">#1affffff</color>
+
+    <color name="localBackground">#827b92</color>
+    <color name="remoteBackground">#484258</color>
 </resources>

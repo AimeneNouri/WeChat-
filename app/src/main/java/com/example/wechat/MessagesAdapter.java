@@ -44,7 +44,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     public class MessagesViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView senderMsgText, receiverMsgText;
+        public TextView senderMsgText, receiverMsgText, senTime, receive_time;
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderImage, messageReceiverImage;
 
@@ -56,6 +56,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             receiverProfileImage = itemView.findViewById(R.id.message_profile_image);
             messageSenderImage = itemView.findViewById(R.id.message_sender_image);
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
+            senTime = itemView.findViewById(R.id.sent_time);
+            receive_time = itemView.findViewById(R.id.receive_time);
         }
     }
 
@@ -108,17 +110,21 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             if (fromUserId.equals(msgSenderId))
             {
                 holder.senderMsgText.setVisibility(View.VISIBLE);
+                holder.receive_time.setVisibility(View.INVISIBLE);
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
-                holder.senderMsgText.setText(messages.getMessage() + "\n" + "\t\t\t" + messages.getTime());
+                holder.senderMsgText.setText(messages.getMessage());
+                holder.senTime.setText(messages.getTime());
                 holder.senderMsgText.setTextColor(Color.WHITE);
             }
             else
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMsgText.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.INVISIBLE);
 
                 holder.receiverMsgText.setBackgroundResource(R.drawable.receiver_message);
-                holder.receiverMsgText.setText(messages.getMessage() + "\n" + "\t\t\t" + messages.getTime());
+                holder.receiverMsgText.setText(messages.getMessage());
+                holder.receive_time.setText( messages.getTime());
                 holder.senderMsgText.setTextColor(Color.BLACK);
             }
         }
@@ -128,6 +134,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 holder.messageSenderImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(messages.getMessage()).into(holder.messageSenderImage);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -143,6 +151,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 Picasso.get().load(messages.getMessage()).into(holder.messageReceiverImage);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +171,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             if (fromUserId.equals(msgSenderId))
             {
                 holder.messageSenderImage.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
                         .into(holder.messageSenderImage);
@@ -178,6 +190,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
                         .into(holder.messageReceiverImage);
@@ -196,6 +210,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             if (fromUserId.equals(msgSenderId))
             {
                 holder.messageSenderImage.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 holder.messageSenderImage.setBackgroundResource(R.drawable.word_icon);
 
@@ -211,6 +227,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
 
                 holder.messageReceiverImage.setBackgroundResource(R.drawable.word_icon);
 

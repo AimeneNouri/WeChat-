@@ -42,6 +42,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.material:material:1.0.0'
 
+
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+
+
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -57,4 +62,6 @@ dependencies {
 
     //library
     implementation 'com.cenkgun:chatbar:1.0.2'
+    implementation 'mx.jesusmartinoza:sweet-password:0.2'
+    implementation 'io.agora.rtc:full-sdk:3.0.0'
 }
