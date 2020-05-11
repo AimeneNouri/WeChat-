@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.wechat.Contacts;
 import com.example.wechat.R;
+import com.example.wechat.activities.CallingActivity;
 import com.example.wechat.activities.Chat;
 import com.example.wechat.activities.ContactProfile;
 import com.example.wechat.activities.VideoCalling;
@@ -127,7 +128,7 @@ public class CallFragment extends Fragment {
                             @Override
                             public void onClick(View v)
                             {
-                                Intent VideoCallIntent = new Intent(getContext(), VideoCalling.class);
+                                Intent VideoCallIntent = new Intent(getContext(), CallingActivity.class);
                                 VideoCallIntent.putExtra("visit_user_id", userIDs);
                                 startActivity(VideoCallIntent);
                             }

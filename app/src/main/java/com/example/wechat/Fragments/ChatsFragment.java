@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,6 @@ public class ChatsFragment extends Fragment {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class ChatsFragment extends Fragment {
         ChatsView = inflater.inflate(R.layout.fragment_chats, container, false);
 
         mAuth = FirebaseAuth.getInstance();
-        currentUserId =  Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        currentUserId = mAuth.getCurrentUser().getUid();
 
         ChatsRef = FirebaseDatabase.getInstance().getReference().child("Contacts").child(currentUserId);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");

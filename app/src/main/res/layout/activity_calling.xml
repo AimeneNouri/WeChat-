@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.CallingActivity">
+
+    <ImageView
+        android:id="@+id/profile_image_calling"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/profile_image"
+        android:scaleType="centerCrop"/>
+    <TextView
+        android:id="@+id/name_calling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="username"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:maxLines="5"
+        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_above="@+id/txt"/>
+
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="120dp"
+        android:gravity="center"
+        android:maxLines="5"
+        android:text="calling..."
+        android:textColor="#777676"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/icon_padding"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/remote_back_icon_margin_bottom"
+        android:layout_alignParentBottom="true" />
+
+    <!--<FrameLayout
+        android:id="@+id/local_video_view_container"
+        android:layout_width="@dimen/local_preview_width"
+        android:layout_height="@dimen/local_preview_height"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="@dimen/local_preview_margin_right"
+        android:layout_marginRight="@dimen/local_preview_margin_right"
+        android:layout_marginTop="@dimen/local_preview_margin_top"
+        android:background="@color/localBackground">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:background="@drawable/profile_image"/>
+    </FrameLayout>-->
+
+    <RelativeLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/control_bottom_margin">
+
+        <ImageButton
+            android:id="@+id/btn_end_call"
+            android:layout_width="@dimen/call_button_size"
+            android:layout_height="@dimen/call_button_size"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/btn_endcall" />
+
+        <ImageButton
+            android:id="@+id/btn_make_cal"
+            android:layout_width="@dimen/call_button_size"
+            android:layout_height="@dimen/call_button_size"
+            android:layout_marginLeft="90dp"
+            android:background="@drawable/btn_startcall"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>

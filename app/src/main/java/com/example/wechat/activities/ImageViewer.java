@@ -43,7 +43,7 @@ import java.util.Locale;
 public class ImageViewer extends AppCompatActivity {
 
     private ImageView myImageView;
-    private ImageButton sharePictureBtn, deletePictureBtn;
+    private ImageButton sharePictureBtn;
     private String imageUrl;
 
 
@@ -54,7 +54,6 @@ public class ImageViewer extends AppCompatActivity {
 
         myImageView = findViewById(R.id.image_viewer);
         sharePictureBtn = findViewById(R.id.shareImageBtn);
-        deletePictureBtn = findViewById(R.id.deleteImageBtn);
 
         imageUrl = getIntent().getStringExtra("url");
         Picasso.get().load(imageUrl).into(myImageView);
@@ -122,30 +121,6 @@ public class ImageViewer extends AppCompatActivity {
                     }
                 });
 
-                bottomSheetDialog.setContentView(bottomSheet);
-                bottomSheetDialog.show();
-            }
-        });
-
-        deletePictureBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ImageViewer.this, R.style.BottomSheet);
-                View bottomSheet = LayoutInflater.from(getApplicationContext())
-                        .inflate(R.layout.delete_for_me, (RelativeLayout) findViewById(R.id.deleteImage));
-
-                bottomSheet.findViewById(R.id.delete_for_me_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-                bottomSheet.findViewById(R.id.cancel_delete_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.dismiss();
-                    }
-                });
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
             }

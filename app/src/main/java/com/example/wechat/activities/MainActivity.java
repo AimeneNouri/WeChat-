@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.example.wechat.Fragments.ChatsFragment;
 import com.example.wechat.Fragments.ContactsFragment;
 import com.example.wechat.Fragments.GroupsFragment;
 import com.example.wechat.Fragments.Requests;
+import com.example.wechat.Groups;
 import com.example.wechat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -144,9 +146,11 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
+            Log.d("WeChat", "null");
             sendUserToLoginActivity();
         }
         else{
+            Log.d("WeChat", "not null");
             updateUserStatus("online");
             VerifyUserExist();
         }
@@ -289,7 +293,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void CreateNewGroup(final String groupName, final String photo) {
 
-        RootRef.child("Groups").child(groupName).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+        Groups group = new Groups();
+        group.setName(groupName);
+        group.setPhoto(photo);
+        group.setAdmin(mAuth.getCurrentUser().getUid());
+        RootRef.child("Groups").child(groupName).setValue(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())

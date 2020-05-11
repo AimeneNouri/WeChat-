@@ -545,8 +545,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 .child(userMessagesList.get(position).getTo())
                 .child(userMessagesList.get(position).getFrom())
                 .child(userMessagesList.get(position).getMessageID())
-                .child("message")
-                .setValue("This message has been deleted !").addOnCompleteListener(new OnCompleteListener<Void>() {
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
@@ -555,8 +554,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
                             .child(userMessagesList.get(position).getTo())
                             .child(userMessagesList.get(position).getMessageID())
-                            .child("message")
-                            .setValue("This message has been deleted !").addOnCompleteListener(new OnCompleteListener<Void>() {
+                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {

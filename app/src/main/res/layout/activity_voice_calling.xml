@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient2"
+    tools:context=".activities.VoiceCalling">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/set_profile_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/profile_image"
+        app:civ_border_color="@color/colorPrimary"
+        app:civ_border_width="1dp" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/set_profile_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="23dp"
+        android:text="Aimene Nouri"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="23dp"
+        android:text="Voice call"
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="16sp" />
+
+
+
+
+
+    <TextView
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/set_profile_image"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/callState"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:text="Start call" />
+
+    <ImageView
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:id="@+id/buttonEndCall"
+        android:layout_below="@+id/chat"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/btn_endcall"/>
+
+
+</RelativeLayout>

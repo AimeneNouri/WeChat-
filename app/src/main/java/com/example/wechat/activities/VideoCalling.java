@@ -3,9 +3,13 @@ package com.example.wechat.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,230 +23,210 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
+import com.opentok.android.OpentokError;
+import com.opentok.android.Publisher;
+import com.opentok.android.Stream;
+import com.opentok.android.Subscriber;
+import com.opentok.android.PublisherKit;
+import com.opentok.android.Session;
 
-public class VideoCalling extends AppCompatActivity {
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-    private TextView nameContact, TypeOfCall;
-    private ImageView ProfileImage;
-    private ImageButton CancelCallBtn, BtnSwitchCamera, acceptCallBtn;
+public class VideoCalling extends AppCompatActivity implements Session.SessionListener, PublisherKit.PublisherListener {
 
-    private String receiverUserId = "", receiverName = "", receiverImage = "";
-    private String senderUserId = "", senderName = "", senderImage = "", checker = "";
+    private static String  API_KEY = "46729602";
+    private static String SESSION_ID = "1_MX40NjcyOTYwMn5-MTU4OTEzMTQ5OTg0NH52cWIzSWd5djNaSG1rWmRQOGxnclJKK0x-fg";
+    private static String TOKEN = "T1==cGFydG5lcl9pZD00NjcyOTYwMiZzaWc9YmI5MDkyMWNlYjRmZTlkNzc1ZDQ2ZjFkMTBiZmMxMDJmNzY1M2JhYjpzZXNzaW9uX2lkPTFfTVg0ME5qY3lPVFl3TW41LU1UVTRPVEV6TVRRNU9UZzBOSDUyY1dJelNXZDVkak5hU0cxcldtUlFPR3huY2xKS0sweC1mZyZjcmVhdGVfdGltZT0xNTg5MTMxNTY2Jm5vbmNlPTAuNzQ2ODU5NDEzMzIzNDY3NCZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTg5MTUzMTYzJmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
+    private static final String LOG_TAG = VideoCalling.class.getSimpleName();
+    private static final int RC_VIDEO_APP_PERM = 124;
+
+    private ImageView closeVideoChat;
+
     private DatabaseReference UsersRef;
+    private String UserId = "";
 
-    private String callingId = "", ringingId = "";
+    private FrameLayout mPublisherViewController;
+    private FrameLayout mSubscriberViewController;
+    private Session mSession;
+    private Publisher mPublisher;
+    private Subscriber mSubscriber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_calling);
 
-        senderUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        receiverUserId = getIntent().getExtras().get("visit_user_id").toString();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        nameContact = findViewById(R.id.name_calling);
-        ProfileImage = findViewById(R.id.profile_image_calling);
-        CancelCallBtn = findViewById(R.id.btn_end_call);
-        BtnSwitchCamera = findViewById(R.id.btn_switch_camera);
-        acceptCallBtn = findViewById(R.id.btn_make_cal);
-        TypeOfCall = findViewById(R.id.txt);
+        closeVideoChat = findViewById(R.id.end_video_chat_btn);
 
-        CancelCallBtn.setOnClickListener(new View.OnClickListener() {
+        closeVideoChat.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                checker = "clicked";
+            public void onClick(View v) {
+                UsersRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.child(UserId).hasChild("Ringing"))
+                        {
+                            UsersRef.child(UserId).child("Ringing").removeValue();
 
-                cancelCallingUser();
+                            if (mPublisher != null)
+                            {
+                                mPublisher.destroy();
+                            }
+                            if (mSubscriber != null)
+                            {
+                                mSubscriber.destroy();
+                            }
+
+                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            finish();
+                        }
+                        if (dataSnapshot.child(UserId).hasChild("Calling"))
+                        {
+                            UsersRef.child(UserId).child("Calling").removeValue();
+
+                            if (mPublisher != null)
+                            {
+                                mPublisher.destroy();
+                            }
+                            if (mSubscriber != null)
+                            {
+                                mSubscriber.destroy();
+                            }
+
+                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            finish();
+                        }
+                        else
+                        {
+                            if (mPublisher != null)
+                            {
+                                mPublisher.destroy();
+                            }
+                            if (mSubscriber != null)
+                            {
+                                mSubscriber.destroy();
+                            }
+
+                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
-        getAndSetUserProfileInfo();
-    }
-
-    private void getAndSetUserProfileInfo()
-    {
-        UsersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if (dataSnapshot.child(receiverUserId).exists())
-                {
-                    receiverImage = dataSnapshot.child(receiverUserId).child("image").getValue(String.class);
-                    receiverName = dataSnapshot.child(receiverUserId).child("name").getValue(String.class);
-
-                    nameContact.setText(receiverName);
-                    Picasso.get().load(receiverImage).placeholder(R.drawable.profile_image).into(ProfileImage);
-                }
-                if (dataSnapshot.child(senderUserId).exists())
-                {
-                    senderImage = dataSnapshot.child(senderUserId).child("image").getValue(String.class);
-                    senderName = dataSnapshot.child(senderUserId).child("name").getValue(String.class);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        requestPermissions();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        UsersRef.child(receiverUserId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if (!checker.equals("clicked") && !dataSnapshot.hasChild("Calling") && !dataSnapshot.hasChild("Ringing"))
-                {
-                    final HashMap<String, Object> callingInfo = new HashMap<>();
-                    callingInfo.put("calling", receiverUserId);
-
-                    UsersRef.child(senderUserId).child("Calling")
-                            .updateChildren(callingInfo)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task)
-                                {
-                                    if (task.isSuccessful())
-                                    {
-                                        final HashMap<String, Object> ringingInfo = new HashMap<>();
-                                        ringingInfo.put("ringing", senderUserId);
-
-                                        UsersRef.child(receiverUserId).child("Ringing")
-                                                .updateChildren(ringingInfo);
-                                    }
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        UsersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if (dataSnapshot.child(senderUserId).hasChild("Ringing") && !dataSnapshot.child(senderUserId).hasChild("Calling") )
-                {
-                    acceptCallBtn.setVisibility(View.VISIBLE);
-                    TypeOfCall.setText("Ringing");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, VideoCalling.this);
     }
 
-    private void cancelCallingUser()
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions()
     {
-        //From sender side
-        UsersRef.child(senderUserId)
-                .child("Calling")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        if (dataSnapshot.exists() && dataSnapshot.hasChild("calling"))
-                        {
-                            callingId = dataSnapshot.child("calling").getValue(String.class);
+        String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
-                            UsersRef.child(callingId)
-                                    .child("Ringing")
-                                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task)
-                                {
-                                    if (task.isSuccessful())
-                                    {
-                                        UsersRef.child(senderUserId)
-                                                .child("Calling")
-                                                .removeValue()
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task)
-                                                    {
-                                                        startActivity(new Intent(VideoCalling.this, LoginActivity.class));
-                                                        finish();
-                                                    }
-                                                });
-                                    }
-                                }
-                            });
-                        }
-                        else
-                        {
-                            startActivity(new Intent(VideoCalling.this, LoginActivity.class));
-                            finish();
-                        }
-                    }
+        if (EasyPermissions.hasPermissions(this, perms))
+        {
+            mPublisherViewController = findViewById(R.id.publisher_container);
+            mSubscriberViewController = findViewById(R.id.subscriber_container);
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+            mSession = new Session.Builder(this, API_KEY, SESSION_ID).build();
+            mSession.setSessionListener(VideoCalling.this);
+            mSession.connect(TOKEN);
+        }
+        else {
+            EasyPermissions.requestPermissions(this, "Our app needs the Mic and Camera permissions, Please allow", RC_VIDEO_APP_PERM, perms);
+        }
+    }
 
-                    }
-                });
+    @Override
+    public void onStreamCreated(PublisherKit publisherKit, Stream stream) {
 
-        //From receiver side
-        UsersRef.child(senderUserId)
-                .child("Ringing")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing"))
-                        {
-                            ringingId = dataSnapshot.child("ringing").getValue(String.class);
+    }
 
-                            UsersRef.child(ringingId)
-                                    .child("Calling")
-                                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task)
-                                {
-                                    if (task.isSuccessful())
-                                    {
-                                        UsersRef.child(senderUserId)
-                                                .child("Ringing")
-                                                .removeValue()
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task)
-                                                    {
-                                                        startActivity(new Intent(VideoCalling.this, LoginActivity.class));
-                                                        finish();
-                                                    }
-                                                });
-                                    }
-                                }
-                            });
-                        }
-                        else
-                        {
-                            startActivity(new Intent(VideoCalling.this, LoginActivity.class));
-                            finish();
-                        }
-                    }
+    @Override
+    public void onStreamDestroyed(PublisherKit publisherKit, Stream stream) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+    }
 
-                    }
-                });
+    @Override
+    public void onError(PublisherKit publisherKit, OpentokError opentokError) {
+
+    }
+
+    //Publishing Stream to the session
+    @Override
+    public void onConnected(Session session)
+    {
+        Log.i(LOG_TAG, "Session Connected");
+
+        mPublisher = new Publisher.Builder(this).build();
+        mPublisher.setPublisherListener(VideoCalling.this);
+
+        mPublisherViewController.addView(mPublisher.getView());
+        if (mPublisher.getView() instanceof GLSurfaceView)
+        {
+            ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
+        }
+        mSession.publish(mPublisher);
+    }
+
+    @Override
+    public void onDisconnected(Session session)
+    {
+        Log.i(LOG_TAG, "Session Disconnected");
+    }
+
+    //Subscribing Stream to the session
+    @Override
+    public void onStreamReceived(Session session, Stream stream)
+    {
+        Log.i(LOG_TAG, "Session Received");
+
+        if (mSubscriber == null)
+        {
+            mSubscriber = new Subscriber.Builder(this, stream).build();
+            mSession.subscribe(mSubscriber);
+            mSubscriberViewController.addView(mSubscriber.getView());
+        }
+    }
+
+    @Override
+    public void onStreamDropped(Session session, Stream stream)
+    {
+        Log.i(LOG_TAG, "Session Dropped");
+
+        if (mSubscriber != null)
+        {
+            mSubscriber = null;
+            mSubscriberViewController.removeAllViews();
+        }
+    }
+
+    @Override
+    public void onError(Session session, OpentokError opentokError)
+    {
+        Log.i(LOG_TAG, "Session Error");
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 }

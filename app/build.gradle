@@ -11,6 +11,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -20,8 +21,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
-
 }
 
 dependencies {
@@ -40,11 +44,11 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 
 
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
 
 
     //noinspection GradleCompatible
@@ -64,4 +68,7 @@ dependencies {
     implementation 'com.cenkgun:chatbar:1.0.2'
     implementation 'mx.jesusmartinoza:sweet-password:0.2'
     implementation 'io.agora.rtc:full-sdk:3.0.0'
+    implementation 'com.opentok.android:opentok-android-sdk:2.15.3'
+    implementation 'pub.devrel:easypermissions:0.4.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
 }

@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +28,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -48,12 +52,16 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        LoginButton = (Button) findViewById(R.id.button_login);
-        PhoneLoginButton = (Button) findViewById(R.id.phone_login_button);
-        UserEmail = (EditText) findViewById(R.id.loginEmail);
-        UserPassword = (EditText) findViewById(R.id.pass_login);
-        NeedNewAccountLink = (TextView) findViewById(R.id.need_new_account);
-        ForgotPassword = (TextView) findViewById(R.id.forget_password);
+        final SharedPreferences preferences = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+        String token = preferences.getString("FcmToken", "Undefined");
+        Log.d("WECHAT", token);
+
+        LoginButton = findViewById(R.id.button_login);
+        PhoneLoginButton = findViewById(R.id.phone_login_button);
+        UserEmail = findViewById(R.id.loginEmail);
+        UserPassword = findViewById(R.id.pass_login);
+        NeedNewAccountLink = findViewById(R.id.need_new_account);
+        ForgotPassword = findViewById(R.id.forget_password);
         loadingBar = new ProgressDialog(this) ;
         TogglePassword = findViewById(R.id.togglePassword);
 
@@ -254,5 +262,16 @@ public class LoginActivity extends AppCompatActivity {
     private void sendUserToRegisterActivity() {
         Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(registerIntent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            sendUserToMainActivity();
+        }
+        else{
+        }
     }
 }

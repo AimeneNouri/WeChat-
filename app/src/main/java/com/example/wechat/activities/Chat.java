@@ -13,7 +13,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +61,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import at.markushi.ui.CircleButton;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -280,6 +284,37 @@ public class Chat extends AppCompatActivity {
 
         loadingBar = new ProgressDialog(this);
 
+        msgInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                if (s.length() != 0)
+                {
+                    RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                }
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 500; // milliseconds
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("online");
+                    }
+                },DELAY);
+            }
+        });
+
         Calendar calendar = Calendar.getInstance();
 
         SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
@@ -465,6 +500,9 @@ public class Chat extends AppCompatActivity {
 
                         userLastSeen.setText("Last Seen " + date + " at " + time);
                     }
+                    else if (state.equals("Typing")) {
+                        userLastSeen.setText("Typing...");
+                    }
                 }
                 else
                 {
@@ -560,25 +598,14 @@ public class Chat extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if (item.getItemId() == R.id.voice_call_icon_option){
-            voiceCall();
+
         }
 
         if (item.getItemId() == R.id.video_call_icon_option){
-            videoCall();
+
         }
 
         return true;
-    }
-
-    private void videoCall()
-    {
-        Intent VideoCallIntent = new Intent(Chat.this, VideoCalling.class);
-        startActivity(VideoCallIntent);
-    }
-
-    private void voiceCall()
-    {
-
     }
 
     public void sendMessage()

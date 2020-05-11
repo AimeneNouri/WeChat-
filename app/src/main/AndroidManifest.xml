@@ -21,15 +21,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ReceiverPictureViewer"
-            android:parentActivityName=".activities.Chat"></activity>
-        <activity android:name=".activities.chat_receiver_profile"
-            android:parentActivityName=".activities.Chat"></activity>
+        <activity android:name=".activities.VoiceCalling"></activity>
+        <activity android:name=".activities.CallingActivity" />
+        <activity
+            android:name=".activities.ReceiverPictureViewer"
+            android:parentActivityName=".activities.Chat" />
+        <activity
+            android:name=".activities.chat_receiver_profile"
+            android:parentActivityName=".activities.Chat" />
         <activity android:name=".activities.VideoCalling" />
         <activity android:name=".activities.ContactProfile" />
         <activity android:name=".activities.ImageViewer" />
         <activity
-            android:name=".activities.Chat"/>
+            android:name=".activities.Chat"
+            android:parentActivityName=".activities.MainActivity" />
         <activity android:name=".activities.UsersProfile" />
         <activity
             android:name=".activities.FindFriends"
@@ -54,22 +59,12 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
 
-        <service
-            android:name=".Notification.MyFirebaseMessagingService"
-            android:enabled="true"
-            android:exported="false">
+        <service android:name=".notification.FirebaseMessaging">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".Notification.MyFirebaseInstanceIdService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+        <service android:name=".notification.FcmTokenRegistration" />
     </application>
 
 </manifest>

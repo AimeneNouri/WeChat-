@@ -32,15 +32,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/ic_share_black_24dp"
-            android:layout_marginStart="100dp"
-            />
-
-        <ImageButton
-            android:id="@+id/deleteImageBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_delete_black_24dp"
-            android:layout_marginStart="230dp"
+            android:layout_centerHorizontal="true"
             />
 
     </RelativeLayout>
