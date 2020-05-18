@@ -16,8 +16,8 @@
 
     <TextView
         android:id="@+id/receiver_message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="9dp"
         android:layout_toEndOf="@+id/message_profile_image"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/receiver_message_text"
         android:layout_alignEnd="@+id/receiver_message_text"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="-34dp"
         android:layout_marginEnd="2dp"
         android:padding="10dp"
         android:text="12:00"
@@ -64,8 +64,8 @@
 
     <TextView
         android:id="@+id/sender_message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="@+id/receiver_message_text"
         android:layout_marginTop="10dp"
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/sender_message_text"
         android:layout_alignEnd="@+id/sender_message_text"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="-34dp"
         android:layout_marginEnd="2dp"
         android:padding="10dp"
         android:text="12:00"

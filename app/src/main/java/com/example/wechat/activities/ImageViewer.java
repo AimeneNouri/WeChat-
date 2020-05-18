@@ -74,7 +74,7 @@ public class ImageViewer extends AppCompatActivity {
                         FileOutputStream outStream = null;
                         try {
                             File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/SaveImages");
+                            File dir = new File(sdCard.getAbsolutePath() + "/WECHAT");
                             dir.mkdirs();
 
                             String fileName = String.format("%d.jpg", System.currentTimeMillis());
@@ -104,10 +104,12 @@ public class ImageViewer extends AppCompatActivity {
                         Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
 
                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                        shareIntent.setType("image/*");
+                        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         shareIntent.putExtra(Intent.EXTRA_STREAM, imageUrl);
-                        startActivity(Intent.createChooser(shareIntent, "Share via"));
+                        shareIntent.setType("image/*");
+
+                        Intent sendIntent = Intent.createChooser(shareIntent, "Share image via");
+                        startActivity(sendIntent);
 
                         bottomSheetDialog.dismiss();
                     }

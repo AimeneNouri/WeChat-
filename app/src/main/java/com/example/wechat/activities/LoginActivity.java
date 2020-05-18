@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showRecoverPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Recover Password");
+        builder.setTitle("Reset Password");
 
         LinearLayout linearLayout = new LinearLayout(this);
         final EditText emailEt = new EditText(this);
@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
 
         builder.setView(linearLayout);
 
-        builder.setPositiveButton("Recover", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String email = emailEt.getText().toString().trim();

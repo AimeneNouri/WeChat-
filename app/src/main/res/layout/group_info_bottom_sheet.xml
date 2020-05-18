@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/group_bottom_sheet"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:id="@+id/mLinearLayout"
+        android:background="@drawable/grad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/group_image3" />
+
+        <TextView
+            android:id="@+id/group_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/group_profile_image"
+            android:layout_centerHorizontal="true"
+            android:text="room name"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mLinearLayout2"
+        android:background="@drawable/forward"
+        android:layout_below="@id/mLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/text_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:layout_marginStart="35dp"
+            android:text="Room admin :"
+            android:textColor="#46144C"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:layout_marginBottom="5dp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/group_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:text="room admin"
+            android:layout_below="@id/text_admin"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:layout_marginBottom="20dp"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/remove_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/group_admin"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="65dp"
+            android:layout_marginBottom="10dp"
+            android:elevation="4dp"
+            android:background="@drawable/send_message_request"
+            android:text="Remove Room"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_light"
+            android:textSize="20sp"
+            android:padding="4dp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+       <!-- <TextView
+            android:id="@+id/text_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="50dp"
+            android:text="Room members :"
+            android:layout_below="@id/group_admin"
+            android:textColor="#46144C"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:layout_marginBottom="5dp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/group_member"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="55dp"
+            android:text="room admin"
+            android:layout_below="@id/text_member"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            android:textStyle="bold"/>-->
+
+    </RelativeLayout>
+
+    <!--<Button
+        android:id="@+id/cancel_delete_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/mLinearLayout2"
+        android:text="Cancel"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:background="@drawable/deletefor_me"
+        android:gravity="center"/>!-->
+
+</RelativeLayout>

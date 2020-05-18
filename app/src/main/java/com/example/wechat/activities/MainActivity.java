@@ -1,6 +1,7 @@
 package com.example.wechat.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -9,8 +10,10 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,6 +34,8 @@ import com.example.wechat.Fragments.Requests;
 import com.example.wechat.Groups;
 import com.example.wechat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,9 +45,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
-    private String currentUserID;
+    private String currentUserId, calledBy = "";;
 
     public static boolean isMainActivityRunning;
 
@@ -68,10 +81,12 @@ public class MainActivity extends AppCompatActivity {
     private CallFragment callFragment;
     private Requests chatRequestFragment;
 
+    private static final int galleryPick = 1;
     private ProgressDialog loadingBar;
     private ImageView groupPhoto;
     private String GroupPhotoCreated;
     private ImageView GroupImage = null;
+    private StorageTask uploadTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         RootRef = FirebaseDatabase.getInstance().getReference();
+        currentUserId = mAuth.getCurrentUser().getUid();
+
+        loadingBar = new ProgressDialog(this);
 
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -144,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         isMainActivityRunning = true;
 
+        checkForReceivingCall();
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
             Log.d("WeChat", "null");
@@ -154,6 +174,31 @@ public class MainActivity extends AppCompatActivity {
             updateUserStatus("online");
             VerifyUserExist();
         }
+    }
+
+    private void checkForReceivingCall()
+    {
+        RootRef.child("Users").child(currentUserId)
+                .child("Ringing")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.hasChild("ringing"))
+                        {
+                            calledBy = dataSnapshot.child("ringing").getValue(String.class);
+
+                            Intent CallIntent = new Intent(MainActivity.this, CallingActivity.class);
+                            CallIntent.putExtra("visit_user_id", calledBy);
+                            startActivity(CallIntent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -252,16 +297,20 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         final EditText name = dialog.findViewById(R.id.groupName);
         groupPhoto = dialog.findViewById(R.id.groupPhoto);
+        GroupImage = groupPhoto;
         Button Create = dialog.findViewById(R.id.createGroup);
         Button cancel = dialog.findViewById(R.id.cancel);
 
         groupPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(1, 1)
                         .start(MainActivity.this);
+
+
             }
         });
 
@@ -296,8 +345,10 @@ public class MainActivity extends AppCompatActivity {
         Groups group = new Groups();
         group.setName(groupName);
         group.setPhoto(photo);
-        group.setAdmin(mAuth.getCurrentUser().getUid());
-        RootRef.child("Groups").child(groupName).setValue(group).addOnCompleteListener(new OnCompleteListener<Void>() {
+        group.setAdminId(mAuth.getCurrentUser().getUid());
+        group.setAdminName(mAuth.getCurrentUser().toString());
+        DatabaseReference newRef = RootRef.child("Groups").push();
+        newRef.setValue(group).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
@@ -331,9 +382,89 @@ public class MainActivity extends AppCompatActivity {
        onlineStatusMap.put("date", saveCurrentDate);
        onlineStatusMap.put("state", state);
 
-        currentUserID = mAuth.getCurrentUser().getUid();
-
-        RootRef.child("Users").child(currentUserID).child("UsersState")
+        RootRef.child("Users").child(currentUserId).child("UsersState")
                 .updateChildren(onlineStatusMap);
    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        /*if(requestCode == galleryPick  &&  resultCode == RESULT_OK  &&  data != null)
+        {
+            Uri imageUri = data.getData();
+
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this);
+        }*/
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if (resultCode == RESULT_OK)
+            {
+                loadingBar.setTitle("Updating Group Picture");
+                loadingBar.setMessage("Please wait, while The picture is updating... ");
+                loadingBar.setCanceledOnTouchOutside(false);
+                loadingBar.show();
+
+                Uri resultUri = result.getUri();
+
+                StorageReference groupImageRef = FirebaseStorage.getInstance().getReference().child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
+
+                InputStream stream = null;
+                try {
+                    stream = new FileInputStream(new File(resultUri.getPath()));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                uploadTask = groupImageRef.putStream(stream);
+
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                        String message = e.toString();
+                        Toast.makeText(MainActivity.this, "ERROR: " + message, Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                        groupImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                GroupPhotoCreated = uri.toString();
+                                Picasso.get().load(GroupPhotoCreated).into(GroupImage);
+                                loadingBar.dismiss();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    }
 }

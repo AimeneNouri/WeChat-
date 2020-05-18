@@ -13,19 +13,11 @@
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/groups_profile_image"
+            android:id="@+id/group_image"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_marginTop="10dp"
             android:src="@drawable/group_image2" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/group_online_status"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="53dp"
-            android:src="@drawable/online"
-            android:visibility="invisible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,11 +31,11 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/group_profile_Name"
+                    android:id="@+id/group_Name"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:text="user name"
-                    android:layout_marginTop="10dp"
+                    android:text="group name"
+                    android:layout_marginTop="15dp"
                     android:textAlignment="textStart"
                     android:textColor="@color/black"
                     android:textSize="17sp"
@@ -52,10 +44,10 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/group_profile_Member"
+                android:id="@+id/group_members"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="user status"
+                android:text="admin"
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="1dp"
                 android:textAlignment="textStart"
@@ -67,7 +59,7 @@
     <View
         android:layout_below="@+id/friend"
         android:layout_width="wrap_content"
-        android:layout_marginStart="98dp"
+        android:layout_marginStart="82dp"
         android:layout_height="0.5dp"
         android:background="#B3B3B3"/>
 

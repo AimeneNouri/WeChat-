@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.wechat">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.wechat"
+    tools:ignore="LockedOrientationActivity">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -21,7 +23,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.VoiceCalling"></activity>
+        <activity android:name=".activities.groupInfo"
+            android:parentActivityName=".activities.GroupsChat"></activity>
+        <activity
+            android:name=".activities.VoiceCalling"
+            android:screenOrientation="portrait" />
         <activity android:name=".activities.CallingActivity" />
         <activity
             android:name=".activities.ReceiverPictureViewer"

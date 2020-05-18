@@ -3,7 +3,24 @@ package com.example.wechat;
 public class Groups {
     private String name;
     private String photo;
-    private String admin;
+    private String  adminId;
+    private String adminName;
+
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
+    }
+
+    public String getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
+    }
 
     public String getName() {
         return name;
@@ -21,11 +38,4 @@ public class Groups {
         this.photo = photo;
     }
 
-    public String getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(String admin) {
-        this.admin = admin;
-    }
 }

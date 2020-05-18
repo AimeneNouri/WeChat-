@@ -97,7 +97,7 @@ public class ChatsFragment extends Fragment {
 
                             final String profileName = dataSnapshot.child("name").getValue().toString();
                             final String profileStatus = dataSnapshot.child("status").getValue().toString();
-
+                            final String device_token = dataSnapshot.child("device_token").getValue().toString();
                             holder.userName.setText(profileName);
 
                             if (dataSnapshot.child("UsersState").hasChild("state"))
@@ -142,6 +142,7 @@ public class ChatsFragment extends Fragment {
                                     chatIntent.putExtra("visit_user_id", userIDs);
                                     chatIntent.putExtra("visit_user_name", profileName);
                                     chatIntent.putExtra("visit_user_image", userImage[0]);
+                                    chatIntent.putExtra("device_token", device_token);
                                     startActivity(chatIntent);
                                 }
                             });

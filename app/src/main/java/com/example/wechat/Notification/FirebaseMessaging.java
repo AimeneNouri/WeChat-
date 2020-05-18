@@ -53,10 +53,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                             .setContentTitle(remoteMessage.getNotification().getTitle())
                             .setContentText(remoteMessage.getNotification().getBody());
                     builder.setContentIntent(contentIntent);
-                    long[] pattern = {500,500,500,500,500,500,500,500,500};
-                    builder.setVibrate(pattern);
-                    builder.setStyle(new NotificationCompat.InboxStyle());
-                    builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
                     notificationManager.notify(1, builder.build());
                 }
 

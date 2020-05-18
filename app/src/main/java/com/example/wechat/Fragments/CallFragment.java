@@ -46,7 +46,7 @@ public class CallFragment extends Fragment {
 
     private DatabaseReference ContactsRef, UsersRef;
     private FirebaseAuth mAuth;
-    private String currentUserId, calledBy = "";
+    private String currentUserId;
 
     public CallFragment() {
         // Required empty public constructor
@@ -74,8 +74,6 @@ public class CallFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        checkForReceivingCall();
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Contacts>().setQuery(ContactsRef, Contacts.class).build();
 
@@ -153,31 +151,6 @@ public class CallFragment extends Fragment {
         };
         mContactsList.setAdapter(adapter);
         adapter.startListening();
-    }
-
-    private void checkForReceivingCall()
-    {
-        UsersRef.child(currentUserId)
-                .child("Ringing")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                    {
-                        if (dataSnapshot.hasChild("ringing"))
-                        {
-                            calledBy = dataSnapshot.child("ringing").getValue(String.class);
-
-                            Intent VideoCallIntent = new Intent(getContext(), VideoCalling.class);
-                            VideoCallIntent.putExtra("visit_user_id", calledBy);
-                            startActivity(VideoCallIntent);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     public static class ContactsCallViewHolder extends RecyclerView.ViewHolder

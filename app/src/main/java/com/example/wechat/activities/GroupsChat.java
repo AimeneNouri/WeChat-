@@ -1,16 +1,28 @@
 package com.example.wechat.activities;
 
 
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,34 +31,71 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.wechat.GroupMessageAdapter;
+import com.example.wechat.Messages;
+import com.example.wechat.MessagesAdapter;
 import com.example.wechat.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GroupsChat extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private ImageButton sendMessageButton;
     private EditText userMessageInput;
-    private ScrollView mScrollView;
-    private TextView displayTextMessages;
     private ImageView Send_File_Btn;
+    private ImageButton backspace;
+
+    private TextView groupName, memberNumber;
+    private CircleImageView GroupImage;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef;
+    private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef, RootRef;
 
-    private String currentGroupName, currentUserId, currentUserName, currentDate, currentTime, checker = "";
+    private String currentGroupName, currentGroupId, msgSenderId, groupAdminId,currentUserName, currentDate, currentTime, checker = "", groupImage, msgReceiverId;
+    String senderName = "";
+    public static boolean isDiscussionActivityRunning;
+
+    private ProgressDialog loadingBar;
+    private final List<Messages> messagesList = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager;
+    private GroupMessageAdapter GroupMessageAdapter;
+    private RecyclerView userMessagesList;
+
+    private String saveCurrentTime;
+    private String myUrl = "";
+    private StorageTask UploadTask;
+    private Uri fileUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,35 +103,29 @@ public class GroupsChat extends AppCompatActivity {
         setContentView(R.layout.activity_groups_chat);
 
         currentGroupName = getIntent().getExtras().get("groupName").toString();
-        Toast.makeText(GroupsChat.this, currentGroupName, Toast.LENGTH_SHORT).show();
+        currentGroupId = getIntent().getExtras().get("groupId").toString();
+        groupImage = getIntent().getExtras().get("visit_group_image").toString();
+        groupAdminId = getIntent().getExtras().get("groupAdminId").toString();
 
         mAuth = FirebaseAuth.getInstance();
-        currentUserId = mAuth.getCurrentUser().getUid();
+        msgSenderId = mAuth.getCurrentUser().getUid();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        GroupNameRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentGroupName);
+        RootRef = FirebaseDatabase.getInstance().getReference();
+        GroupNameRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentGroupId).child("Messages");
 
-        mToolbar = (Toolbar) findViewById(R.id.group_chat_bar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(currentGroupName);
+        Initialisation();
 
-        sendMessageButton = (ImageButton) findViewById(R.id.send_msg_button);
-        userMessageInput = (EditText) findViewById(R.id.input_groups_message);
-        displayTextMessages = (TextView) findViewById(R.id.group_chat_text);
-        mScrollView =(ScrollView) findViewById(R.id.scroll_view);
-        Send_File_Btn = findViewById(R.id.send_files_btn);
+        Toast.makeText(GroupsChat.this, currentGroupName, Toast.LENGTH_SHORT).show();
 
-        GetUserInfo();
+        groupName.setText(currentGroupName);
+        Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(GroupImage);
+
+        DisplayGroupInfos();
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveMessageToDB();
-
-                userMessageInput.setText("");
-
-                mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                sendMessage();
             }
         });
 
@@ -138,25 +181,32 @@ public class GroupsChat extends AppCompatActivity {
                     }
                 });
 
+                bottomSheet.findViewById(R.id.cancel_delete_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
 
             }
         });
 
-        GroupNameRef.addChildEventListener(new ChildEventListener() {
+        RootRef.child("Groups").child(currentGroupId).child("Messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    DisplayMessages(dataSnapshot);
-                }
+                Messages messages = dataSnapshot.getValue(Messages.class);
+                //MediaPlayer mp = MediaPlayer.create(GroupsChat.this, R.raw.ringing);
+                messagesList.add(messages);
+                GroupMessageAdapter.notifyDataSetChanged();
+                userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    DisplayMessages(dataSnapshot);
-                }
 
             }
 
@@ -177,70 +227,466 @@ public class GroupsChat extends AppCompatActivity {
         });
     }
 
+    private void Initialisation() {
 
+        mToolbar = findViewById(R.id.group_chat_bar);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-    private void GetUserInfo() {
-        usersRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View actionBarView = layoutInflater.inflate(R.layout.group__chatbar, null);
+        actionBar.setCustomView(actionBarView);
+
+        groupName = findViewById(R.id.groupName);
+        memberNumber = findViewById(R.id.user_last_seen);
+        GroupImage = findViewById(R.id.groupPicture);
+        backspace = findViewById(R.id.backToMainActivity);
+
+        sendMessageButton = findViewById(R.id.send_msg_button);
+        userMessageInput = findViewById(R.id.input_groups_message);
+        Send_File_Btn = findViewById(R.id.send_files_btn);
+
+        GroupMessageAdapter = new GroupMessageAdapter(this, messagesList);
+        userMessagesList = findViewById(R.id.private_msg_list_of_users);
+        linearLayoutManager = new LinearLayoutManager(this);
+        userMessagesList.setLayoutManager(linearLayoutManager);
+        userMessagesList.setAdapter(GroupMessageAdapter);
+
+        loadingBar = new ProgressDialog(this);
+
+        backspace.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            public void onClick(View v) {
+                Intent homeIntent = new Intent(GroupsChat.this, MainActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(homeIntent);
+                finish();
+            }
+        });
+
+        userMessageInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                if(dataSnapshot.exists())
+                if (s.length() != 0)
                 {
-                    currentUserName = dataSnapshot.child("name").getValue().toString();
+                    //RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing...");
+                }
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 500; // milliseconds
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Online");
+                    }
+                },DELAY);
+            }
+        });
+
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 438 && resultCode == RESULT_OK && data != null && data.getData() != null)
+        {
+            loadingBar.setTitle("Sending File");
+            loadingBar.setMessage("Please wait, while your file is sending... ");
+            loadingBar.setCanceledOnTouchOutside(false);
+            loadingBar.show();
+
+            fileUri = data.getData();
+
+            if (!checker.equals("image"))
+            {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Documents Files");
+
+                final String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
+                //final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+                //final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+                DatabaseReference userMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                        .child("Messages").push();
+
+                final String msgPushID = userMsgKeyRef.getKey();
+
+                final StorageReference filePath = storageReference.child(msgPushID + "." + checker);
+
+                filePath.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String downloadUrl = uri.toString();
+
+                                Map msgFileBody = new HashMap();
+                                msgFileBody.put("message", downloadUrl);
+                                msgFileBody.put("name", fileUri.getLastPathSegment());
+                                msgFileBody.put("type", checker);
+                                msgFileBody.put("from", msgSenderId);
+                                msgFileBody.put("to", "ALL");
+                                msgFileBody.put("messageID", msgPushID);
+                                msgFileBody.put("time", saveCurrentTime);
+
+                                Map messageBodyDetails = new HashMap();
+                                messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgFileBody);
+                                //messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgFileBody);
+
+                                RootRef.updateChildren(messageBodyDetails);
+                                loadingBar.dismiss();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                loadingBar.dismiss();
+                                Toast.makeText(GroupsChat.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }).addOnProgressListener(new OnProgressListener<com.google.firebase.storage.UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(@NonNull com.google.firebase.storage.UploadTask.TaskSnapshot taskSnapshot)
+                    {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        loadingBar.setMessage((int) progress + " % Uploading...");
+                    }
+                });
+            }
+            else if (checker.equals("image"))
+            {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+
+                final String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
+                //final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+                //final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+                DatabaseReference userMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                        .child("Messages").push();
+
+                final String msgPushID = userMsgKeyRef.getKey();
+
+                final StorageReference filePath = storageReference.child(msgPushID + "." + "jpg");
+
+                UploadTask = filePath.putFile(fileUri);
+                UploadTask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception {
+                        if (!task.isSuccessful())
+                        {
+                            throw  task.getException();
+                        }
+
+                        return filePath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful())
+                        {
+                            Uri downloadUri = task.getResult();
+                            myUrl = downloadUri.toString();
+
+                            Map msgPictureBody = new HashMap();
+                            msgPictureBody.put("message", myUrl);
+                            msgPictureBody.put("name", fileUri.getLastPathSegment());
+                            msgPictureBody.put("type", checker);
+                            msgPictureBody.put("from", msgSenderId);
+                            msgPictureBody.put("to", "ALL");
+                            msgPictureBody.put("messageID", msgPushID);
+                            msgPictureBody.put("time", saveCurrentTime);
+
+                            Map messageBodyDetails = new HashMap();
+                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgPictureBody);
+                            //messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgPictureBody);
+
+                            RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        loadingBar.dismiss();
+                                    }
+                                    else
+                                    {
+                                        loadingBar.dismiss();
+                                        Toast.makeText(GroupsChat.this, "Error", Toast.LENGTH_SHORT).show();
+                                    }
+                                    userMessageInput.setText("");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else
+            {
+                loadingBar.dismiss();
+                Toast.makeText(this, "Nothing Selected, Error", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void DisplayGroupInfos() {
+        RootRef.child("Users")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        memberNumber.setText(dataSnapshot.getChildrenCount() + " members");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isDiscussionActivityRunning = true;
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            sendUserToLoginActivity();
+        }
+        else{
+            updateUserStatus("online");
+            VerifyUserExist();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isDiscussionActivityRunning = false;
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null)
+        {
+            updateUserStatus("offline");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDiscussionActivityRunning = false;
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (!MainActivity.isMainActivityRunning){
+            if (currentUser != null)
+            {
+                updateUserStatus("offline");
+            }
+        }
+    }
+
+    private void VerifyUserExist() {
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        RootRef.child("Users").child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if ((dataSnapshot.child("name").exists()))
+                {}
+                else
+                {
+                    sendUserToSettingsActivity();
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
     }
 
-    private void saveMessageToDB() {
-        String msg = userMessageInput.getText().toString();
-        String msgKey = GroupNameRef.push().getKey();
+    private void sendUserToSettingsActivity() {
+        Intent loginIntent = new Intent(GroupsChat.this, SettingsActivity.class);
+        startActivity(loginIntent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
 
-        if (TextUtils.isEmpty(msg))
+    private void sendMessage() {
+        final String messageText = userMessageInput.getText().toString();
+
+        if (TextUtils.isEmpty(messageText))
         {
             Toast.makeText(this, "Please write The Text Message first !!", Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Calendar calForDate = Calendar.getInstance();
-            SimpleDateFormat DateFormat = new SimpleDateFormat("MMM dd, yyyy");
-            currentDate = DateFormat.format(calForDate.getTime());
+            String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
 
-            Calendar calForTime = Calendar.getInstance();
-            SimpleDateFormat TimeFormat = new SimpleDateFormat("hh:mm a");
-            currentTime = TimeFormat.format(calForTime.getTime());
+            DatabaseReference userMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                    .child("Messages").push();
 
-            HashMap<String, Object> groupMessageKey =  new HashMap<>();
-            GroupNameRef.updateChildren(groupMessageKey);
+            String msgPushID = userMsgKeyRef.getKey();
 
-            GroupMessageKeyRef = GroupNameRef.child(msgKey);
+            Map msgTextBody = new HashMap();
+            msgTextBody.put("message", messageText);
+            msgTextBody.put("type", "text");
+            msgTextBody.put("from", msgSenderId);
+            msgTextBody.put("to", "ALL");
+            msgTextBody.put("messageID", msgPushID);
+            msgTextBody.put("time", saveCurrentTime);
 
-            HashMap<String, Object> msgInfoMap =  new HashMap<>();
-            msgInfoMap.put("name", currentUserName);
-            msgInfoMap.put("message", msg);
-            msgInfoMap.put("date", currentDate);
-            msgInfoMap.put("time", currentTime);
-            GroupMessageKeyRef.updateChildren(msgInfoMap);
+            Map messageBodyDetails = new HashMap();
+            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
+
+            RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful())
+                    {
+
+                    }
+                    else
+                    {
+                        Toast.makeText(GroupsChat.this, "message doesn't sent", Toast.LENGTH_SHORT).show();
+                    }
+                    userMessageInput.setText("");
+                }
+            });
         }
     }
 
-    private void DisplayMessages(DataSnapshot dataSnapshot) {
-        Iterator iterator = dataSnapshot.getChildren().iterator();
+    private void updateUserStatus(String state)
+    {
+        String saveCurrentTime, saveCurrentDate;
 
-        while (iterator.hasNext()) {
-            String chatDate = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatMessage = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatName = (String) ((DataSnapshot) iterator.next()).getValue();
-            String chatTime = (String) ((DataSnapshot) iterator.next()).getValue();
+        Calendar calendar = Calendar.getInstance();
 
-            displayTextMessages.append(chatName + "\n" + chatMessage + "\n\n" + chatTime);
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
 
-            mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+
+        HashMap<String, Object> onlineStatusMap = new HashMap<>();
+        onlineStatusMap.put("time", saveCurrentTime);
+        onlineStatusMap.put("date", saveCurrentDate);
+        onlineStatusMap.put("state", state);
+
+        msgSenderId = mAuth.getCurrentUser().getUid();
+
+        RootRef.child("Users").child(msgSenderId).child("UsersState")
+                .updateChildren(onlineStatusMap);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.group_option, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.group_info){
+           /* Intent groupChatIntent = new Intent(GroupsChat.this, groupInfo.class);
+            groupChatIntent.putExtra("group_Name", currentGroupName);
+            groupChatIntent.putExtra("group_Id", currentGroupId);
+            groupChatIntent.putExtra("visit_group_Picture", groupImage);
+            groupChatIntent.putExtra("groupAdminId", groupAdminId);
+            startActivity(groupChatIntent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            */
+
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
+
+            View bottomSheet = LayoutInflater.from(getApplicationContext())
+                    .inflate(R.layout.group_info_bottom_sheet, findViewById(R.id.group_bottom_sheet));
+
+            Button remove_room = bottomSheet.findViewById(R.id.remove_room);
+            CircleImageView group_image = bottomSheet.findViewById(R.id.group_profile_image);
+            TextView group_name = bottomSheet.findViewById(R.id.group_name);
+            TextView group_admin_name = bottomSheet.findViewById(R.id.group_admin);
+
+            if (msgSenderId.equals(groupAdminId))
+            {
+                remove_room.setVisibility(View.VISIBLE);
+                RootRef.child("Users").child(msgSenderId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if ((dataSnapshot.child("name").exists()))
+                        {
+                            String admin_name = dataSnapshot.child("name").getValue().toString();
+                            group_admin_name.setText(admin_name);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(group_image);
+            group_name.setText(currentGroupName);
+            remove_room.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (msgSenderId.equals(groupAdminId))
+                    {
+                        RootRef.child("Groups").child(currentGroupId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful())
+                                {
+                                    Toast.makeText(GroupsChat.this, currentGroupName + " deleted", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(GroupsChat.this, MainActivity.class));
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            /*bottomSheet.findViewById(R.id.cancel_delete_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    bottomSheetDialog.dismiss();
+                }
+            });
+             */
+
+            bottomSheetDialog.setContentView(bottomSheet);
+            bottomSheetDialog.show();
         }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendUserToLoginActivity() {
+        Intent loginIntent = new Intent(GroupsChat.this, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+        finish();
     }
 }

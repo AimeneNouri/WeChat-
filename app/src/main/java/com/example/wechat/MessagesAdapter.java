@@ -114,6 +114,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
                 holder.senderMsgText.setText(messages.getMessage());
                 holder.senTime.setText(messages.getTime());
+                holder.senTime.setTextColor(Color.WHITE);
                 holder.senderMsgText.setTextColor(Color.WHITE);
             }
             else
@@ -545,7 +546,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 .child(userMessagesList.get(position).getTo())
                 .child(userMessagesList.get(position).getFrom())
                 .child(userMessagesList.get(position).getMessageID())
-                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                .child("message")
+                .setValue("This message has been deleted").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task)
             {
@@ -554,7 +556,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
                             .child(userMessagesList.get(position).getTo())
                             .child(userMessagesList.get(position).getMessageID())
-                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            .child("message")
+                            .setValue("This message has been deleted").addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task)
                         {

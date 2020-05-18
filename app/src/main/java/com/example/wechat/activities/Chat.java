@@ -9,13 +9,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +56,9 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,10 +86,11 @@ public class Chat extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
-    private String currentUserID, deviceToken;
+    private String deviceToken;
 
     public static boolean isDiscussionActivityRunning;
     String senderName = "";
+    private MediaPlayer mPlayer = null;
 
     private final List<com.example.wechat.Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
@@ -91,7 +98,7 @@ public class Chat extends AppCompatActivity {
     private RecyclerView UsersMessagesList;
 
     private String saveCurrentTime;
-    private String checker = "", myUrl = "";
+    private String checker = "", myUrl = "", calledBy = "";
     private StorageTask UploadTask;
     private Uri fileUri;
 
@@ -110,12 +117,14 @@ public class Chat extends AppCompatActivity {
         msgReceiverName = getIntent().getExtras().get("visit_user_name").toString();
         msgReceiverImage = getIntent().getExtras().get("visit_user_image").toString();
 
+        deviceToken = getIntent().getExtras().get("device_token").toString();
+
         Initialisation();
 
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
-        userName.setOnClickListener(new View.OnClickListener() {
+        /*userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent profileIntent = new Intent(Chat.this, chat_receiver_profile.class);
@@ -124,6 +133,7 @@ public class Chat extends AppCompatActivity {
                 startActivity(profileIntent);
             }
         });
+         */
 
         userImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,7 +269,6 @@ public class Chat extends AppCompatActivity {
         mToolbar = findViewById(R.id.chat_toolbar);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -358,18 +367,18 @@ public class Chat extends AppCompatActivity {
                             public void onSuccess(Uri uri) {
                                 String downloadUrl = uri.toString();
 
-                                Map msgFileBody = new HashMap();
-                                msgFileBody.put("message", downloadUrl);
-                                msgFileBody.put("name", fileUri.getLastPathSegment());
-                                msgFileBody.put("type", checker);
-                                msgFileBody.put("from", msgSenderId);
-                                msgFileBody.put("to", msgReceiverId);
-                                msgFileBody.put("messageID", msgPushID);
-                                msgFileBody.put("time", saveCurrentTime);
+                                Map msgTextBody = new HashMap();
+                                msgTextBody.put("message", downloadUrl);
+                                msgTextBody.put("name", fileUri.getLastPathSegment());
+                                msgTextBody.put("type", checker);
+                                msgTextBody.put("from", msgSenderId);
+                                msgTextBody.put("to", msgReceiverId);
+                                msgTextBody.put("messageID", msgPushID);
+                                msgTextBody.put("time", saveCurrentTime);
 
                                 Map messageBodyDetails = new HashMap();
-                                messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgFileBody);
-                                messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgFileBody);
+                                messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
+                                messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgTextBody);
 
                                 RootRef.updateChildren(messageBodyDetails);
                                 loadingBar.dismiss();
@@ -425,18 +434,18 @@ public class Chat extends AppCompatActivity {
                             Uri downloadUri = task.getResult();
                             myUrl = downloadUri.toString();
 
-                            Map msgPictureBody = new HashMap();
-                            msgPictureBody.put("message", myUrl);
-                            msgPictureBody.put("name", fileUri.getLastPathSegment());
-                            msgPictureBody.put("type", checker);
-                            msgPictureBody.put("from", msgSenderId);
-                            msgPictureBody.put("to", msgReceiverId);
-                            msgPictureBody.put("messageID", msgPushID);
-                            msgPictureBody.put("time", saveCurrentTime);
+                            Map msgTextBody  = new HashMap();
+                            msgTextBody.put("message", myUrl);
+                            msgTextBody.put("name", fileUri.getLastPathSegment());
+                            msgTextBody.put("type", checker);
+                            msgTextBody.put("from", msgSenderId);
+                            msgTextBody.put("to", msgReceiverId);
+                            msgTextBody.put("messageID", msgPushID);
+                            msgTextBody.put("time", saveCurrentTime);
 
                             Map messageBodyDetails = new HashMap();
-                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgPictureBody);
-                            messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgPictureBody);
+                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
+                            messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgTextBody);
 
                             RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
                                 @Override
@@ -522,6 +531,7 @@ public class Chat extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         isDiscussionActivityRunning = true;
+        checkForReceivingCall();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
@@ -580,6 +590,31 @@ public class Chat extends AppCompatActivity {
         });
     }
 
+    private void checkForReceivingCall()
+    {
+        RootRef.child("Users").child(msgSenderId)
+                .child("Ringing")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.hasChild("ringing"))
+                        {
+                            calledBy = dataSnapshot.child("ringing").getValue(String.class);
+
+                            Intent CallIntent = new Intent(Chat.this, CallingActivity.class);
+                            CallIntent.putExtra("visit_user_id", calledBy);
+                            startActivity(CallIntent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private void sendUserToSettingsActivity() {
         Intent loginIntent = new Intent(Chat.this, SettingsActivity.class);
         startActivity(loginIntent);
@@ -595,17 +630,27 @@ public class Chat extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        super.onOptionsItemSelected(item);
 
         if (item.getItemId() == R.id.voice_call_icon_option){
 
+           Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
+            VoiceIntent.putExtra("visit_user_id", msgReceiverId);
+            VoiceIntent.putExtra("recipientId", deviceToken);
+            VoiceIntent.putExtra("visit_user_name", msgReceiverName);
+            VoiceIntent.putExtra("visit_user_image", msgReceiverImage);
+            startActivity(VoiceIntent);
+
+
+            return true;
         }
 
         if (item.getItemId() == R.id.video_call_icon_option){
-
+            Intent Calling = new Intent(Chat.this, CallingActivity.class);
+            Calling.putExtra("visit_user_id", msgReceiverId);
+            startActivity(Calling);
         }
 
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     public void sendMessage()
@@ -626,7 +671,7 @@ public class Chat extends AppCompatActivity {
 
             String msgPushID = userMsgKeyRef.getKey();
 
-            Map msgTextBody = new HashMap();
+            Map<String, String> msgTextBody = new HashMap();
             msgTextBody.put("message", messageText);
             msgTextBody.put("type", "text");
             msgTextBody.put("from", msgSenderId);
@@ -643,6 +688,30 @@ public class Chat extends AppCompatActivity {
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful())
                     {
+
+                        RootRef.child("Users").child(msgSenderId).child("name").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                senderName = dataSnapshot.getValue(String.class);
+
+                                /*try {
+                                    Jsoup.connect("https://fcm.googleapis.com/fcm/send")
+                                            .method(Connection.Method.POST)
+                                            .header("Content-type", "application/json")
+                                            .header("Authorization", "key=AAAAqKZPPWs:APA91bHvxLeeuN_WaIHOxGpV1j3_VGuKJW1Zzsdbch6BY5bRM-Nf6xYRxAAtfuu3JuVOSpS3HyRJEpiovEC3WlcK0XQtInNd92EIcXit52HYzgbqw-Tq9zn4f1z0iHlE7G0udY1aE3w4")
+                                            .requestBody("{\"notification\":{\"title\":\"" + senderName + "\",\"body\":\"" + messageText + "\"},\"to\" : \"" + deviceToken + "\"}")
+                                            .post();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }*/
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
 
                     }
                     else
@@ -672,9 +741,9 @@ public class Chat extends AppCompatActivity {
         onlineStatusMap.put("date", saveCurrentDate);
         onlineStatusMap.put("state", state);
 
-        currentUserID = mAuth.getCurrentUser().getUid();
+        msgSenderId = mAuth.getCurrentUser().getUid();
 
-        RootRef.child("Users").child(currentUserID).child("UsersState")
+        RootRef.child("Users").child(msgSenderId).child("UsersState")
                 .updateChildren(onlineStatusMap);
     }
 
