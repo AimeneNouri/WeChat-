@@ -87,8 +87,26 @@ public class SettingsActivity extends AppCompatActivity {
         UpdateAccount = (Button) findViewById(R.id.updateSetting_button);
         loadingBar = new ProgressDialog(this);
 
-        UserEmail.setText(user.getEmail());
-        phone_number.setText(user.getPhoneNumber());
+        //check for email
+        if (user.getEmail() != null)
+        {
+            UserEmail.setText(user.getEmail());
+        }
+        else
+        {
+            UserEmail.setVisibility(View.GONE);
+        }
+
+        //check for phone number
+        if (user.getPhoneNumber() != null)
+        {
+            phone_number.setText(user.getPhoneNumber());
+        }
+        else
+        {
+            phone_number.setVisibility(View.GONE);
+        }
+
 
         UpdateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,15 +186,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == galleryPick  &&  resultCode == RESULT_OK  &&  data != null)
-        {
-            Uri imageUri = data.getData();
-
-            CropImage.activity()
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAspectRatio(1, 1)
-                    .start(this);
-        }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
         {
@@ -196,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity {
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReference();
 
-                final StorageReference mountainImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
+                final StorageReference ImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
 
                 InputStream stream = null;
                 try {
@@ -205,7 +214,7 @@ public class SettingsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                uploadTask = mountainImagesRef.putStream(stream);
+                uploadTask = ImagesRef.putStream(stream);
 
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -220,10 +229,11 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(SettingsActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                        mountainImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
                                 final String link = uri.toString();
+                                Picasso.get().load(link).into(UserImage);
 
                                 RootRef.child("Users").child(currentUserId).child("image")
                                         .setValue(uri.toString())
@@ -231,14 +241,13 @@ public class SettingsActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
-                                                    Toast.makeText(SettingsActivity.this, "Photo saved Successfully", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
-                                                    Picasso.get().load(link).into(UserImage);
+                                                    Toast.makeText(SettingsActivity.this, "Photo saved Successfully", Toast.LENGTH_SHORT).show();
                                                 }
                                                 else{
                                                     String message = task.getException().toString();
-                                                    Toast.makeText(SettingsActivity.this, "Error: " + message,Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
+                                                    Toast.makeText(SettingsActivity.this, "Error: " + message,Toast.LENGTH_SHORT).show();
 
                                                 }
                                             }

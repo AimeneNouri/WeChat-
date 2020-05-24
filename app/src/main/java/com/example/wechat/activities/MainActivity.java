@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK)
             {
-                loadingBar.setTitle("Updating Group Picture");
+                loadingBar.setTitle("Room Profile Image");
                 loadingBar.setMessage("Please wait, while The picture is updating... ");
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();

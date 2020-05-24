@@ -122,6 +122,15 @@ public class GroupsChat extends AppCompatActivity {
 
         DisplayGroupInfos();
 
+        GroupImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(GroupsChat.this, ImageViewer.class);
+                profileIntent.putExtra("url", groupImage);
+                startActivity(profileIntent);
+            }
+        });
+
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,6 +157,21 @@ public class GroupsChat extends AppCompatActivity {
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         intent.setType("image/*");
                         startActivityForResult(intent.createChooser(intent, "Select Image"), 438);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
+                //Videos
+                bottomSheet.findViewById(R.id.videos).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        checker = "video";
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.setType("video/*");
+                        startActivityForResult(intent.createChooser(intent, "Select Video"), 438);
                         bottomSheetDialog.dismiss();
                     }
                 });
@@ -438,6 +462,71 @@ public class GroupsChat extends AppCompatActivity {
                     }
                 });
             }
+            else if (checker.equals("video"))
+            {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Videos Files");
+
+                final String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
+
+                DatabaseReference userMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                        .child("Messages").push();
+
+                final String msgPushID = userMsgKeyRef.getKey();
+                final StorageReference filePath = storageReference.child(msgPushID + "." + "mp4");
+
+                UploadTask = filePath.putFile(fileUri);
+                UploadTask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception
+                    {
+                        if (!task.isSuccessful())
+                        {
+                            throw  task.getException();
+                        }
+
+                        return filePath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful())
+                        {
+                            Uri downloadUri = task.getResult();
+                            myUrl = downloadUri.toString();
+
+                            Map msgTextBody  = new HashMap();
+                            msgTextBody.put("message", myUrl);
+                            msgTextBody.put("name", fileUri.getLastPathSegment());
+                            msgTextBody.put("type", checker);
+                            msgTextBody.put("from", msgSenderId);
+                            msgTextBody.put("to", "ALL");
+                            msgTextBody.put("messageID", msgPushID);
+                            msgTextBody.put("time", saveCurrentTime);
+
+                            Map messageBodyDetails = new HashMap();
+                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
+                            //messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgTextBody);
+
+                            RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        loadingBar.dismiss();
+                                        //Toast.makeText(GroupsChat.this, "video has been sent", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        loadingBar.dismiss();
+                                        Toast.makeText(GroupsChat.this, "Error", Toast.LENGTH_SHORT).show();
+                                    }
+                                    userMessageInput.setText("");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
             else
             {
                 loadingBar.dismiss();
@@ -629,22 +718,23 @@ public class GroupsChat extends AppCompatActivity {
             if (msgSenderId.equals(groupAdminId))
             {
                 remove_room.setVisibility(View.VISIBLE);
-                RootRef.child("Users").child(msgSenderId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if ((dataSnapshot.child("name").exists()))
-                        {
-                            String admin_name = dataSnapshot.child("name").getValue().toString();
-                            group_admin_name.setText(admin_name);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
+
+            RootRef.child("Users").child(groupAdminId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if ((dataSnapshot.child("name").exists()))
+                    {
+                        String admin_name = dataSnapshot.child("name").getValue().toString();
+                        group_admin_name.setText(admin_name);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
             Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(group_image);
             group_name.setText(currentGroupName);
@@ -666,15 +756,6 @@ public class GroupsChat extends AppCompatActivity {
                     }
                 }
             });
-
-            /*bottomSheet.findViewById(R.id.cancel_delete_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    bottomSheetDialog.dismiss();
-                }
-            });
-             */
 
             bottomSheetDialog.setContentView(bottomSheet);
             bottomSheetDialog.show();

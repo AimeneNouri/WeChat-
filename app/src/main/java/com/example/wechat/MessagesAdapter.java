@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
 import com.example.wechat.activities.MainActivity;
+import com.example.wechat.activities.videoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,7 +49,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     {
         public TextView senderMsgText, receiverMsgText, senTime, receive_time;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage;
+        public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo;
+        public VideoView messageSenderVideo, messageReceiverVideo;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -56,6 +60,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             receiverProfileImage = itemView.findViewById(R.id.message_profile_image);
             messageSenderImage = itemView.findViewById(R.id.message_sender_image);
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
+            messageSenderVideo = itemView.findViewById(R.id.message_sender_video);
+            messageReceiverVideo = itemView.findViewById(R.id.message_receiver_video);
+            playOne = itemView.findViewById(R.id.playVideoReceiver);
+            playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
             receive_time = itemView.findViewById(R.id.receive_time);
         }
@@ -104,6 +112,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.senderMsgText.setVisibility(View.GONE);
         holder.messageReceiverImage.setVisibility(View.GONE);
         holder.messageSenderImage.setVisibility(View.GONE);
+        holder.messageReceiverVideo.setVisibility(View.GONE);
+        holder.messageSenderVideo.setVisibility(View.GONE);
+        holder.playTwo.setVisibility(View.GONE);
+        holder.playOne.setVisibility(View.GONE);
 
         if (fromMsgType.equals("text"))
         {
@@ -161,6 +173,44 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     public void onClick(View v)
                     {
                         Intent intent = new Intent(holder.itemView.getContext(), ImageViewer.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+        }
+        else if (fromMsgType.equals("video"))
+        {
+            if (fromUserId.equals(msgSenderId))
+            {
+                holder.messageSenderVideo.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
+                holder.playTwo.setVisibility(View.VISIBLE);
+                holder.playOne.setVisibility(View.GONE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+            else
+            {
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverVideo.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
+                holder.playTwo.setVisibility(View.GONE);
+                holder.playOne.setVisibility(View.VISIBLE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
                         intent.putExtra("url", userMessagesList.get(position).getMessage());
                         holder.itemView.getContext().startActivity(intent);
                     }

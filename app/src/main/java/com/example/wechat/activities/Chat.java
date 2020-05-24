@@ -219,6 +219,21 @@ public class Chat extends AppCompatActivity {
                     }
                 });
 
+                //Videos
+                bottomSheet.findViewById(R.id.videos).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        checker = "video";
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        intent.setType("video/*");
+                        startActivityForResult(intent.createChooser(intent, "Select Video"), 438);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+
                 //PDF Files
                 bottomSheet.findViewById(R.id.pdf).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -345,7 +360,7 @@ public class Chat extends AppCompatActivity {
 
             fileUri = data.getData();
 
-            if (!checker.equals("image"))
+            if (!checker.equals("image") && !checker.equals("video"))
             {
                 StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Documents Files");
 
@@ -453,7 +468,74 @@ public class Chat extends AppCompatActivity {
                                     if (task.isSuccessful())
                                     {
                                         loadingBar.dismiss();
-                                        //Toast.makeText(Chat.this, "message sent", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(Chat.this, "Image has been sent", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        loadingBar.dismiss();
+                                        Toast.makeText(Chat.this, "Error", Toast.LENGTH_SHORT).show();
+                                    }
+                                    msgInput.setText("");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            else if (checker.equals("video"))
+            {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Videos Files");
+
+                final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+                final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+                DatabaseReference userMsgKeyRef = RootRef.child("Messages").child(msgSenderId)
+                        .child(msgReceiverId).push();
+
+                final String msgPushID = userMsgKeyRef.getKey();
+                final StorageReference filePath = storageReference.child(msgPushID + "." + "mp4");
+
+                UploadTask = filePath.putFile(fileUri);
+                UploadTask.continueWithTask(new Continuation() {
+                    @Override
+                    public Object then(@NonNull Task task) throws Exception
+                    {
+                        if (!task.isSuccessful())
+                        {
+                            throw  task.getException();
+                        }
+
+                        return filePath.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful())
+                        {
+                            Uri downloadUri = task.getResult();
+                            myUrl = downloadUri.toString();
+
+                            Map msgTextBody  = new HashMap();
+                            msgTextBody.put("message", myUrl);
+                            msgTextBody.put("name", fileUri.getLastPathSegment());
+                            msgTextBody.put("type", checker);
+                            msgTextBody.put("from", msgSenderId);
+                            msgTextBody.put("to", msgReceiverId);
+                            msgTextBody.put("messageID", msgPushID);
+                            msgTextBody.put("time", saveCurrentTime);
+
+                            Map messageBodyDetails = new HashMap();
+                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
+                            messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgTextBody);
+
+                            RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        loadingBar.dismiss();
+                                        Toast.makeText(Chat.this, "video has been sent", Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                     {

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.wechat.Messages;
 import com.example.wechat.activities.Chat;
 import com.example.wechat.Contacts;
 import com.example.wechat.R;
@@ -31,7 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,6 +51,7 @@ public class ChatsFragment extends Fragment {
     private DatabaseReference ChatsRef, UsersRef;
     private FirebaseAuth mAuth;
     private String currentUserId;
+    private String lastMessage, MessageId;
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -100,6 +104,31 @@ public class ChatsFragment extends Fragment {
                             final String device_token = dataSnapshot.child("device_token").getValue().toString();
                             holder.userName.setText(profileName);
 
+                            /*FirebaseDatabase.getInstance().getReference()
+                                    .child("Messages")
+                                    .child(userIDs)
+                                    .child(currentUserId)
+                                    .orderByKey()
+                                    .limitToLast(1)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists())
+                                            {
+                                                lastMessage = dataSnapshot.child("message").getValue(String.class);
+                                                //String from = dataSnapshot.child("from").getValue(String.class);
+                                                holder.userStatus.setText(lastMessage);
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                             */
+
                             if (dataSnapshot.child("UsersState").hasChild("state"))
                             {
                                 String state = dataSnapshot.child("UsersState").child("state").getValue().toString();
@@ -133,6 +162,7 @@ public class ChatsFragment extends Fragment {
                             {
                                 holder.userStatus.setText("offline");
                             }
+
 
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override

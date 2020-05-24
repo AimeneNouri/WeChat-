@@ -23,8 +23,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.groupInfo"
-            android:parentActivityName=".activities.GroupsChat"></activity>
+        <activity android:name=".activities.videoView"></activity>
+        <activity
+            android:name=".activities.groupInfo"
+            android:parentActivityName=".activities.GroupsChat" />
         <activity
             android:name=".activities.VoiceCalling"
             android:screenOrientation="portrait" />

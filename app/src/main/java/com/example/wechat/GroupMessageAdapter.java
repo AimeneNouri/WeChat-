@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
 import com.example.wechat.activities.MainActivity;
+import com.example.wechat.activities.videoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,7 +49,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         public TextView senderMsgText, receiverMsgText, senTime, receive_time, msgReceiverName;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage;
+        public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne;
+        public VideoView messageSenderVideo, messageReceiverVideo;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,6 +60,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             receiverProfileImage = itemView.findViewById(R.id.message_profile_image);
             messageSenderImage = itemView.findViewById(R.id.message_sender_image);
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
+            messageSenderVideo = itemView.findViewById(R.id.message_sender_video);
+            messageReceiverVideo = itemView.findViewById(R.id.message_receiver_video);
+            playOne = itemView.findViewById(R.id.playVideoReceiver);
+            playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
             receive_time = itemView.findViewById(R.id.receive_time);
         }
@@ -101,6 +108,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         holder.senderMsgText.setVisibility(View.GONE);
         holder.messageReceiverImage.setVisibility(View.GONE);
         holder.messageSenderImage.setVisibility(View.GONE);
+        holder.messageReceiverVideo.setVisibility(View.GONE);
+        holder.messageSenderVideo.setVisibility(View.GONE);
+        holder.playTwo.setVisibility(View.GONE);
+        holder.playOne.setVisibility(View.GONE);
 
         if (fromMsgType.equals("text"))
         {
@@ -164,6 +175,46 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 });
             }
         }
+
+        else if (fromMsgType.equals("video"))
+        {
+            if (fromUserId.equals(msgSenderId))
+            {
+                holder.messageSenderVideo.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
+                holder.playTwo.setVisibility(View.VISIBLE);
+                holder.playOne.setVisibility(View.GONE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+            else
+            {
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.messageReceiverVideo.setVisibility(View.VISIBLE);
+                holder.senTime.setVisibility(View.GONE);
+                holder.receive_time.setVisibility(View.GONE);
+                holder.playTwo.setVisibility(View.GONE);
+                holder.playOne.setVisibility(View.VISIBLE);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+        }
+
         else if (fromMsgType.equals("pdf"))
         {
             if (fromUserId.equals(msgSenderId))
@@ -297,7 +348,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("Message Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -337,7 +388,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
+                        builder.setTitle("Image Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -426,7 +477,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("Message Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -453,7 +504,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
+                        builder.setTitle("Image Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -514,7 +565,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         rootRef.child("Messages").child(userMessagesList.get(position).getTo())
                 .child(userMessagesList.get(position).getFrom())
                 .child(userMessagesList.get(position).getMessageID())
-                .child("message").setValue("This message has been deleted !")
+                .removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -523,8 +574,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                             rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
                                     .child(userMessagesList.get(position).getTo())
                                     .child(userMessagesList.get(position).getMessageID())
-                                    .child("message")
-                                    .setValue("This message has been deleted !").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
