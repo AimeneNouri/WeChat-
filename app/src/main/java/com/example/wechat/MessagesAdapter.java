@@ -6,15 +6,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
@@ -51,6 +55,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo;
         public VideoView messageSenderVideo, messageReceiverVideo;
+        public RelativeLayout messageSender, messageReceiver;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +67,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
             messageSenderVideo = itemView.findViewById(R.id.message_sender_video);
             messageReceiverVideo = itemView.findViewById(R.id.message_receiver_video);
+            messageSender = itemView.findViewById(R.id.sender_message_text_Layout);
+            messageReceiver = itemView.findViewById(R.id.receiver_message_text_layout);
             playOne = itemView.findViewById(R.id.playVideoReceiver);
             playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
@@ -116,11 +123,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.messageSenderVideo.setVisibility(View.GONE);
         holder.playTwo.setVisibility(View.GONE);
         holder.playOne.setVisibility(View.GONE);
+        holder.messageSender.setVisibility(View.GONE);
+        holder.messageReceiver.setVisibility(View.GONE);
 
         if (fromMsgType.equals("text"))
         {
             if (fromUserId.equals(msgSenderId))
             {
+                holder.messageSender.setVisibility(View.VISIBLE);
                 holder.senderMsgText.setVisibility(View.VISIBLE);
                 holder.receive_time.setVisibility(View.INVISIBLE);
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
@@ -128,9 +138,23 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.senTime.setText(messages.getTime());
                 holder.senTime.setTextColor(Color.WHITE);
                 holder.senderMsgText.setTextColor(Color.WHITE);
+
+                //check if url
+                if (URLUtil.isValidUrl(messages.getMessage()))
+                {
+                    holder.senderMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
+                    holder.senderMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.senderMsgText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            holder.itemView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(messages.getMessage())));
+                        }
+                    });
+                }
             }
             else
             {
+                holder.messageReceiver.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMsgText.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.INVISIBLE);
@@ -139,6 +163,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.receiverMsgText.setText(messages.getMessage());
                 holder.receive_time.setText( messages.getTime());
                 holder.senderMsgText.setTextColor(Color.BLACK);
+
+                //check if url
+                if (URLUtil.isValidUrl(messages.getMessage()))
+                {
+                    holder.receiverMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
+                    holder.receiverMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.receiverMsgText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            holder.itemView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(messages.getMessage())));
+                        }
+                    });
+                }
             }
         }
         else if (fromMsgType.equals("image"))
@@ -292,7 +329,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 });
             }
         }
-        
+
         if (fromUserId.equals(msgSenderId))
         {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

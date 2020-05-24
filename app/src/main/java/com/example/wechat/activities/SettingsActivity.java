@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -87,24 +88,24 @@ public class SettingsActivity extends AppCompatActivity {
         UpdateAccount = (Button) findViewById(R.id.updateSetting_button);
         loadingBar = new ProgressDialog(this);
 
-        //check for email
-        if (user.getEmail() != null)
-        {
-            UserEmail.setText(user.getEmail());
-        }
-        else
+        //check for email existing
+        if (TextUtils.isEmpty(user.getEmail()))
         {
             UserEmail.setVisibility(View.GONE);
         }
-
-        //check for phone number
-        if (user.getPhoneNumber() != null)
+        else
         {
-            phone_number.setText(user.getPhoneNumber());
+            UserEmail.setText(user.getEmail());
+        }
+
+        //check for phone number existing
+        if (TextUtils.isEmpty(user.getPhoneNumber()))
+        {
+            phone_number.setVisibility(View.GONE);
         }
         else
         {
-            phone_number.setVisibility(View.GONE);
+            phone_number.setText(user.getPhoneNumber());
         }
 
 

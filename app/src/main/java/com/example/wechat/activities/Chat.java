@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -80,8 +81,9 @@ public class Chat extends AppCompatActivity {
     private TextView userName, userLastSeen;
     private CircleImageView userImage;
 
-    private ImageButton uploadFilesBtn, backSpace;
-    private CircleButton send_msg;
+    private ImageButton backSpace;
+    private ImageButton send_msg;
+    private ImageView uploadFilesBtn;
     private EditText msgInput;
 
     private FirebaseAuth mAuth;

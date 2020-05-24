@@ -11,33 +11,38 @@
 
     <ImageView
         android:id="@+id/logo_wechat"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/logowechat"
+        android:src="@drawable/logo_wechat"
         />
-    
+
     <TextView
+        android:id="@+id/we"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="We"
-        android:layout_marginRight="73sp"
+        android:layout_marginRight="85sp"
         android:textAlignment="center"
-        android:textSize="35sp"
+        android:textSize="38sp"
         android:textColor="#EACD98"
         android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
-        android:layout_below="@+id/logo_wechat"/>
+        android:layout_below="@+id/logo_wechat"
+        android:alpha=".9"/>
+
     <TextView
+        android:id="@+id/chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chat"
-        android:layout_marginLeft="50sp"
-        android:textAlignment="center"
-        android:textSize="35sp"
-        android:textColor="#CED9ED"
-        android:textStyle="bold"
+        android:layout_below="@+id/logo_wechat"
+        android:layout_marginLeft="49sp"
+        android:alpha=".9"
         android:fontFamily="sans-serif-medium"
-        android:layout_below="@+id/logo_wechat"/>
+        android:text="Chat"
+        android:textAlignment="center"
+        android:textColor="#CED9ED"
+        android:textSize="38sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

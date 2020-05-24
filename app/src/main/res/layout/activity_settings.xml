@@ -14,12 +14,12 @@
 
         <ImageButton
             android:id="@+id/backToMainActivity"
-            android:layout_width="13dp"
-            android:layout_height="20dp"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
             android:layout_marginTop="16dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/chevron"/>
+            android:background="@drawable/ic_keyboard_backspace_black_24dp"/>
     </RelativeLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -78,7 +78,7 @@
         android:layout_marginEnd="30dp"
         android:textColorHint="#555555"
         android:drawableStart="@drawable/ic_email_black_24dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="40dp" />
     <TextView
         android:id="@+id/User_phoneNumber_profile"
         android:layout_width="match_parent"
@@ -93,7 +93,7 @@
         android:layout_marginEnd="30dp"
         android:textColorHint="#555555"
         android:drawableStart="@drawable/ic_phone_iphone_black_24dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="40dp"/>
 
     <Button
         android:id="@+id/updateSetting_button"
@@ -108,6 +108,6 @@
         android:background="@drawable/btn_update"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="60dp"/>
 
 </RelativeLayout>
