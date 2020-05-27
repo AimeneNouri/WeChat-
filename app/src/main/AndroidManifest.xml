@@ -23,7 +23,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.videoView"></activity>
+        <activity android:name=".activities.Theme"></activity>
+        <activity android:name=".activities.Wallpaper" />
+        <activity android:name=".activities.MediaChat" />
+        <activity android:name=".activities.videoView" />
         <activity
             android:name=".activities.groupInfo"
             android:parentActivityName=".activities.GroupsChat" />

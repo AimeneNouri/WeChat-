@@ -113,26 +113,6 @@ public class ContactProfile extends AppCompatActivity {
                 {
                     String typeof_Request = dataSnapshot.child(receiverUserId).child("typeof_Request").getValue().toString();
 
-                    if(typeof_Request.equals("sent"))
-                    {
-                        //current_state = "request_sent";
-                        //SendMessageRequestButton.setText("Cancel Friend Request");
-                    }
-                    else if (typeof_Request.equals("received"))
-                    {
-                        //current_state = "request_received";
-                        //SendMessageRequestButton.setText("Accept Friend Request");
-
-                        //DeclineMessageRequestButton.setVisibility(View.VISIBLE);
-                        //DeclineMessageRequestButton.setEnabled(true);
-
-                        /*DeclineMessageRequestButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                CancelChatRequest();
-                            }
-                        });*/
-                    }
                 }
                 else
                 {

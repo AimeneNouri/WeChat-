@@ -5,42 +5,52 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
+import com.example.wechat.Images;
 import com.example.wechat.Messages;
 import com.example.wechat.MessagesAdapter;
 import com.example.wechat.R;
+import com.example.wechat.Report;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -49,7 +59,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -57,21 +66,15 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import at.markushi.ui.CircleButton;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Chat extends AppCompatActivity {
@@ -80,11 +83,14 @@ public class Chat extends AppCompatActivity {
     private String msgReceiverId, msgReceiverName, msgReceiverImage, msgSenderId;
     private TextView userName, userLastSeen;
     private CircleImageView userImage;
+    Animation slideFromRight, slideToRight;
 
     private ImageButton backSpace;
     private ImageButton send_msg;
     private ImageView uploadFilesBtn;
     private EditText msgInput;
+
+    private String PushMsg;
 
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
@@ -97,7 +103,7 @@ public class Chat extends AppCompatActivity {
     private final List<com.example.wechat.Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private MessagesAdapter messagesAdapter;
-    private RecyclerView UsersMessagesList;
+    private RecyclerView UsersMessagesList, MediaList;
 
     private String saveCurrentTime;
     private String checker = "", myUrl = "", calledBy = "";
@@ -105,6 +111,9 @@ public class Chat extends AppCompatActivity {
     private Uri fileUri;
 
     private ProgressDialog loadingBar;
+    private FloatingActionButton floatingActionButton;
+    private DatabaseReference ImageMsgKeyRef;
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,11 +131,24 @@ public class Chat extends AppCompatActivity {
         deviceToken = getIntent().getExtras().get("device_token").toString();
 
         Initialisation();
+        floatingActionButton = findViewById(R.id.BackToLastMessage);
+        relativeLayout = findViewById(R.id.layout);
 
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
-        /*userName.setOnClickListener(new View.OnClickListener() {
+        /*
+        userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(Chat.this, chat_receiver_profile.class);
+                profileIntent.putExtra("name_receiver", msgReceiverName);
+                profileIntent.putExtra("receiver_image", msgReceiverImage);
+                startActivity(profileIntent);
+            }
+        });
+
+        userLastSeen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent profileIntent = new Intent(Chat.this, chat_receiver_profile.class);
@@ -157,6 +179,7 @@ public class Chat extends AppCompatActivity {
                 finish();
             }
         });
+
 
         RootRef.child("Messages").child(msgSenderId).child(msgReceiverId)
                 .addChildEventListener(new ChildEventListener() {
@@ -189,6 +212,35 @@ public class Chat extends AppCompatActivity {
 
                     }
                 });
+
+        UsersMessagesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy < 0)
+                {
+                    floatingActionButton.show();
+                }
+                else if (!recyclerView.canScrollVertically(1))
+                {
+                    floatingActionButton.hide();
+                }
+            }
+        });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UsersMessagesList.smoothScrollToPosition(UsersMessagesList.getAdapter().getItemCount());
+                floatingActionButton.hide();
+            }
+        });
 
         send_msg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,7 +329,6 @@ public class Chat extends AppCompatActivity {
                 bottomSheetDialog.show();
             }
         });
-
     }
 
 
@@ -297,6 +348,8 @@ public class Chat extends AppCompatActivity {
         userImage = findViewById(R.id.profile_image_receiver);
         userLastSeen = findViewById(R.id.receiver_last_seen);
         backSpace = findViewById(R.id.backToMainActivity);
+        slideFromRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        slideToRight = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
 
         send_msg =  findViewById(R.id.send_msg_button);
         msgInput = findViewById(R.id.input_chat_message);
@@ -310,6 +363,12 @@ public class Chat extends AppCompatActivity {
 
         loadingBar = new ProgressDialog(this);
 
+        final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(635, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParam.setMargins(0,4,0, 4);
+        layoutParams.setMargins(0,4,0, 4);
+
+        msgInput.setHint("Message "+ msgReceiverName +"'s chat");
         msgInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -319,9 +378,19 @@ public class Chat extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
+
                 if (s.length() != 0)
                 {
+                    send_msg.setVisibility(View.VISIBLE);
+                    //send_msg.setAnimation(slideFromRight);
+                    msgInput.setLayoutParams(layoutParam);
                     RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                }
+                if (s.length() == 0)
+                {
+                    send_msg.setVisibility(View.GONE);
+                    //send_msg.setAnimation(slideToRight);
+                    msgInput.setLayoutParams(layoutParams);
                 }
             }
 
@@ -424,12 +493,12 @@ public class Chat extends AppCompatActivity {
                 final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
                 final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
 
-                DatabaseReference userMsgKeyRef = RootRef.child("Messages").child(msgSenderId)
+                ImageMsgKeyRef = RootRef.child("Messages").child(msgSenderId)
                         .child(msgReceiverId).push();
 
-                final String msgPushID = userMsgKeyRef.getKey();
+                PushMsg = ImageMsgKeyRef.getKey();
 
-                final StorageReference filePath = storageReference.child(msgPushID + "." + "jpg");
+                final StorageReference filePath = storageReference.child(PushMsg + "." + "jpg");
 
                 UploadTask = filePath.putFile(fileUri);
                 UploadTask.continueWithTask(new Continuation() {
@@ -457,12 +526,12 @@ public class Chat extends AppCompatActivity {
                             msgTextBody.put("type", checker);
                             msgTextBody.put("from", msgSenderId);
                             msgTextBody.put("to", msgReceiverId);
-                            msgTextBody.put("messageID", msgPushID);
+                            msgTextBody.put("messageID", PushMsg);
                             msgTextBody.put("time", saveCurrentTime);
 
                             Map messageBodyDetails = new HashMap();
-                            messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgTextBody);
-                            messageBodyDetails.put(messageReceiverRef + "/" + msgPushID, msgTextBody);
+                            messageBodyDetails.put(messageSenderRef + "/" + PushMsg, msgTextBody);
+                            messageBodyDetails.put(messageReceiverRef + "/" + PushMsg, msgTextBody);
 
                             RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
                                 @Override
@@ -709,6 +778,7 @@ public class Chat extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.call, menu);
+        getMenuInflater().inflate(R.menu.chat_setting, menu);
         return true;
     }
 
@@ -724,7 +794,6 @@ public class Chat extends AppCompatActivity {
             VoiceIntent.putExtra("visit_user_image", msgReceiverImage);
             startActivity(VoiceIntent);
 
-
             return true;
         }
 
@@ -734,7 +803,148 @@ public class Chat extends AppCompatActivity {
             startActivity(Calling);
         }
 
+        //Chat setting Option
+
+        /*if (item.getItemId() == R.id.Chat_info)
+        {
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);
+
+            View bottomSheet = LayoutInflater.from(getApplicationContext())
+                    .inflate(R.layout.media_bottom_sheet, (RelativeLayout) findViewById(R.id.bottomSheet_Media));
+
+            MediaList = bottomSheet.findViewById(R.id.Media_list);
+            MediaList.setHasFixedSize(true);
+            MediaList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+            DatabaseReference MediaRef = FirebaseDatabase.getInstance().getReference().child("Messages").child(msgSenderId);
+
+            FirebaseRecyclerOptions<Images> options = new FirebaseRecyclerOptions.Builder<Images>().setQuery(MediaRef, Images.class).build();
+
+            FirebaseRecyclerAdapter<Images, ImagesViewHolder> adapter = new FirebaseRecyclerAdapter<Images, ImagesViewHolder>(options) {
+                @Override
+                protected void onBindViewHolder(@NonNull ImagesViewHolder holder, int position, @NonNull Images model) {
+                    final String[] userImage = {"default_image"};
+
+                    MediaRef.child(msgReceiverId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            List<String> ListMessage = new ArrayList<>();
+                            String messagetype = dataSnapshot.child("type").getValue(String.class);
+
+                            if (messagetype.equals("image"))
+                            {
+                                for (DataSnapshot imageSnapshot : dataSnapshot.getChildren())
+                                {
+                                    userImage[0] = imageSnapshot.child("image").getValue(String.class);
+                                    Picasso.get().load(userImage[0]).placeholder(R.drawable.profile_image).into(holder.imageView);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @NonNull
+                @Override
+                public ImagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_images, parent, false);
+                    return new ImagesViewHolder(view);
+                }
+
+            };
+            MediaList.setAdapter(adapter);
+            adapter.startListening();
+
+            bottomSheetDialog.setContentView(bottomSheet);
+            bottomSheetDialog.show();
+        }
+         */
+
+        if (item.getItemId() == R.id.Video_info)
+        {
+
+        }
+
+        if (item.getItemId() == R.id.wallpaper_option)
+        {
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);
+
+            View bottomSheet = LayoutInflater.from(getApplicationContext())
+                    .inflate(R.layout.wallpaper_bottom_sheet, (RelativeLayout) findViewById(R.id.wallpaper_bottom_sheet));
+
+            bottomSheet.findViewById(R.id.wallpaper_bottom_sheet).setVerticalScrollBarEnabled(true);
+
+            bottomSheet.findViewById(R.id.btn_item1).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relativeLayout.setBackgroundResource(R.drawable.bg_item1);
+                    bottomSheetDialog.dismiss();
+                }
+            });
+
+            bottomSheet.findViewById(R.id.btn_item2).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!msgReceiverId.equals(msgSenderId))
+                    {
+                        relativeLayout.setBackgroundResource(R.drawable.bg_item2);
+                        bottomSheetDialog.dismiss();
+                    }
+                }
+            });
+
+            bottomSheetDialog.setContentView(bottomSheet);
+            bottomSheetDialog.show();
+        }
+
+        if (item.getItemId() == R.id.remove_option)
+        {
+
+        }
+        if (item.getItemId() == R.id.Report_option)
+        {
+            Report report = new Report();
+            report.setFrom(msgSenderId);
+            report.setTo(msgReceiverId);
+            DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference().child("Report").push();
+            reportRef.setValue(report).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful())
+                    {
+                        Toast.makeText(Chat.this, "Your report has been saved", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class VideosViewHolder extends RecyclerView.ViewHolder{
+
+        VideoView videoView;
+
+        public VideosViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            videoView = itemView.findViewById(R.id.video_media);
+        }
+    }
+
+    public static class ImagesViewHolder extends RecyclerView.ViewHolder{
+
+        ImageView imageView;
+
+        public ImagesViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            imageView = itemView.findViewById(R.id.media_image);
+        }
     }
 
     public void sendMessage()

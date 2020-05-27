@@ -4,7 +4,8 @@ public class Messages {
 
     private String from, message, type, to, messageID, time, name;
 
-    public Messages(){}
+    public Messages() {
+    }
 
     public Messages(String from, String message, String type, String to, String messageID, String time, String name) {
         this.from = from;

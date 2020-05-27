@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -97,6 +99,8 @@ public class GroupsChat extends AppCompatActivity {
     private StorageTask UploadTask;
     private Uri fileUri;
 
+    private FloatingActionButton floatingActionButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +118,7 @@ public class GroupsChat extends AppCompatActivity {
         GroupNameRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentGroupId).child("Messages");
 
         Initialisation();
+        floatingActionButton = findViewById(R.id.BackToLastMessage);
 
         Toast.makeText(GroupsChat.this, currentGroupName, Toast.LENGTH_SHORT).show();
 
@@ -249,6 +254,35 @@ public class GroupsChat extends AppCompatActivity {
 
             }
         });
+
+        userMessagesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy < 0)
+                {
+                    floatingActionButton.show();
+                }
+                else if (!recyclerView.canScrollVertically(1))
+                {
+                    floatingActionButton.hide();
+                }
+            }
+        });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
+                floatingActionButton.hide();
+            }
+        });
     }
 
     private void Initialisation() {
@@ -290,6 +324,12 @@ public class GroupsChat extends AppCompatActivity {
             }
         });
 
+        final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(635, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParam.setMargins(0,4,0, 4);
+        layoutParams.setMargins(0,4,0, 4);
+
+        userMessageInput.setHint("Message "+ currentGroupName +"'s chat");
         userMessageInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -301,7 +341,14 @@ public class GroupsChat extends AppCompatActivity {
             {
                 if (s.length() != 0)
                 {
-                    //RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing...");
+                    sendMessageButton.setVisibility(View.VISIBLE);
+                    userMessageInput.setLayoutParams(layoutParam);
+                    RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                }
+                if (s.length() == 0)
+                {
+                    sendMessageButton.setVisibility(View.GONE);
+                    userMessageInput.setLayoutParams(layoutParams);
                 }
             }
 

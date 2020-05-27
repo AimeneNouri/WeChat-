@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/wallpaper_bottom_sheet"
+    android:background="@drawable/grad"
+    android:alpha=".99">
+
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="38dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:id="@+id/btn_item1"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:background="@drawable/item1" />
+
+        <ImageView
+            android:id="@+id/btn_item2"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/item2" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear2"
+        android:layout_below="@+id/linear1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp">
+
+        <ImageView
+            android:id="@+id/btn_item3"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:background="@drawable/item3" />
+
+        <ImageView
+            android:id="@+id/btn_item4"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/item4" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lineay3"
+        android:layout_below="@+id/linear2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp">
+
+        <ImageView
+            android:id="@+id/btn_item5"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:background="@drawable/item3" />
+
+        <ImageView
+            android:id="@+id/btn_item6"
+            android:layout_width="156dp"
+            android:layout_height="184dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/item4" />
+
+    </LinearLayout>
+
+</RelativeLayout>

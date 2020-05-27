@@ -50,7 +50,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     public class MessageViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView senderMsgText, receiverMsgText, senTime, receive_time, msgReceiverName;
+        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, msgReceiverName;
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne;
         public VideoView messageSenderVideo, messageReceiverVideo;
@@ -62,6 +62,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             senderMsgText = itemView.findViewById(R.id.sender_message_text);
             receiverMsgText = itemView.findViewById(R.id.receiver_message_text);
             receiverProfileImage = itemView.findViewById(R.id.message_profile_image);
+            receiverName = itemView.findViewById(R.id.receiverUsername);
             messageSenderImage = itemView.findViewById(R.id.message_sender_image);
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
             messageSenderVideo = itemView.findViewById(R.id.message_sender_video);
@@ -101,6 +102,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                     String ReceiverImage = dataSnapshot.child("image").getValue(String.class);
                     Picasso.get().load(ReceiverImage).placeholder(R.drawable.profile_image).into(holder.receiverProfileImage);
                 }
+                String ReceiverName = dataSnapshot.child("name").getValue().toString();
+                holder.receiverName.setText(ReceiverName);
             }
 
             @Override
@@ -111,6 +114,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         holder.receiverMsgText.setVisibility(View.GONE);
         holder.receiverProfileImage.setVisibility(View.GONE);
+        holder.receiverName.setVisibility(View.GONE);
         holder.senderMsgText.setVisibility(View.GONE);
         holder.messageReceiverImage.setVisibility(View.GONE);
         holder.messageSenderImage.setVisibility(View.GONE);
@@ -131,14 +135,14 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
                 holder.senderMsgText.setText(messages.getMessage());
                 holder.senTime.setText(messages.getTime());
-                holder.senTime.setTextColor(Color.WHITE);
-                holder.senderMsgText.setTextColor(Color.WHITE);
+                //holder.senTime.setTextColor(Color.WHITE);
+                holder.senderMsgText.setTextColor(Color.BLACK);
 
                 //check if url
                 if (URLUtil.isValidUrl(messages.getMessage()))
                 {
                     holder.senderMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
-                    holder.senderMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.senderMsgText.setTextColor(Color.parseColor("#009AFF"));
                     holder.senderMsgText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -151,13 +155,14 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             {
                 holder.messageReceiver.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.receiverMsgText.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.INVISIBLE);
 
                 holder.receiverMsgText.setBackgroundResource(R.drawable.receiver_message);
                 holder.receiverMsgText.setText(messages.getMessage());
                 holder.receive_time.setText( messages.getTime());
-                holder.senderMsgText.setTextColor(Color.BLACK);
+                holder.senderMsgText.setTextColor(Color.WHITE);
 
                 //check if url
                 if (URLUtil.isValidUrl(messages.getMessage()))

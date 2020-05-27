@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Images"
+        android:id="@+id/Chat_info"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="Videos"
+        android:id="@+id/Video_info"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="Wallpaper"
+        android:id="@+id/wallpaper_option"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="Remove Contact"
+        android:id="@+id/remove_option"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="Report"
+        android:id="@+id/Report_option"
+        app:showAsAction="never">
+    </item>
+
+</menu>
