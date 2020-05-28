@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/group_chat_bar"
-        android:layout_marginBottom="6dp"
         android:layout_above="@+id/mLinearLayout">
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -43,7 +42,7 @@
         android:padding="3dp"
         android:id="@+id/mLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
@@ -61,16 +60,13 @@
         <EditText
             android:id="@+id/input_groups_message"
             android:layout_width="315dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:hint="Enter The Text Message..."
             android:background="@drawable/inputdiscussion"
             android:inputType="textMultiLine"
-            android:editable="true"
-            android:enabled="true"
             android:minLines="1"
             android:maxLines="6"
             android:isScrollContainer="true"
-            android:focusable="true"
             android:padding="10dp"
             android:layout_marginTop="2dp"
             android:layout_marginStart="2dp"
@@ -80,9 +76,9 @@
 
         <ImageButton
             android:id="@+id/send_msg_button"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="2dp"
             android:layout_gravity="bottom"
             android:background="@drawable/btn_send_message"

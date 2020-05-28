@@ -33,7 +33,7 @@
         android:textSize="19dp"
         android:textColor="@color/white"
         android:textStyle="bold"
-        android:layout_marginStart="66dp"
+        android:layout_marginStart="68dp"
         android:layout_marginTop="2dp"
         />
     <TextView

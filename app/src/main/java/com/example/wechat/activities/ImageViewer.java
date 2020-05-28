@@ -97,24 +97,6 @@ public class ImageViewer extends AppCompatActivity {
                     }
                 });
 
-                bottomSheet.findViewById(R.id.forward).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
-
-                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, imageUrl);
-                        shareIntent.setType("image/*");
-
-                        Intent sendIntent = Intent.createChooser(shareIntent, "Share image via");
-                        startActivity(sendIntent);
-
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-
                 bottomSheet.findViewById(R.id.cancel_Share_button).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)

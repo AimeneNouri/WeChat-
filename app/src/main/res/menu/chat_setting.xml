@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
+    <!--<item
         android:title="Images"
         android:id="@+id/Chat_info"
         app:showAsAction="never">
@@ -12,24 +12,51 @@
         android:title="Videos"
         android:id="@+id/Video_info"
         app:showAsAction="never">
-    </item>
+    </item>-->
 
-    <item
-        android:title="Wallpaper"
-        android:id="@+id/wallpaper_option"
-        app:showAsAction="never">
-    </item>
+    <group android:id="@+id/group1">
 
-    <item
-        android:title="Remove Contact"
-        android:id="@+id/remove_option"
-        app:showAsAction="never">
-    </item>
+        <item
+            android:title="Wallpaper"
+            android:checked="true"
+            android:id="@+id/wallpaper_option"
+            app:showAsAction="never">
+        </item>
 
-    <item
-        android:title="Report"
-        android:id="@+id/Report_option"
-        app:showAsAction="never">
-    </item>
+    </group>
+
+    <group android:id="@+id/group2">
+
+        <item
+            android:title="Remove Contact"
+            android:checked="true"
+            android:id="@+id/remove_option"
+            app:showAsAction="never">
+        </item>
+
+
+    </group>
+
+    <group android:id="@+id/group3">
+
+        <item
+            android:title="Clear Chat"
+            android:checked="true"
+            android:id="@+id/ClearChat"
+            app:showAsAction="never">
+        </item>
+
+    </group>
+
+    <group android:id="@+id/group4">
+
+        <item
+            android:title="Report"
+            android:checked="true"
+            android:id="@+id/Report_option"
+            app:showAsAction="never">
+        </item>
+
+    </group>
 
 </menu>

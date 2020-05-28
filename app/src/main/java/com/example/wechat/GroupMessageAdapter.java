@@ -332,7 +332,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             }
         }
 
-        if (fromUserId.equals(msgSenderId))
+       /* if (fromUserId.equals(msgSenderId))
         {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -576,7 +576,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                     return false;
                 }
             });
-        }
+        }*/
     }
 
     @Override

@@ -312,6 +312,128 @@ public class GroupsChat extends AppCompatActivity {
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(GroupMessageAdapter);
 
+        groupName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
+
+                View bottomSheet = LayoutInflater.from(getApplicationContext())
+                        .inflate(R.layout.group_info_bottom_sheet, findViewById(R.id.group_bottom_sheet));
+
+                Button remove_room = bottomSheet.findViewById(R.id.remove_room);
+                CircleImageView group_image = bottomSheet.findViewById(R.id.group_profile_image);
+                TextView group_name = bottomSheet.findViewById(R.id.group_name);
+                TextView group_admin_name = bottomSheet.findViewById(R.id.group_admin);
+
+                if (msgSenderId.equals(groupAdminId))
+                {
+                    remove_room.setVisibility(View.VISIBLE);
+                }
+
+                RootRef.child("Users").child(groupAdminId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if ((dataSnapshot.child("name").exists()))
+                        {
+                            String admin_name = dataSnapshot.child("name").getValue().toString();
+                            group_admin_name.setText(admin_name);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(group_image);
+                group_name.setText(currentGroupName);
+                remove_room.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (msgSenderId.equals(groupAdminId))
+                        {
+                            RootRef.child("Groups").child(currentGroupId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        Toast.makeText(GroupsChat.this, currentGroupName + " deleted", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(GroupsChat.this, MainActivity.class));
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+                bottomSheetDialog.setContentView(bottomSheet);
+                bottomSheetDialog.show();
+            }
+        });
+
+        memberNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
+
+                View bottomSheet = LayoutInflater.from(getApplicationContext())
+                        .inflate(R.layout.group_info_bottom_sheet, findViewById(R.id.group_bottom_sheet));
+
+                Button remove_room = bottomSheet.findViewById(R.id.remove_room);
+                CircleImageView group_image = bottomSheet.findViewById(R.id.group_profile_image);
+                TextView group_name = bottomSheet.findViewById(R.id.group_name);
+                TextView group_admin_name = bottomSheet.findViewById(R.id.group_admin);
+
+                if (msgSenderId.equals(groupAdminId))
+                {
+                    remove_room.setVisibility(View.VISIBLE);
+                }
+
+                RootRef.child("Users").child(groupAdminId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if ((dataSnapshot.child("name").exists()))
+                        {
+                            String admin_name = dataSnapshot.child("name").getValue().toString();
+                            group_admin_name.setText(admin_name);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(group_image);
+                group_name.setText(currentGroupName);
+                remove_room.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (msgSenderId.equals(groupAdminId))
+                        {
+                            RootRef.child("Groups").child(currentGroupId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful())
+                                    {
+                                        Toast.makeText(GroupsChat.this, currentGroupName + " deleted", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(GroupsChat.this, MainActivity.class));
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+
+                bottomSheetDialog.setContentView(bottomSheet);
+                bottomSheetDialog.show();
+            }
+        });
+
         loadingBar = new ProgressDialog(this);
 
         backspace.setOnClickListener(new View.OnClickListener() {

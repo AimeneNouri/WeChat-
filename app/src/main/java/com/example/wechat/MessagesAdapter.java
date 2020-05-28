@@ -137,6 +137,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.messageSender.setVisibility(View.VISIBLE);
                 holder.senderMsgText.setVisibility(View.VISIBLE);
                 holder.receive_time.setVisibility(View.INVISIBLE);
+                holder.senTime.setVisibility(View.VISIBLE);
+
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
                 holder.senderMsgText.setText(messages.getMessage());
                 holder.senTime.setText(messages.getTime());
@@ -633,37 +635,38 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private void deleteMessagesForEveryOne(final int position, final MessagesViewHolder messageHolder)
     {
         final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("Messages")
-                .child(userMessagesList.get(position).getTo())
-                .child(userMessagesList.get(position).getFrom())
-                .child(userMessagesList.get(position).getMessageID())
-                .child("message")
-                .setValue("This message has been deleted").addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task)
-            {
-                if (task.isSuccessful())
+        if (!userMessagesList.get(position).getFrom().equals(userMessagesList.get(position).getTo()))
+        {
+            rootRef.child("Messages")
+                    .child(userMessagesList.get(position).getTo())
+                    .child(userMessagesList.get(position).getFrom())
+                    .child(userMessagesList.get(position).getMessageID())
+                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task)
                 {
-                    rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
-                            .child(userMessagesList.get(position).getTo())
-                            .child(userMessagesList.get(position).getMessageID())
-                            .child("message")
-                            .setValue("This message has been deleted").addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task)
-                        {
-                            if (task.isSuccessful())
+                    if (task.isSuccessful())
+                    {
+                        rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
+                                .child(userMessagesList.get(position).getTo())
+                                .child(userMessagesList.get(position).getMessageID())
+                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task)
                             {
-                                Toast.makeText(messageHolder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                if (task.isSuccessful())
+                                {
+                                    Toast.makeText(messageHolder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                    else {
+                        Toast.makeText(messageHolder.itemView.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else {
-                    Toast.makeText(messageHolder.itemView.getContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+            });
+        }
     }
 
 }

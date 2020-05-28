@@ -6,6 +6,9 @@
     android:layout_width="match_parent"
     android:id="@+id/layout"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".activities.Chat"
     android:background="@drawable/background_discussion">
 
@@ -43,7 +46,7 @@
         android:padding="3dp"
         android:id="@+id/mLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:background="@drawable/chatmessage_shadow"
@@ -62,33 +65,30 @@
         <EditText
             android:id="@+id/input_chat_message"
             android:layout_width="315dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:hint="Enter The Text Message..."
             android:background="@drawable/inputdiscussion"
             android:inputType="textMultiLine"
-            android:editable="true"
-            android:enabled="true"
             android:minLines="1"
             android:maxLines="6"
             android:isScrollContainer="true"
-            android:focusable="true"
             android:padding="10dp"
             android:layout_marginTop="2dp"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
             android:layout_toEndOf="@+id/send_files_btn"
-            android:layout_marginEnd="2dp"/>
+            android:layout_marginEnd="2dp" />
 
         <ImageButton
             android:id="@+id/send_msg_button"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="bottom"
+            android:layout_marginStart="2dp"
             android:background="@drawable/btn_send_message"
             android:layout_toEndOf="@+id/input_chat_message"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
     </LinearLayout>
 </RelativeLayout>
