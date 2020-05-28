@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -154,9 +155,10 @@ public class Chat extends AppCompatActivity {
          */
 
         relativeLayout = findViewById(R.id.layout);
-        relativeLayout.setBackgroundResource(bgResource);
         Initialisation();
         floatingActionButton = findViewById(R.id.BackToLastMessage);
+
+        relativeLayout.setBackgroundResource(bgResource);
 
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
@@ -197,10 +199,11 @@ public class Chat extends AppCompatActivity {
         backSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent homeIntent = new Intent(Chat.this, MainActivity.class);
+                /*Intent homeIntent = new Intent(Chat.this, MainActivity.class);
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(homeIntent);
-                finish();
+                finish();*/
+                onBackPressed();
             }
         });
 
@@ -263,19 +266,6 @@ public class Chat extends AppCompatActivity {
             public void onClick(View v) {
                 UsersMessagesList.smoothScrollToPosition(UsersMessagesList.getAdapter().getItemCount());
                 floatingActionButton.hide();
-            }
-        });
-
-        UsersMessagesList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View view = Chat.this
-                        .getCurrentFocus();
-                if (view != null)
-                {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
             }
         });
 
@@ -936,8 +926,6 @@ public class Chat extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     bgResource = R.drawable.bg_item1;
-                    //editor.putInt("theme1", R.drawable.bg_item1);
-                    //editor.apply();
                     relativeLayout.setBackgroundResource(bgResource);
                     Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                     bottomSheetDialog.dismiss();
@@ -950,22 +938,22 @@ public class Chat extends AppCompatActivity {
                     if (!msgReceiverId.equals(msgSenderId))
                     {
                         bgResource = R.drawable.bg_item2;
-                        //editor.putInt("theme2", R.drawable.bg_item2);
-                        //editor.apply();
-                        relativeLayout.setBackgroundResource(R.drawable.bg_item2);
+                        relativeLayout.setBackgroundResource(bgResource);
                         Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
                     }
                 }
             });
 
-            bottomSheet.findViewById(R.id.btn_item3).setOnClickListener(new View.OnClickListener() {
+            /*bottomSheet.findViewById(R.id.btn_item3).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!msgReceiverId.equals(msgSenderId))
                     {
-                        //relativeLayout.setBackgroundResource(R.drawable.bg_item2);
-                        //Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
+                        editor.putInt("theme_default", R.drawable.background_discussion);
+                        editor.commit();
+                        relativeLayout.setBackgroundResource(R.drawable.background_discussion);
+                        Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
                     }
                 }
@@ -982,15 +970,13 @@ public class Chat extends AppCompatActivity {
                     }
                 }
             });
-
+*/
             bottomSheet.findViewById(R.id.item5).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!msgReceiverId.equals(msgSenderId))
                     {
-                        bgResource = R.drawable.background_discussion;
-                        //editor.putInt("theme3", R.drawable.background_discussion);
-                        //editor.apply();
+                       bgResource = R.drawable.background_discussion;
                         relativeLayout.setBackgroundResource(bgResource);
                         Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
@@ -1091,7 +1077,7 @@ public class Chat extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-            relativeLayout.setBackgroundResource(bgResource);
+            //relativeLayout.setBackgroundResource(bgResource);
     }
 
     public void sendMessage()

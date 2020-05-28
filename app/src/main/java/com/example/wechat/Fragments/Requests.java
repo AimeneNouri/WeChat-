@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,9 @@ public class Requests extends Fragment {
     private DatabaseReference ChatRequestsRef, UsersRef, ContactsRef;
     private FirebaseAuth mAuth;
     private String currentUserId;
+
+    private ImageView NotificationsOff;
+    private TextView textView;
 
     public Requests() {
         // Required empty public constructor
