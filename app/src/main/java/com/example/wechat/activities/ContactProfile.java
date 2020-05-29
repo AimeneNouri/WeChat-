@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.wechat.R;
@@ -28,8 +29,9 @@ public class ContactProfile extends AppCompatActivity {
 
     private String senderUserId, receiverUserId, current_state;
     private CircleImageView userProfileImage;
-    private TextView Backspace, userProfileName, userProfileStatus;
+    private TextView userProfileName, userProfileStatus;
     private Button RemoveContact;
+    private ImageButton back_btn;
 
     private DatabaseReference UserRef, chatRequestRef, ContactsRef, notificationRef;
     private FirebaseAuth mAuth;
@@ -49,7 +51,14 @@ public class ContactProfile extends AppCompatActivity {
         receiverUserId = getIntent().getExtras().get("visit_user_id").toString();
         senderUserId = mAuth.getCurrentUser().getUid();
 
-        Backspace = findViewById(R.id.backToContactFragment);
+        back_btn = findViewById(R.id.back_btn);
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         userProfileImage = findViewById(R.id.visit_profile_image);
         userProfileName = findViewById(R.id.visit_user_name);
         userProfileStatus = findViewById(R.id.visit_profile_status);
@@ -57,16 +66,6 @@ public class ContactProfile extends AppCompatActivity {
         current_state = "new";
 
         RetrieveUserInfo();
-
-        Backspace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent ContactIntent = new Intent(ContactProfile.this, MainActivity.class);
-                ContactIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(ContactIntent);
-                finish();
-            }
-        });
     }
 
     private void RetrieveUserInfo() {

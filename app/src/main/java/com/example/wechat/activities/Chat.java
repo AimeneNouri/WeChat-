@@ -191,10 +191,6 @@ public class Chat extends AppCompatActivity {
         backSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent homeIntent = new Intent(Chat.this, MainActivity.class);
-                homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(homeIntent);
-                finish();*/
                 onBackPressed();
             }
         });

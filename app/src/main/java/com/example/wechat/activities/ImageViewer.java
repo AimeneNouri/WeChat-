@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ import java.util.Locale;
 public class ImageViewer extends AppCompatActivity {
 
     private ImageView myImageView;
-    private ImageButton sharePictureBtn;
+    private ImageButton sharePictureBtn, back_btn;
     private String imageUrl;
 
 
@@ -51,9 +52,19 @@ public class ImageViewer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_viewer);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         myImageView = findViewById(R.id.image_viewer);
         sharePictureBtn = findViewById(R.id.shareImageBtn);
+        back_btn = findViewById(R.id.back_btn);
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         imageUrl = getIntent().getStringExtra("url");
         Picasso.get().load(imageUrl).into(myImageView);
@@ -110,10 +121,4 @@ public class ImageViewer extends AppCompatActivity {
             }
         });
     }
-
-    private void Deleteforme()
-    {
-
-    }
-
 }

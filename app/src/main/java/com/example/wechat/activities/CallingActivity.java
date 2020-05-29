@@ -77,7 +77,7 @@ public class CallingActivity extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(CallingActivity.this,VideoCalling.class);
+                                Intent intent = new Intent(CallingActivity.this, VideoCalling.class);
                                 startActivity(intent);
                             }
                         });
@@ -198,10 +198,7 @@ public class CallingActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task)
                                             {
-                                                Intent backIntent = new Intent(CallingActivity.this, MainActivity.class);
-                                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                startActivity(backIntent);
-                                                finish();
+                                                onBackPressed();
                                             }
                                         });
                                     }
@@ -210,10 +207,7 @@ public class CallingActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Intent backIntent = new Intent(CallingActivity.this, MainActivity.class);
-                            backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(backIntent);
-                            finish();
+                            onBackPressed();
                         }
                     }
 
@@ -244,10 +238,7 @@ public class CallingActivity extends AppCompatActivity {
                                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                Intent backIntent = new Intent(CallingActivity.this, MainActivity.class);
-                                                backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                startActivity(backIntent);
-                                                finish();
+                                                onBackPressed();
                                             }
                                         });
                                     }
@@ -256,10 +247,7 @@ public class CallingActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            Intent backIntent = new Intent(CallingActivity.this, MainActivity.class);
-                            backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(backIntent);
-                            finish();
+                            onBackPressed();
                         }
                     }
 
