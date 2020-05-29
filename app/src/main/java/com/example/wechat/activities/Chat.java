@@ -123,8 +123,6 @@ public class Chat extends AppCompatActivity {
     RelativeLayout relativeLayout;
 
     public static int bgResource;
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,24 +139,18 @@ public class Chat extends AppCompatActivity {
 
         deviceToken = getIntent().getExtras().get("device_token").toString();
 
-        /*preferences = Chat.this.getSharedPreferences("Theme", Context.MODE_PRIVATE);
-        editor = preferences.edit();
-
-        int value = preferences.getInt("theme_default", R.drawable.bg_item1);
-        if (value == R.drawable.bg_item1)
-        {
-            relativeLayout.setBackgroundResource(R.drawable.bg_item1);
-        }else if (value == R.drawable.bg_item2)
-        {
-            relativeLayout.setBackgroundResource(R.drawable.bg_item2);
-        }
-         */
-
         relativeLayout = findViewById(R.id.layout);
         Initialisation();
         floatingActionButton = findViewById(R.id.BackToLastMessage);
 
-        relativeLayout.setBackgroundResource(bgResource);
+        if (bgResource == R.drawable.bg_item1 || bgResource == R.drawable.bg_item1 ||  bgResource == R.drawable.background_discussion)
+        {
+            relativeLayout.setBackgroundResource(bgResource);
+        }else
+        {
+            relativeLayout.setBackgroundColor(Color.parseColor("#DCDCDC"));
+        }
+
 
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
@@ -945,32 +937,6 @@ public class Chat extends AppCompatActivity {
                 }
             });
 
-            /*bottomSheet.findViewById(R.id.btn_item3).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!msgReceiverId.equals(msgSenderId))
-                    {
-                        editor.putInt("theme_default", R.drawable.background_discussion);
-                        editor.commit();
-                        relativeLayout.setBackgroundResource(R.drawable.background_discussion);
-                        Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
-                        bottomSheetDialog.dismiss();
-                    }
-                }
-            });
-
-            bottomSheet.findViewById(R.id.btn_item4).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!msgReceiverId.equals(msgSenderId))
-                    {
-                        //relativeLayout.setBackgroundResource(R.drawable.bg_item2);
-                        //Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
-                        bottomSheetDialog.dismiss();
-                    }
-                }
-            });
-*/
             bottomSheet.findViewById(R.id.item5).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

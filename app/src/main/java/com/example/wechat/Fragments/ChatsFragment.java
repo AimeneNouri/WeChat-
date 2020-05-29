@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wechat.Messages;
@@ -106,39 +107,52 @@ public class ChatsFragment extends Fragment {
                             final String device_token = dataSnapshot.child("device_token").getValue().toString();
                             holder.userName.setText(profileName);
 
-                            if (dataSnapshot.child("UsersState").hasChild("state"))
-                            {
-                                String state = dataSnapshot.child("UsersState").child("state").getValue().toString();
-                                String date = dataSnapshot.child("UsersState").child("date").getValue().toString();
-                                String time = dataSnapshot.child("UsersState").child("time").getValue().toString();
+                            DatabaseReference MessagesRef = FirebaseDatabase.getInstance().getReference().child("Messages").child(userIDs).child(currentUserId);
+                            MessagesRef.limitToLast(1).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot ds: dataSnapshot.getChildren())
+                                            {
+                                                String message =  ""+ds.child("message").getValue();
+                                                String messageTime =  ""+ds.child("time").getValue();
+                                                String type =  ""+ds.child("type").getValue();
 
-                                if (state.equals("online"))
-                                {
-                                    holder.userStatus.setText("online");
-                                }
-                                else if (state.equals("offline"))
-                                {
-                                    Calendar calendar = Calendar.getInstance();
-                                    SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
-                                    String current_Date = currentDate.format(calendar.getTime());
+                                                if (message.length() > 34) {
+                                                    message = message.substring(0, 33) + "...";
+                                                }
 
-                                    calendar.add(Calendar.DATE, -1);
-                                    SimpleDateFormat yesterdayDate = new SimpleDateFormat("dd/MM/yyyy");
-                                    String yesterday_Date = yesterdayDate.format(calendar.getTime());
+                                                if (type.equals("text"))
+                                                {
+                                                    holder.userStatus.setText(message);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("image"))
+                                                {
+                                                    holder.userStatus.setText(" Photo");
+                                                    holder.imageMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("video"))
+                                                {
+                                                    holder.userStatus.setText("Video");
+                                                    holder.videoMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("docx") || type.equals("pdf"))
+                                                {
+                                                    holder.userStatus.setText(" File");
+                                                    holder.fileMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                            }
 
-                                    if (current_Date.equals(date)) {
-                                        date = "Today";
-                                    } else if (yesterday_Date.equals(date)) {
-                                        date = "Yesterday";
-                                    }
+                                        }
 
-                                    holder.userStatus.setText("Last Seen " + date + " at " + time);
-                                }
-                            }
-                            else
-                            {
-                                holder.userStatus.setText("offline");
-                            }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
 
 
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +180,7 @@ public class ChatsFragment extends Fragment {
             @NonNull
             @Override
             public ChatsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_display_layout, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_chat_layout, parent, false);
                 ChatsViewHolder viewHolder = new ChatsViewHolder(view);
                 return viewHolder;
             }
@@ -177,8 +191,10 @@ public class ChatsFragment extends Fragment {
 
     public static class ChatsViewHolder extends RecyclerView.ViewHolder{
 
-        TextView userName, userStatus;
+        TextView userName, userStatus, messageTime;
         CircleImageView profileImage;
+        ImageView videoMessage, imageMessage, fileMessage;
+
 
         public ChatsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -186,6 +202,10 @@ public class ChatsFragment extends Fragment {
             userName = itemView.findViewById(R.id.user_profile_name);
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
+            messageTime = itemView.findViewById(R.id.message_time);
+            videoMessage = itemView.findViewById(R.id.videoMessage);
+            imageMessage = itemView.findViewById(R.id.imagePhoto);
+            fileMessage = itemView.findViewById(R.id.documentFile);
         }
     }
 }

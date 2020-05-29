@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,9 +31,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -97,19 +102,78 @@ public class GroupsFragment extends Fragment {
                             final String groupName = dataSnapshot.child("name").getValue(String.class);
                             final String groupAdminId = dataSnapshot.child("adminId").getValue(String.class);
                             holder.group_Name.setText(groupName);
-                            
-                            DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-                            UsersRef.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    holder.groupMember.setText(dataSnapshot.getChildrenCount() + " members");
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                            GroupsRef.child(groupId).child("Messages").limitToLast(1)
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot ds: dataSnapshot.getChildren())
+                                            {
+                                                String message =  ""+ds.child("message").getValue();
+                                                String messageTime =  ""+ds.child("time").getValue();
+                                                String from =  ""+ds.child("from").getValue();
+                                                String type =  ""+ds.child("type").getValue();
 
-                                }
-                            });
+                                                if (message.length() > 34) {
+                                                    message = message.substring(0, 33) + "...";
+                                                }
+
+                                                if (type.equals("text"))
+                                                {
+                                                    holder.groupMember.setText(message);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("image"))
+                                                {
+                                                    holder.groupMember.setText(" Photo");
+                                                    holder.imageMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("video"))
+                                                {
+                                                    holder.groupMember.setText("Video");
+                                                    holder.videoMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("docx") || type.equals("pdf"))
+                                                {
+                                                    holder.groupMember.setText(" File");
+                                                    holder.fileMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+
+                                                DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+                                                UserRef.orderByChild("uid").equalTo(from)
+                                                        .addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                for (DataSnapshot ds: dataSnapshot.getChildren())
+                                                                {
+                                                                    String name = ""+ds.child("name").getValue();
+                                                                    if (from.equals(currentUserId))
+                                                                    {
+                                                                        holder.senderName.setText("You:");
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        holder.senderName.setText(name+": ");
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
 
                             holder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -147,8 +211,9 @@ public class GroupsFragment extends Fragment {
 
     public static class GroupsViewHolder extends RecyclerView.ViewHolder
     {
-        TextView group_Name, groupMember;
+        TextView group_Name, groupMember, messageTime, senderName;
         CircleImageView groupImage;
+        ImageView videoMessage, imageMessage, fileMessage;
 
         public GroupsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -156,6 +221,11 @@ public class GroupsFragment extends Fragment {
             group_Name = itemView.findViewById(R.id.group_Name);
             groupMember = itemView.findViewById(R.id.group_members);
             groupImage = itemView.findViewById(R.id.group_image);
+            messageTime = itemView.findViewById(R.id.message_time);
+            senderName = itemView.findViewById(R.id.sender_name);
+            videoMessage = itemView.findViewById(R.id.videoMessage);
+            imageMessage = itemView.findViewById(R.id.imagePhoto);
+            fileMessage = itemView.findViewById(R.id.documentFile);
         }
     }
 }

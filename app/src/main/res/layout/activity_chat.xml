@@ -10,7 +10,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".activities.Chat"
-    android:background="@drawable/background_discussion">
+    android:background="#DCDCDC">
 
     <include
         android:id="@+id/chat_toolbar"

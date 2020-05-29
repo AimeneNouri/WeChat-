@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#8E6EA0</color>
     <color name="colorPrimaryDark">#E052F3</color>
-    <color name="colorAccent">#8E6EA0</color>
+    <color name="colorAccent">#DCDCDC</color>
     <color name="white">#ffffff</color>
     <color name="black">#000</color>
     <color name="gradStart">#00FFBC</color>
