@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.Theme"></activity>
+        <activity android:name=".activities.PdfReader"></activity>
+        <activity android:name=".activities.Theme" />
         <activity android:name=".activities.Wallpaper" />
         <activity android:name=".activities.MediaChat" />
         <activity android:name=".activities.videoView" />
@@ -76,6 +77,10 @@
             </intent-filter>
         </service>
         <service android:name=".notification.FcmTokenRegistration" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

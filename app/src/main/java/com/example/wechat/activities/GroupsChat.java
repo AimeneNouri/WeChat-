@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -100,6 +101,7 @@ public class GroupsChat extends AppCompatActivity {
     private Uri fileUri;
 
     private FloatingActionButton floatingActionButton;
+    private RelativeLayout GroupInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,11 +313,13 @@ public class GroupsChat extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(GroupMessageAdapter);
+        GroupInfo = findViewById(R.id.groupInfo);
 
-        groupName.setOnClickListener(new View.OnClickListener() {
+        GroupInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                groupName.setAlpha((float) 0.6);
+                memberNumber.setAlpha((float) 0.6);
                 final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
 
                 View bottomSheet = LayoutInflater.from(getApplicationContext())
@@ -370,69 +374,11 @@ public class GroupsChat extends AppCompatActivity {
 
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
+                groupName.setAlpha(1);
+                memberNumber.setAlpha(1);
             }
         });
 
-        memberNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
-
-                View bottomSheet = LayoutInflater.from(getApplicationContext())
-                        .inflate(R.layout.group_info_bottom_sheet, findViewById(R.id.group_bottom_sheet));
-
-                Button remove_room = bottomSheet.findViewById(R.id.remove_room);
-                CircleImageView group_image = bottomSheet.findViewById(R.id.group_profile_image);
-                TextView group_name = bottomSheet.findViewById(R.id.group_name);
-                TextView group_admin_name = bottomSheet.findViewById(R.id.group_admin);
-
-                if (msgSenderId.equals(groupAdminId))
-                {
-                    remove_room.setVisibility(View.VISIBLE);
-                }
-
-                RootRef.child("Users").child(groupAdminId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if ((dataSnapshot.child("name").exists()))
-                        {
-                            String admin_name = dataSnapshot.child("name").getValue().toString();
-                            group_admin_name.setText(admin_name);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(group_image);
-                group_name.setText(currentGroupName);
-                remove_room.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (msgSenderId.equals(groupAdminId))
-                        {
-                            RootRef.child("Groups").child(currentGroupId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful())
-                                    {
-                                        Toast.makeText(GroupsChat.this, currentGroupName + " deleted", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(GroupsChat.this, MainActivity.class));
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-
-                bottomSheetDialog.setContentView(bottomSheet);
-                bottomSheetDialog.show();
-            }
-        });
 
         loadingBar = new ProgressDialog(this);
 
@@ -489,7 +435,7 @@ public class GroupsChat extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
 
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
     }
 
@@ -854,22 +800,22 @@ public class GroupsChat extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.group_option, menu);
+        //getMenuInflater().inflate(R.menu.group_option, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == R.id.group_info){
-           /* Intent groupChatIntent = new Intent(GroupsChat.this, groupInfo.class);
+        /*if (item.getItemId() == R.id.group_info){
+           Intent groupChatIntent = new Intent(GroupsChat.this, groupInfo.class);
             groupChatIntent.putExtra("group_Name", currentGroupName);
             groupChatIntent.putExtra("group_Id", currentGroupId);
             groupChatIntent.putExtra("visit_group_Picture", groupImage);
             groupChatIntent.putExtra("groupAdminId", groupAdminId);
             startActivity(groupChatIntent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            */
+
 
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
 
@@ -925,7 +871,7 @@ public class GroupsChat extends AppCompatActivity {
 
             bottomSheetDialog.setContentView(bottomSheet);
             bottomSheetDialog.show();
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

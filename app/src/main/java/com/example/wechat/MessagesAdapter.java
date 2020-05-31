@@ -1,11 +1,16 @@
 package com.example.wechat;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
 import com.example.wechat.activities.MainActivity;
+import com.example.wechat.activities.PdfReader;
 import com.example.wechat.activities.videoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -51,11 +57,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     public class MessagesViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time;
+        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo;
+        public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo, iconReceiverPdf, iconSenderPdf;
         public VideoView messageSenderVideo, messageReceiverVideo;
-        public RelativeLayout messageSender, messageReceiver;
+        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,6 +76,29 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             messageReceiverVideo = itemView.findViewById(R.id.message_receiver_video);
             messageSender = itemView.findViewById(R.id.sender_message_text_Layout);
             messageReceiver = itemView.findViewById(R.id.receiver_message_text_layout);
+
+            sent_time_video = itemView.findViewById(R.id.sent_time_video);
+            receiver_time_video = itemView.findViewById(R.id.receive_time_video);
+            videoSenderLayout = itemView.findViewById(R.id.video_sender_layout);
+            videoReceiverLayout = itemView.findViewById(R.id.video_receiver_layout);
+
+            sent_time_image = itemView.findViewById(R.id.sent_time_image);
+            receiver_time_image = itemView.findViewById(R.id.receive_time_image);
+            imageReceiverLayout = itemView.findViewById(R.id.image_receiver_layout);
+            imageSenderLayout = itemView.findViewById(R.id.image_sender_layout);
+
+            sentPdfMessage = itemView.findViewById(R.id.sender_message_pdf);
+            receivePdfMessage = itemView.findViewById(R.id.receiver_message_pdf);
+            sent_time_sender_pdf = itemView.findViewById(R.id.sent_time_pdf);
+            sent_time_receiver_pdf = itemView.findViewById(R.id.receive_time_pdf);
+            pdfReceiverLayout = itemView.findViewById(R.id.receiver_message_pdf_layout);
+            pdfSenderLayout= itemView.findViewById(R.id.sender_message_pdf_Layout);
+            iconSenderPdf= itemView.findViewById(R.id.icon_pdf);
+            iconReceiverPdf= itemView.findViewById(R.id.icon_pdf_receiver);
+            overflow_pdf_receiver= itemView.findViewById(R.id.receiver_pdf_overflow);
+            overflow_pdf_sender= itemView.findViewById(R.id.sender_pdf_overflow);
+
+
             playOne = itemView.findViewById(R.id.playVideoReceiver);
             playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
@@ -81,9 +110,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     @Override
     public MessagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_messages_layout, parent, false);
-
         mAuth = FirebaseAuth.getInstance();
-
         return new MessagesViewHolder(v);
     }
 
@@ -129,6 +156,28 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.playOne.setVisibility(View.GONE);
         holder.messageSender.setVisibility(View.GONE);
         holder.messageReceiver.setVisibility(View.GONE);
+
+        holder.sent_time_video.setVisibility(View.GONE);
+        holder.receiver_time_video.setVisibility(View.GONE);
+        holder.videoReceiverLayout.setVisibility(View.GONE);
+        holder.videoSenderLayout.setVisibility(View.GONE);
+
+        holder.sent_time_image.setVisibility(View.GONE);
+        holder.receiver_time_image.setVisibility(View.GONE);
+        holder.imageSenderLayout.setVisibility(View.GONE);
+        holder.imageReceiverLayout.setVisibility(View.GONE);
+
+        holder.sent_time_sender_pdf.setVisibility(View.GONE);
+        holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+        holder.pdfSenderLayout.setVisibility(View.GONE);
+        holder.pdfReceiverLayout.setVisibility(View.GONE);
+        holder.iconReceiverPdf.setVisibility(View.GONE);
+        holder.iconSenderPdf.setVisibility(View.GONE);
+        holder.receivePdfMessage.setVisibility(View.GONE);
+        holder.sentPdfMessage.setVisibility(View.GONE);
+        holder.overflow_pdf_receiver.setVisibility(View.GONE);
+        holder.overflow_pdf_sender.setVisibility(View.GONE);
+
 
         if (fromMsgType.equals("text"))
         {
@@ -189,9 +238,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             if (fromUserId.equals(msgSenderId))
             {
                 holder.messageSenderImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(messages.getMessage()).into(holder.messageSenderImage);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_image.setVisibility(View.VISIBLE);
+                holder.receiver_time_image.setVisibility(View.GONE);
+                holder.imageSenderLayout.setVisibility(View.VISIBLE);
+                holder.imageReceiverLayout.setVisibility(View.GONE);
+
+                Picasso.get().load(messages.getMessage()).into(holder.messageSenderImage);
+                holder.sent_time_image.setText( messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -209,8 +264,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_image.setVisibility(View.GONE);
+                holder.receiver_time_image.setVisibility(View.VISIBLE);
+                holder.imageSenderLayout.setVisibility(View.GONE);
+                holder.imageReceiverLayout.setVisibility(View.VISIBLE);
 
+
+                holder.receiver_time_image.setText(messages.getTime());
                 Picasso.get().load(messages.getMessage()).into(holder.messageReceiverImage);
+
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
@@ -231,7 +293,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.receive_time.setVisibility(View.GONE);
                 holder.playTwo.setVisibility(View.VISIBLE);
                 holder.playOne.setVisibility(View.GONE);
+                holder.sent_time_video.setVisibility(View.VISIBLE);
+                holder.videoSenderLayout.setVisibility(View.VISIBLE);
+                holder.receiver_time_video.setVisibility(View.GONE);
+                holder.videoReceiverLayout.setVisibility(View.GONE);
 
+
+                holder.sent_time_video.setText( messages.getTime());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -249,7 +317,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.receive_time.setVisibility(View.GONE);
                 holder.playTwo.setVisibility(View.GONE);
                 holder.playOne.setVisibility(View.VISIBLE);
+                holder.sent_time_video.setVisibility(View.GONE);
+                holder.videoSenderLayout.setVisibility(View.GONE);
+                holder.receiver_time_video.setVisibility(View.VISIBLE);
+                holder.videoReceiverLayout.setVisibility(View.VISIBLE);
 
+
+                holder.receiver_time_video.setText( messages.getTime());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -264,17 +338,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         {
             if (fromUserId.equals(msgSenderId))
             {
-                holder.messageSenderImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.VISIBLE);
+                holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+                holder.pdfSenderLayout.setVisibility(View.VISIBLE);
+                holder.pdfReceiverLayout.setVisibility(View.GONE);
+                holder.iconReceiverPdf.setVisibility(View.GONE);
+                holder.iconSenderPdf.setVisibility(View.VISIBLE);
+                holder.receivePdfMessage.setVisibility(View.GONE);
+                holder.sentPdfMessage.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_receiver.setVisibility(View.GONE);
+                holder.overflow_pdf_sender.setVisibility(View.VISIBLE);
 
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
-                        .into(holder.messageSenderImage);
-
+                holder.sentPdfMessage.setText("PDF File ");
+                holder.sent_time_sender_pdf.setText(messages.getTime());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -283,17 +365,26 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             else
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.GONE);
+                holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
+                holder.pdfSenderLayout.setVisibility(View.GONE);
+                holder.pdfReceiverLayout.setVisibility(View.VISIBLE);
+                holder.iconReceiverPdf.setVisibility(View.VISIBLE);
+                holder.iconSenderPdf.setVisibility(View.GONE);
+                holder.receivePdfMessage.setVisibility(View.VISIBLE);
+                holder.sentPdfMessage.setVisibility(View.GONE);
+                holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_sender.setVisibility(View.GONE);
 
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
-                        .into(holder.messageReceiverImage);
+                holder.receivePdfMessage.setText("PDF File ");
+                holder.sent_time_receiver_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -303,16 +394,27 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         {
             if (fromUserId.equals(msgSenderId))
             {
-                holder.messageSenderImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.VISIBLE);
+                holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+                holder.pdfSenderLayout.setVisibility(View.VISIBLE);
+                holder.pdfReceiverLayout.setVisibility(View.GONE);
+                holder.iconReceiverPdf.setVisibility(View.GONE);
+                holder.iconSenderPdf.setVisibility(View.VISIBLE);
+                holder.receivePdfMessage.setVisibility(View.GONE);
+                holder.sentPdfMessage.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_receiver.setVisibility(View.GONE);
+                holder.overflow_pdf_sender.setVisibility(View.VISIBLE);
 
-                holder.messageSenderImage.setBackgroundResource(R.drawable.word_icon);
+                holder.iconSenderPdf.setBackgroundResource(R.drawable.word_icon);
+                holder.sentPdfMessage.setText("docx File ");
+                holder.sent_time_sender_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -320,16 +422,27 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             else
             {
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.GONE);
+                holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
+                holder.pdfSenderLayout.setVisibility(View.GONE);
+                holder.pdfReceiverLayout.setVisibility(View.VISIBLE);
+                holder.iconReceiverPdf.setVisibility(View.VISIBLE);
+                holder.iconSenderPdf.setVisibility(View.GONE);
+                holder.receivePdfMessage.setVisibility(View.VISIBLE);
+                holder.sentPdfMessage.setVisibility(View.GONE);
+                holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_sender.setVisibility(View.GONE);
 
-                holder.messageReceiverImage.setBackgroundResource(R.drawable.word_icon);
+                holder.iconReceiverPdf.setBackgroundResource(R.drawable.word2);
+                holder.receivePdfMessage.setText("docx File ");
+                holder.sent_time_receiver_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -350,7 +463,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("File Options:");
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -393,7 +506,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("Message Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -433,7 +546,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
+                        builder.setTitle("Image Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -465,6 +578,58 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
                                     holder.itemView.getContext().startActivity(intent);
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                    else if (userMessagesList.get(position).getType().equals("video") ) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Delete For me",
+                                "Delete For everyone",
+                                "View this video",
+                                "Cancel"
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        builder.setTitle("Video Options:");
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //Delete For me
+                                if (which == 0)
+                                {
+                                    deleteSentMessages(position, holder);
+
+                                    userMessagesList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position,userMessagesList.size());
+
+                                }
+
+                                //Delete For everyone
+                                else if (which == 1)
+                                {
+                                    deleteMessagesForEveryOne(position, holder);
+
+                                    userMessagesList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position,userMessagesList.size());
+
+                                }
+                                //View this Video
+                                else if (which == 2)
+                                {
+                                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
+                                            intent.putExtra("url", userMessagesList.get(position).getMessage());
+                                            holder.itemView.getContext().startActivity(intent);
+                                        }
+                                    });
                                 }
 
                             }
@@ -489,7 +654,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("File Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -522,7 +687,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
+                        builder.setTitle("Message Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -549,7 +714,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
+                        builder.setTitle("Image Options:");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
@@ -571,6 +736,47 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                 {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
                                     holder.itemView.getContext().startActivity(intent);
+                                }
+
+                            }
+                        });
+                        builder.show();
+                    }
+                    else if (userMessagesList.get(position).getType().equals("video") ) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Delete For me",
+                                "View this video",
+                                "Cancel"
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        builder.setTitle("Video Options:");
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //Delete For me
+                                if (which == 0)
+                                {
+                                    deleteReceiveMessages(position, holder);
+
+                                    userMessagesList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position,userMessagesList.size());
+
+                                }
+
+                                //View this Video
+                                else if (which == 1)
+                                {
+                                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(holder.itemView.getContext(), videoView.class);
+                                            intent.putExtra("url", userMessagesList.get(position).getMessage());
+                                            holder.itemView.getContext().startActivity(intent);
+                                        }
+                                    });
                                 }
 
                             }

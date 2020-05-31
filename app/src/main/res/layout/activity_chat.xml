@@ -10,11 +10,11 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".activities.Chat"
-    android:background="#DCDCDC">
+    android:background="@drawable/background_discussion">
 
     <include
         android:id="@+id/chat_toolbar"
-        layout="@layout/app_bar_layout"/>
+        layout="@layout/chat_bar_layout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/private_msg_list_of_users"

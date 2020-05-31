@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
 import com.example.wechat.activities.MainActivity;
+import com.example.wechat.activities.PdfReader;
 import com.example.wechat.activities.videoView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +42,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     private List<Messages> userMessagesList;
     private FirebaseAuth mAuth;
-    private DatabaseReference UsersRef;
+    private DatabaseReference UsersRef, GroupsRef;
 
     public GroupMessageAdapter(Context context, List<Messages> userMessagesList)
     {
@@ -50,11 +51,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     public class MessageViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, msgReceiverName;
+        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne;
+        public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne, iconReceiverPdf, iconSenderPdf;
         public VideoView messageSenderVideo, messageReceiverVideo;
-        public RelativeLayout messageSender, messageReceiver;
+        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +70,28 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             messageReceiverVideo = itemView.findViewById(R.id.message_receiver_video);
             messageSender = itemView.findViewById(R.id.sender_message_text_Layout);
             messageReceiver = itemView.findViewById(R.id.receiver_message_text_layout);
+
+            sent_time_video = itemView.findViewById(R.id.sent_time_video);
+            receiver_time_video = itemView.findViewById(R.id.receive_time_video);
+            videoSenderLayout = itemView.findViewById(R.id.video_sender_layout);
+            videoReceiverLayout = itemView.findViewById(R.id.video_receiver_layout);
+
+            sent_time_image = itemView.findViewById(R.id.sent_time_image);
+            receiver_time_image = itemView.findViewById(R.id.receive_time_image);
+            imageReceiverLayout = itemView.findViewById(R.id.image_receiver_layout);
+            imageSenderLayout = itemView.findViewById(R.id.image_sender_layout);
+
+            sentPdfMessage = itemView.findViewById(R.id.sender_message_pdf);
+            receivePdfMessage = itemView.findViewById(R.id.receiver_message_pdf);
+            sent_time_sender_pdf = itemView.findViewById(R.id.sent_time_pdf);
+            sent_time_receiver_pdf = itemView.findViewById(R.id.receive_time_pdf);
+            pdfReceiverLayout = itemView.findViewById(R.id.receiver_message_pdf_layout);
+            pdfSenderLayout= itemView.findViewById(R.id.sender_message_pdf_Layout);
+            iconSenderPdf= itemView.findViewById(R.id.icon_pdf);
+            iconReceiverPdf= itemView.findViewById(R.id.icon_pdf_receiver);
+            overflow_pdf_receiver= itemView.findViewById(R.id.receiver_pdf_overflow);
+            overflow_pdf_sender= itemView.findViewById(R.id.sender_pdf_overflow);
+
             playOne = itemView.findViewById(R.id.playVideoReceiver);
             playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
@@ -124,6 +147,27 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         holder.playOne.setVisibility(View.GONE);
         holder.messageSender.setVisibility(View.GONE);
         holder.messageReceiver.setVisibility(View.GONE);
+
+        holder.sent_time_video.setVisibility(View.GONE);
+        holder.receiver_time_video.setVisibility(View.GONE);
+        holder.videoReceiverLayout.setVisibility(View.GONE);
+        holder.videoSenderLayout.setVisibility(View.GONE);
+
+        holder.sent_time_image.setVisibility(View.GONE);
+        holder.receiver_time_image.setVisibility(View.GONE);
+        holder.imageSenderLayout.setVisibility(View.GONE);
+        holder.imageReceiverLayout.setVisibility(View.GONE);
+
+        holder.sent_time_sender_pdf.setVisibility(View.GONE);
+        holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+        holder.pdfSenderLayout.setVisibility(View.GONE);
+        holder.pdfReceiverLayout.setVisibility(View.GONE);
+        holder.iconReceiverPdf.setVisibility(View.GONE);
+        holder.iconSenderPdf.setVisibility(View.GONE);
+        holder.receivePdfMessage.setVisibility(View.GONE);
+        holder.sentPdfMessage.setVisibility(View.GONE);
+        holder.overflow_pdf_receiver.setVisibility(View.GONE);
+        holder.overflow_pdf_sender.setVisibility(View.GONE);
 
         if (fromMsgType.equals("text"))
         {
@@ -183,9 +227,15 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             if (fromUserId.equals(msgSenderId))
             {
                 holder.messageSenderImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(messages.getMessage()).into(holder.messageSenderImage);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_image.setVisibility(View.VISIBLE);
+                holder.receiver_time_image.setVisibility(View.GONE);
+                holder.imageSenderLayout.setVisibility(View.VISIBLE);
+                holder.imageReceiverLayout.setVisibility(View.GONE);
+
+                Picasso.get().load(messages.getMessage()).into(holder.messageSenderImage);
+                holder.sent_time_image.setText( messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -203,7 +253,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_image.setVisibility(View.GONE);
+                holder.receiver_time_image.setVisibility(View.VISIBLE);
+                holder.imageSenderLayout.setVisibility(View.GONE);
+                holder.imageReceiverLayout.setVisibility(View.VISIBLE);
 
+
+                holder.receiver_time_image.setText( messages.getTime());
                 Picasso.get().load(messages.getMessage()).into(holder.messageReceiverImage);
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -226,7 +282,12 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.receive_time.setVisibility(View.GONE);
                 holder.playTwo.setVisibility(View.VISIBLE);
                 holder.playOne.setVisibility(View.GONE);
+                holder.sent_time_video.setVisibility(View.VISIBLE);
+                holder.videoSenderLayout.setVisibility(View.VISIBLE);
+                holder.receiver_time_video.setVisibility(View.GONE);
+                holder.videoReceiverLayout.setVisibility(View.GONE);
 
+                holder.sent_time_video.setText( messages.getTime());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -244,7 +305,12 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.receive_time.setVisibility(View.GONE);
                 holder.playTwo.setVisibility(View.GONE);
                 holder.playOne.setVisibility(View.VISIBLE);
+                holder.sent_time_video.setVisibility(View.GONE);
+                holder.videoSenderLayout.setVisibility(View.GONE);
+                holder.receiver_time_video.setVisibility(View.VISIBLE);
+                holder.videoReceiverLayout.setVisibility(View.VISIBLE);
 
+                holder.receiver_time_video.setText( messages.getTime());
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -260,17 +326,26 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         {
             if (fromUserId.equals(msgSenderId))
             {
-                holder.messageSenderImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.VISIBLE);
+                holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+                holder.pdfSenderLayout.setVisibility(View.VISIBLE);
+                holder.pdfReceiverLayout.setVisibility(View.GONE);
+                holder.iconReceiverPdf.setVisibility(View.GONE);
+                holder.iconSenderPdf.setVisibility(View.VISIBLE);
+                holder.receivePdfMessage.setVisibility(View.GONE);
+                holder.sentPdfMessage.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_receiver.setVisibility(View.GONE);
+                holder.overflow_pdf_sender.setVisibility(View.VISIBLE);
 
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
-                        .into(holder.messageSenderImage);
+                holder.sentPdfMessage.setText("PDF File");
+                holder.sent_time_sender_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -278,18 +353,26 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.GONE);
+                holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
+                holder.pdfSenderLayout.setVisibility(View.GONE);
+                holder.pdfReceiverLayout.setVisibility(View.VISIBLE);
+                holder.iconReceiverPdf.setVisibility(View.VISIBLE);
+                holder.iconSenderPdf.setVisibility(View.GONE);
+                holder.receivePdfMessage.setVisibility(View.VISIBLE);
+                holder.sentPdfMessage.setVisibility(View.GONE);
+                holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_sender.setVisibility(View.GONE);
 
-                Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/wechat-6ffe4.appspot.com/o/Image%20Files%2Fpdf_file.png?alt=media&token=1d7d5481-9702-4972-b9a1-852420130f2d")
-                        .into(holder.messageReceiverImage);
+                holder.receivePdfMessage.setText("PDF File");
+                holder.sent_time_receiver_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
@@ -299,356 +382,64 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         {
             if (fromUserId.equals(msgSenderId))
             {
-                holder.messageSenderImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.VISIBLE);
+                holder.sent_time_receiver_pdf.setVisibility(View.GONE);
+                holder.pdfSenderLayout.setVisibility(View.VISIBLE);
+                holder.pdfReceiverLayout.setVisibility(View.GONE);
+                holder.iconReceiverPdf.setVisibility(View.GONE);
+                holder.iconSenderPdf.setVisibility(View.VISIBLE);
+                holder.receivePdfMessage.setVisibility(View.GONE);
+                holder.sentPdfMessage.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_receiver.setVisibility(View.GONE);
+                holder.overflow_pdf_sender.setVisibility(View.VISIBLE);
 
-                holder.messageSenderImage.setBackgroundResource(R.drawable.word_icon);
+                holder.iconSenderPdf.setBackgroundResource(R.drawable.word_icon);
+                holder.sentPdfMessage.setText("docx File");
+                holder.sent_time_sender_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.messageReceiverImage.setVisibility(View.VISIBLE);
-                holder.senTime.setVisibility(View.GONE);
-                holder.receive_time.setVisibility(View.GONE);
+                holder.sent_time_sender_pdf.setVisibility(View.GONE);
+                holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
+                holder.pdfSenderLayout.setVisibility(View.GONE);
+                holder.pdfReceiverLayout.setVisibility(View.VISIBLE);
+                holder.iconReceiverPdf.setVisibility(View.VISIBLE);
+                holder.iconSenderPdf.setVisibility(View.GONE);
+                holder.receivePdfMessage.setVisibility(View.VISIBLE);
+                holder.sentPdfMessage.setVisibility(View.GONE);
+                holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
+                holder.overflow_pdf_sender.setVisibility(View.GONE);
 
-                holder.messageReceiverImage.setBackgroundResource(R.drawable.word_icon);
+                holder.iconReceiverPdf.setBackgroundResource(R.drawable.word2);
+                holder.receivePdfMessage.setText("docx File");
+                holder.sent_time_receiver_pdf.setText(messages.getTime());
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
+                        Intent intent = new Intent(holder.itemView.getContext(), PdfReader.class);
+                        intent.putExtra("url", userMessagesList.get(position).getMessage());
+                        intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });
             }
         }
-
-       /* if (fromUserId.equals(msgSenderId))
-        {
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v)
-                {
-                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx")) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
-                                "Download and View this Document",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteSentMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-                                }
-
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                                //Download and View this Document
-                                else if (which == 2)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-                            }
-                        });
-                        builder.show();
-                    }
-                    else if (userMessagesList.get(position).getType().equals("text")) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteSentMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                            }
-                        });
-                        builder.show();
-                    }
-                    else if (userMessagesList.get(position).getType().equals("image") ) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
-                                "Download this Image",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Image Options:");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteSentMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-                                //Download this Image
-                                else if (which == 2)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-
-                            }
-                        });
-                        builder.show();
-                    }
-                    return false;
-                }
-            });
-        }
-
-        else
-        {
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v)
-                {
-                    if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx")) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Download and View this Document",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Files Options:");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteReceiveMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                                //Download and View this Document
-                                else if (which == 1)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-                            }
-                        });
-                        builder.show();
-                    }
-                    else if (userMessagesList.get(position).getType().equals("text")) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Message Options:");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteReceiveMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-                            }
-                        });
-                        builder.show();
-                    }
-                    else if (userMessagesList.get(position).getType().equals("image") ) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Download this Image",
-                                "Cancel"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                        builder.setTitle("Image Options:");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                //Delete For me
-                                if (which == 0)
-                                {
-                                    deleteReceiveMessages(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
-                                //Download this Image
-                                else if (which == 1)
-                                {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
-                                    holder.itemView.getContext().startActivity(intent);
-                                }
-
-                            }
-                        });
-                        builder.show();
-                    }
-                    return false;
-                }
-            });
-        }*/
     }
 
     @Override
     public int getItemCount() {
         return userMessagesList.size();
     }
-
-    private void deleteSentMessages(int position, MessageViewHolder holder) {
-        DatabaseReference RootRef = FirebaseDatabase.getInstance().getReference();
-        RootRef.child("Messages").child(userMessagesList.get(position).getFrom())
-                .child(userMessagesList.get(position).getTo())
-                .child(userMessagesList.get(position).getMessageID())
-                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(holder.itemView.getContext(), "Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(holder.itemView.getContext(), "ERROR Occurred.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void deleteMessagesForEveryOne(int position, MessageViewHolder holder) {
-        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("Messages").child(userMessagesList.get(position).getTo())
-                .child(userMessagesList.get(position).getFrom())
-                .child(userMessagesList.get(position).getMessageID())
-                .removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful())
-                        {
-                            rootRef.child("Messages").child(userMessagesList.get(position).getFrom())
-                                    .child(userMessagesList.get(position).getTo())
-                                    .child(userMessagesList.get(position).getMessageID())
-                                    .removeValue()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(holder.itemView.getContext(), "Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                        else {
-                            Toast.makeText(holder.itemView.getContext(), "ERROR", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                });
-    }
-
-    private void deleteReceiveMessages(int position, MessageViewHolder holder) {
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("Messages").child(userMessagesList.get(position).getTo())
-                .child(userMessagesList.get(position).getFrom())
-                .child(userMessagesList.get(position).getMessageID())
-                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(holder.itemView.getContext(), "Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(holder.itemView.getContext(), "ERROR Occurred.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
 
 }

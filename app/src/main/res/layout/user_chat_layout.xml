@@ -16,8 +16,7 @@
             android:id="@+id/users_profile_image"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/profile_image" />
+            android:layout_marginTop="10dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +33,7 @@
                     android:id="@+id/user_profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user name"
+                    android:text=""
                     android:layout_marginTop="12dp"
                     android:textAlignment="textStart"
                     android:textColor="@color/black"
@@ -47,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16.5dp"
                     android:layout_alignParentRight="true"
-                    android:text="00:00"
+                    android:text=""
                     android:textSize="13sp" />
 
             </RelativeLayout>
@@ -63,7 +62,7 @@
                     android:layout_width="20dp"
                     android:layout_height="19dp"
                     android:layout_marginStart="2dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="3.5dp"
                     android:background="@drawable/ic_photo_camera_black_24dp"
                     android:visibility="gone"/>
 
@@ -72,7 +71,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_marginStart="2dp"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginTop="3dp"
                     android:background="@drawable/video"
                     android:visibility="gone"/>
 
@@ -81,7 +80,7 @@
                     android:layout_width="20dp"
                     android:layout_height="18dp"
                     android:layout_marginStart="2dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="2.9dp"
                     android:background="@drawable/ic_insert_drive_file_black_24dp"
                     android:visibility="gone"/>
 
@@ -89,11 +88,11 @@
                     android:id="@+id/user_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="user status"
+                    android:text=""
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="3dp"
                     android:textAlignment="textStart"
-                    android:textSize="13sp" />
+                    android:textSize="14.5sp" />
             </LinearLayout>
 
         </LinearLayout>

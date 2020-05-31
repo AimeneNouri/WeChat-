@@ -12,17 +12,17 @@
         android:id="@+id/back_btn"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
         android:background="@drawable/back_btn"
         />
 
     <ImageView
         android:id="@+id/image_viewer"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
         android:layout_below="@+id/back_btn"
         android:layout_above="@+id/mLinearLayout"
         android:src="@drawable/crop_image_menu_flip"/>
@@ -41,7 +41,7 @@
             android:id="@+id/shareImageBtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/ic_file_download_black_24dp"
+            android:background="@drawable/save_image"
             android:layout_marginBottom="5dp"
             android:layout_centerHorizontal="true"
             />

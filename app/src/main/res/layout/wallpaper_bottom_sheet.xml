@@ -5,68 +5,73 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/wallpaper_bottom_sheet"
+    android:layout_marginTop="10dp"
     android:background="@drawable/grad">
+
+    <View
+        android:layout_below="@+id/friend"
+        android:layout_width="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="140dp"
+        android:layout_height="5dp"
+        android:background="@drawable/corner_wallpaper"/>
 
     <LinearLayout
         android:id="@+id/linear1"
+        android:layout_below="@+id/friend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginStart="40dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp">
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="5dp">
 
-        <ImageView
-            android:id="@+id/btn_item1"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item1"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
             android:layout_width="134dp"
-            android:layout_height="134dp"
-            android:background="@drawable/item1" />
+            android:layout_height="122dp">
 
-        <ImageView
-            android:id="@+id/btn_item2"
+            <ImageView
+                tools:ignore="ContentDescription"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/background_discussion5" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item2"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
             android:layout_width="134dp"
-            android:layout_height="134dp"
-            android:layout_marginLeft="30dp"
-            android:background="@drawable/item2" />
+            android:layout_marginStart="10dp"
+            android:layout_height="122dp">
+
+            <ImageView
+                tools:ignore="ContentDescription"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/background_discussion6" />
+
+        </androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 
-    <!--<LinearLayout
+    <LinearLayout
         android:id="@+id/linear2"
         android:layout_below="@+id/linear1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="40dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="5dp">
-
-        <ImageView
-            android:id="@+id/btn_item3"
-            android:layout_width="134dp"
-            android:layout_height="134dp"
-            android:background="@drawable/item3" />
-
-        <ImageView
-            android:id="@+id/btn_item4"
-            android:layout_width="134dp"
-            android:layout_height="134dp"
-            android:layout_marginLeft="30dp"
-            android:background="@drawable/item4" />
-
-    </LinearLayout>-->
-
-    <LinearLayout
-        android:id="@+id/linear3"
-        android:layout_below="@+id/linear1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="111dp"
-        android:orientation="vertical"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/item5"
+            android:id="@+id/item3"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
             android:layout_width="134dp"
@@ -78,16 +83,21 @@
                 android:layout_width="match_parent"
                 android:background="@drawable/background_discussion" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Default"
-                android:textSize="12sp"
-                android:alpha=".82"
-                android:layout_marginTop="55dp"
-                android:textColor="#323232"
-                android:layout_marginLeft="47dp"
-                android:layout_marginBottom="5dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item4"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_width="134dp"
+            android:layout_height="122dp">
+
+            <ImageView
+                tools:ignore="ContentDescription"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_item2" />
 
         </androidx.cardview.widget.CardView>
 

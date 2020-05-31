@@ -128,7 +128,7 @@ public class ChatsFragment extends Fragment {
                                                 }
                                                 else if (type.equals("image"))
                                                 {
-                                                    holder.userStatus.setText(" Photo");
+                                                    holder.userStatus.setText("Photo");
                                                     holder.imageMessage.setVisibility(View.VISIBLE);
                                                     holder.messageTime.setText(messageTime);
                                                 }
@@ -138,9 +138,15 @@ public class ChatsFragment extends Fragment {
                                                     holder.videoMessage.setVisibility(View.VISIBLE);
                                                     holder.messageTime.setText(messageTime);
                                                 }
-                                                else if (type.equals("docx") || type.equals("pdf"))
+                                                else if (type.equals("docx"))
                                                 {
-                                                    holder.userStatus.setText(" File");
+                                                    holder.userStatus.setText("Word File");
+                                                    holder.fileMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("pdf"))
+                                                {
+                                                    holder.userStatus.setText("PDF File");
                                                     holder.fileMessage.setVisibility(View.VISIBLE);
                                                     holder.messageTime.setText(messageTime);
                                                 }

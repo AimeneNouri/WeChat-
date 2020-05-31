@@ -73,6 +73,7 @@ dependencies {
     implementation 'pub.devrel:easypermissions:0.4.0'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
 }
 repositories {
     flatDir {

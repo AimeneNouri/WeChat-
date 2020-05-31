@@ -14,49 +14,47 @@
         app:showAsAction="never">
     </item>-->
 
-    <group android:id="@+id/group1">
-
-        <item
-            android:title="Wallpaper"
-            android:checked="true"
-            android:id="@+id/wallpaper_option"
-            app:showAsAction="never">
-        </item>
-
-    </group>
-
-    <group android:id="@+id/group2">
-
-        <item
-            android:title="Remove Contact"
-            android:checked="true"
-            android:id="@+id/remove_option"
-            app:showAsAction="never">
-        </item>
 
 
-    </group>
+    <item
+        android:id="@+id/voice_call_icon_option"
+        android:title="Voice Call"
+        app:showAsAction="never"
+        />
 
-    <group android:id="@+id/group3">
+    <item
+        android:id="@+id/video_call_icon_option"
+        android:title="Video Call"
+        app:showAsAction="never"
+        />
 
-        <item
-            android:title="Clear Chat"
-            android:checked="true"
-            android:id="@+id/ClearChat"
-            app:showAsAction="never">
-        </item>
+    <item
+        android:title="Wallpaper"
+        android:checked="true"
+        android:id="@+id/wallpaper_option"
+        app:showAsAction="never">
+    </item>
 
-    </group>
+    <item
+        android:title="Remove Contact"
+        android:checked="true"
+        android:id="@+id/remove_option"
+        app:showAsAction="never">
+    </item>
 
-    <group android:id="@+id/group4">
+    <item
+        android:title="Clear Chat"
+        android:checked="true"
+        android:id="@+id/ClearChat"
+        app:showAsAction="never">
+    </item>
 
-        <item
-            android:title="Report"
-            android:checked="true"
-            android:id="@+id/Report_option"
-            app:showAsAction="never">
-        </item>
+    <item
+        android:title="Report"
+        android:checked="true"
+        android:id="@+id/Report_option"
+        app:showAsAction="never">
+    </item>
 
-    </group>
 
 </menu>

@@ -56,18 +56,18 @@
 
        <ImageButton
            android:id="@+id/CallVoiceBtn"
-           android:layout_width="40dp"
-           android:layout_height="40dp"
-           android:layout_marginStart="5dp"
-           android:layout_marginTop="14dp"
+           android:layout_width="35dp"
+           android:layout_height="35dp"
+           android:layout_marginStart="10dp"
+           android:layout_marginTop="16dp"
            android:layout_toEndOf="@+id/user_profile_name"
            android:background="@drawable/voice_call" />
 
        <ImageButton
            android:id="@+id/CallVideoBtn"
-           android:layout_width="40dp"
-           android:layout_height="40dp"
-           android:layout_marginTop="14dp"
+           android:layout_width="35dp"
+           android:layout_height="35dp"
+           android:layout_marginTop="16dp"
            android:layout_marginStart="15dp"
            android:layout_toEndOf="@+id/CallVoiceBtn"
            android:background="@drawable/btn_video_call"/>

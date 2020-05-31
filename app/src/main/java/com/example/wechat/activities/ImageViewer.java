@@ -72,52 +72,29 @@ public class ImageViewer extends AppCompatActivity {
         sharePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ImageViewer.this, R.style.BottomSheet);
+                Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
 
-                View bottomSheet = LayoutInflater.from(getApplicationContext())
-                        .inflate(R.layout.share_picture, (RelativeLayout) findViewById(R.id.shareImageDialog));
+                FileOutputStream outStream = null;
+                try {
+                    File sdCard = Environment.getExternalStorageDirectory();
+                    File dir = new File(sdCard.getAbsolutePath() + "/WECHAT");
+                    dir.mkdirs();
 
-                bottomSheet.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
+                    String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                    File outFile = new File(dir, fileName);
 
-                        FileOutputStream outStream = null;
-                        try {
-                            File sdCard = Environment.getExternalStorageDirectory();
-                            File dir = new File(sdCard.getAbsolutePath() + "/WECHAT");
-                            dir.mkdirs();
+                    outStream = new FileOutputStream(outFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    outStream.flush();
+                    outStream.close();
 
-                            String fileName = String.format("%d.jpg", System.currentTimeMillis());
-                            File outFile = new File(dir, fileName);
+                }catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                            outStream = new FileOutputStream(outFile);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                            outStream.flush();
-                            outStream.close();
-
-                        }catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        Toast.makeText(ImageViewer.this, "Image Saved", Toast.LENGTH_SHORT).show();
-
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-
-                bottomSheet.findViewById(R.id.cancel_Share_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-
-                bottomSheetDialog.setContentView(bottomSheet);
-                bottomSheetDialog.show();
+                Toast.makeText(ImageViewer.this, "Image Saved", Toast.LENGTH_SHORT).show();
             }
         });
     }

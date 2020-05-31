@@ -61,9 +61,7 @@ public class UsersProfile extends AppCompatActivity {
         Backspace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent FriendsIntent = new Intent(UsersProfile.this, FindFriends.class);
-                startActivity(FriendsIntent);
-                finish();
+                onBackPressed();
             }
         });
     }

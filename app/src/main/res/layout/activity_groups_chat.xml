@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/group_chat_bar"
-        layout="@layout/app_bar_layout"
+        layout="@layout/chat_bar_layout"
         ></include>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -76,6 +76,7 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -567,7 +568,6 @@ public class Chat extends AppCompatActivity {
                                     if (task.isSuccessful())
                                     {
                                         loadingBar.dismiss();
-                                        //Toast.makeText(Chat.this, "Image has been sent", Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                     {
@@ -664,7 +664,7 @@ public class Chat extends AppCompatActivity {
             {
                 if (dataSnapshot.child("UsersState").hasChild("state"))
                 {
-                    String state = "" + dataSnapshot.child("UsersState").child("state").getValue();
+                    String state = dataSnapshot.child("UsersState").child("state").getValue().toString();
                     String date = dataSnapshot.child("UsersState").child("date").getValue().toString();
                     String time = dataSnapshot.child("UsersState").child("time").getValue().toString();
 
@@ -675,7 +675,7 @@ public class Chat extends AppCompatActivity {
                     else if (state.equals("offline"))
                     {
                         Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat currentDate = new SimpleDateFormat("EEEE");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
                         String current_Date = currentDate.format(calendar.getTime());
 
                         calendar.add(Calendar.DATE, -1);
@@ -683,9 +683,9 @@ public class Chat extends AppCompatActivity {
                         String yesterday_Date = yesterdayDate.format(calendar.getTime());
 
                         if (current_Date.equals(date)) {
-                            date = "Today";
+                            date = "today";
                         } else if (yesterday_Date.equals(date)) {
-                            date = "Yesterday";
+                            date = "yesterday";
                         }
 
                         userLastSeen.setText("Last Seen " + date + " at " + time);
@@ -808,7 +808,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.call, menu);
+        //getMenuInflater().inflate(R.menu.call, menu);
         getMenuInflater().inflate(R.menu.chat_setting, menu);
         return true;
     }
@@ -833,8 +833,6 @@ public class Chat extends AppCompatActivity {
             Calling.putExtra("visit_user_id", msgReceiverId);
             startActivity(Calling);
         }
-
-        //Chat setting Option
 
         /*if (item.getItemId() == R.id.Chat_info)
         {
@@ -910,22 +908,22 @@ public class Chat extends AppCompatActivity {
 
             bottomSheet.findViewById(R.id.wallpaper_bottom_sheet).setVerticalScrollBarEnabled(true);
 
-            bottomSheet.findViewById(R.id.btn_item1).setOnClickListener(new View.OnClickListener() {
+            bottomSheet.findViewById(R.id.item1).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bgResource = R.drawable.bg_item1;
+                    bgResource = R.drawable.background_discussion5;
                     relativeLayout.setBackgroundResource(bgResource);
                     Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                     bottomSheetDialog.dismiss();
                 }
             });
 
-            bottomSheet.findViewById(R.id.btn_item2).setOnClickListener(new View.OnClickListener() {
+            bottomSheet.findViewById(R.id.item2).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!msgReceiverId.equals(msgSenderId))
                     {
-                        bgResource = R.drawable.bg_item2;
+                        bgResource = R.drawable.background_discussion6;
                         relativeLayout.setBackgroundResource(bgResource);
                         Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
@@ -933,12 +931,25 @@ public class Chat extends AppCompatActivity {
                 }
             });
 
-            bottomSheet.findViewById(R.id.item5).setOnClickListener(new View.OnClickListener() {
+            bottomSheet.findViewById(R.id.item3).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!msgReceiverId.equals(msgSenderId))
                     {
                        bgResource = R.drawable.background_discussion;
+                        relativeLayout.setBackgroundResource(bgResource);
+                        Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
+                        bottomSheetDialog.dismiss();
+                    }
+                }
+            });
+
+            bottomSheet.findViewById(R.id.item4).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!msgReceiverId.equals(msgSenderId))
+                    {
+                        bgResource = R.drawable.bg_item2;
                         relativeLayout.setBackgroundResource(bgResource);
                         Toast.makeText(Chat.this, "Background Changed", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();

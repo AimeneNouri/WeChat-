@@ -135,9 +135,15 @@ public class GroupsFragment extends Fragment {
                                                     holder.videoMessage.setVisibility(View.VISIBLE);
                                                     holder.messageTime.setText(messageTime);
                                                 }
-                                                else if (type.equals("docx") || type.equals("pdf"))
+                                                else if (type.equals("docx"))
                                                 {
-                                                    holder.groupMember.setText(" File");
+                                                    holder.groupMember.setText("Word File");
+                                                    holder.fileMessage.setVisibility(View.VISIBLE);
+                                                    holder.messageTime.setText(messageTime);
+                                                }
+                                                else if (type.equals("pdf"))
+                                                {
+                                                    holder.groupMember.setText("PDF File");
                                                     holder.fileMessage.setVisibility(View.VISIBLE);
                                                     holder.messageTime.setText(messageTime);
                                                 }

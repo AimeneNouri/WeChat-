@@ -46,8 +46,9 @@
             android:layout_height="wrap_content"
             android:text="receiver message !! "
             android:padding="10dp"
+            android:fontFamily="@font/open_sans_semibold"
             android:textColor="@color/white"
-            android:textSize="17.5sp"
+            android:textSize="15sp"
             />
 
         <TextView
@@ -65,24 +66,74 @@
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/message_sender_image"
-        android:layout_width="205dp"
-        android:layout_height="180dp"
+    <RelativeLayout
+        android:id="@+id/image_sender_layout"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="6dp"
         android:layout_marginTop="10dp"
-        android:scaleType="centerCrop"/>
+        android:background="@drawable/background_video_chat">
 
-    <ImageView
-        android:id="@+id/message_receiver_image"
-        android:layout_width="205dp"
-        android:layout_height="180dp"
+        <ImageView
+            android:id="@+id/message_sender_image"
+            android:layout_width="209dp"
+            android:layout_height="190dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp" />
+
+        <TextView
+            android:id="@+id/sent_time_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message_sender_image"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginBottom="3dp"
+            android:text="12:00"
+            android:textColor="#6A6A6A"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/image_receiver_layout"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"
         android:layout_marginStart="47dp"
-        android:scaleType="centerCrop"
-        />
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/background_receiver_video">
+
+        <ImageView
+            android:id="@+id/message_receiver_image"
+            android:layout_width="209dp"
+            android:layout_height="190dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"/>
+
+
+        <TextView
+            android:id="@+id/receive_time_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message_receiver_image"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginBottom="3dp"
+            android:text="12:00"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/sender_message_text_Layout"
@@ -100,7 +151,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="sender message !!"
-            android:textSize="17.5sp"
+            android:textSize="15sp"
+            android:fontFamily="@font/open_sans_semibold"
             android:padding="10dp"
             android:layout_marginRight="5dp"
             android:textColor="@color/black"
@@ -119,46 +171,214 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/playVideoReceiver"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginEnd="-180dp"
-        android:layout_toStartOf="@+id/message_receiver_video"
-        android:background="@drawable/ic_play_circle_outline_black_24dp"
-        android:elevation="1dp"/>
 
-    <ImageView
-        android:id="@+id/playVideoSender"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="-130dp"
-        android:layout_toStartOf="@+id/message_sender_video"
-        android:background="@drawable/ic_play_circle_outline_black_24dp"
-        android:elevation="1dp"/>
 
-    <VideoView
-        android:id="@+id/message_sender_video"
-        android:layout_width="205dp"
-        android:layout_height="180dp"
-        android:layout_alignParentEnd="true"
+    <RelativeLayout
+        android:id="@+id/video_sender_layout"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
         android:layout_marginRight="6dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
-        android:scaleType="centerCrop"/>
+        android:background="@drawable/background_video_chat">
 
-    <VideoView
-        android:id="@+id/message_receiver_video"
-        android:layout_width="205dp"
-        android:layout_height="180dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="10dp"
+        <ImageView
+            android:id="@+id/playVideoSender"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="-130dp"
+            android:layout_toStartOf="@+id/message_sender_video"
+            android:background="@drawable/ic_play_circle_outline_black_24dp"
+            android:elevation="1dp"/>
+
+        <VideoView
+            android:id="@+id/message_sender_video"
+            android:layout_width="209dp"
+            android:layout_height="190dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"/>
+
+        <TextView
+            android:id="@+id/sent_time_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message_sender_video"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginBottom="3dp"
+            android:text="12:00"
+            android:textColor="#6A6A6A"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/video_receiver_layout"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="47dp"
-        android:scaleType="centerCrop"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/background_receiver_video">
+
+        <ImageView
+            android:id="@+id/playVideoReceiver"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="-135dp"
+            android:layout_toStartOf="@+id/message_receiver_video"
+            android:background="@drawable/ic_play_circle_outline_black_24dp"
+            android:elevation="1dp" />
+
+        <VideoView
+            android:id="@+id/message_receiver_video"
+            android:layout_width="209dp"
+            android:layout_height="190dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"/>
+
+        <TextView
+            android:id="@+id/receive_time_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message_receiver_video"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:text="12:00"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/sender_message_pdf_Layout"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sender_message"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="@+id/receiver_message_text_layout"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+
+        <RelativeLayout
+            android:id="@+id/sender_pdf_overflow"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/overflow_sender">
+
+            <ImageView
+                android:id="@+id/icon_pdf"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/pdf_file"/>
+
+            <TextView
+                android:id="@+id/sender_message_pdf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF File"
+                android:layout_toEndOf="@+id/icon_pdf"
+                android:textSize="17.5sp"
+                android:padding="10dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:layout_marginRight="5dp"
+                android:textColor="#434343"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/sent_time_pdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sender_pdf_overflow"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="12:00"
+            android:textColor="#6A6A6A"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/receiver_message_pdf_layout"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/message_profile_image"
+        android:background="@drawable/receiver_message"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="10dp">
+
+        <RelativeLayout
+            android:id="@+id/receiver_pdf_overflow"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/overflow_receiver">
+
+            <ImageView
+                android:id="@+id/icon_pdf_receiver"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/pdf_icon"/>
+
+            <TextView
+                android:id="@+id/receiver_message_pdf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF File"
+                android:layout_toEndOf="@+id/icon_pdf_receiver"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/open_sans_semibold"
+                android:textSize="17.5sp"
+                android:background="#23A8A8A8"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/receive_time_pdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/receiver_pdf_overflow"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="12:00"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
 </RelativeLayout>
