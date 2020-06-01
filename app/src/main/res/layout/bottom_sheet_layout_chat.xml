@@ -7,121 +7,160 @@
     android:layout_marginTop="20dp"
     android:layout_height="wrap_content">
 
-       <LinearLayout
-        android:background="@drawable/save"
-        android:id="@+id/images"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <RelativeLayout
+        android:id="@+id/LinearChat"
+        android:background="@drawable/deletefor_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_margin="3dp"
-            android:padding="5dp"
-            android:background="@drawable/image_icon"/>
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/images"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Images"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_margin="3dp"
+                android:padding="5dp"
+                android:background="@drawable/image_icon_bottom_sheet"/>
 
-    <LinearLayout
-        android:background="@drawable/bottom_sheet_chat_background"
-        android:id="@+id/videos"
-        android:layout_below="@+id/images"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Images"
+                android:textColor="#EA252525"
+                android:textSize="15sp"
+                android:layout_marginLeft="5dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:gravity="center_vertical"/>
 
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_margin="3dp"
-            android:padding="5dp"
-            android:background="@drawable/videos"/>
+        </LinearLayout>
 
-        <TextView
+        <View
+            android:layout_below="@+id/images"
+            android:layout_width="match_parent"
+            android:layout_height="0.45dp"
+            android:background="#D3D3D3"/>
+
+        <LinearLayout
+            android:id="@+id/videos"
+            android:layout_below="@+id/images"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Videos"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
+            android:gravity="center"
+            android:layout_marginLeft="11dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_margin="3dp"
+                android:padding="5dp"
+                android:background="@drawable/video_icon_bottom_sheet"/>
 
-    <LinearLayout
-        android:id="@+id/pdf"
-        android:background="@drawable/bottom_sheet_chat_background"
-        android:layout_below="@+id/videos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Videos"
+                android:textColor="#EA252525"
+                android:layout_marginLeft="5dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:gravity="center_vertical"/>
 
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_margin="3dp"
-            android:padding="5dp"
-            android:background="@drawable/pdf_icon"/>
+        </LinearLayout>
 
-        <TextView
+        <View
+            android:layout_below="@+id/videos"
+            android:layout_width="match_parent"
+            android:layout_height="0.45dp"
+            android:background="#D3D3D3"/>
+
+        <LinearLayout
+            android:id="@+id/pdf"
+            android:layout_below="@+id/videos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PDF Files"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:gravity="center_vertical"/>
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/word"
-        android:layout_below="@+id/pdf"
-        android:background="@drawable/forward"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_margin="3dp"
+                android:padding="5dp"
+                android:background="@drawable/pdf_icon_bottom_sheet"/>
 
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_margin="4dp"
-            android:padding="5dp"
-            android:background="@drawable/word_icon"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PDF Files"
+                android:textColor="#EA252525"
+                android:layout_marginLeft="5dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:gravity="center_vertical"/>
 
-        <TextView
+        </LinearLayout>
+
+        <View
+            android:layout_below="@+id/pdf"
+            android:layout_width="match_parent"
+            android:layout_height="0.45dp"
+            android:background="#D3D3D3"/>
+
+        <LinearLayout
+            android:id="@+id/word"
+            android:layout_below="@+id/pdf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ms Word Files"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"
-            android:gravity="center_vertical"/>
+            android:gravity="center"
+            android:layout_marginLeft="11dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="40dp"
+                android:layout_margin="4dp"
+                android:padding="5dp"
+                android:background="@drawable/word_icon_bottom_sheet"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ms Word Files"
+                android:layout_marginLeft="5dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:textColor="#EA252525"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/cancel_delete_button"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@+id/word"
+        android:layout_below="@+id/LinearChat"
         android:text="Cancel"
         android:layout_marginTop="10dp"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_blue_dark"
+        android:fontFamily="@font/open_sans_semibold"
+        android:textColor="#01789F"
         android:textSize="20sp"
         android:textAllCaps="false"
         android:background="@drawable/deletefor_me"
