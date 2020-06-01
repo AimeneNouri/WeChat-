@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.PdfReader"></activity>
+        <activity android:name=".activities.Stories"></activity>
+        <activity android:name=".activities.PdfReader" />
         <activity android:name=".activities.Theme" />
         <activity android:name=".activities.Wallpaper" />
         <activity android:name=".activities.MediaChat" />

@@ -40,7 +40,7 @@ public class VoiceCalling extends AppCompatActivity {
     private static final String APP_SECRET = "HJr/Bus8VUukF3DnRnZ5lg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
 
-    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage;
+    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver;
     private SinchClient sinchClient;
 
     private FirebaseAuth mAuth;
@@ -59,6 +59,7 @@ public class VoiceCalling extends AppCompatActivity {
         msgReceiverName = getIntent().getExtras().get("visit_user_name").toString();
         msgReceiverImage = getIntent().getExtras().get("visit_user_image").toString();
         receiverCallId = getIntent().getStringExtra("visit_user_id");
+        DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
         mAuth = FirebaseAuth.getInstance();
         SenderCallId = mAuth.getCurrentUser().getUid();
@@ -95,7 +96,7 @@ public class VoiceCalling extends AppCompatActivity {
             public void onClick(View v) {
                 if (call == null){
 
-                    call = sinchClient.getCallClient().callUser(receiverCallId);
+                    call = sinchClient.getCallClient().callUser(DeviceTokenReceiver);
                     call.addCallListener(new SinchCallListener());
                     callState.setText("Calling...");
 
@@ -109,7 +110,7 @@ public class VoiceCalling extends AppCompatActivity {
                 if (call != null)
                 {
                     call.hangup();
-                    startActivity(new Intent(getApplicationContext(), Chat.class));
+                    onBackPressed();
                 }
             }
         });
@@ -147,11 +148,11 @@ public class VoiceCalling extends AppCompatActivity {
     {
         @Override
         public void onIncomingCall(CallClient callClient, Call incomingCall) {
-            //mediaPlayer.start();
+            mediaPlayer.start();
             acceptCall.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //mediaPlayer.stop();
+                    mediaPlayer.stop();
                     call = incomingCall;
                     call.answer();
                     call.addCallListener(new SinchCallListener());
@@ -163,6 +164,7 @@ public class VoiceCalling extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     call.hangup();
+                    onBackPressed();
                 }
             });
         }

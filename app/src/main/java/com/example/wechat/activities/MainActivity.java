@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.options_menu, menu);
-        getMenuInflater().inflate(R.menu.creategroupbutton, menu);
+        getMenuInflater().inflate(R.menu.stories, menu);
 
         return true;
     }
@@ -283,8 +283,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(findFriendIntent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
-        if (item.getItemId() == R.id.creat_groups){
+        if (item.getItemId() == R.id.new_room){
            NewGroupRequest();
+        }
+        if (item.getItemId() == R.id.story){
+            startActivity(new Intent(MainActivity.this, Stories.class));
         }
         return true;
     }

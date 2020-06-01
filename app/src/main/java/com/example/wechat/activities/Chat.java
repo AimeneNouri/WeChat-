@@ -820,7 +820,7 @@ public class Chat extends AppCompatActivity {
 
            Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
             VoiceIntent.putExtra("visit_user_id", msgReceiverId);
-            VoiceIntent.putExtra("recipientId", deviceToken);
+            VoiceIntent.putExtra("recipientToken", deviceToken);
             VoiceIntent.putExtra("visit_user_name", msgReceiverName);
             VoiceIntent.putExtra("visit_user_image", msgReceiverImage);
             startActivity(VoiceIntent);
