@@ -834,70 +834,6 @@ public class Chat extends AppCompatActivity {
             startActivity(Calling);
         }
 
-        /*if (item.getItemId() == R.id.Chat_info)
-        {
-            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);
-
-            View bottomSheet = LayoutInflater.from(getApplicationContext())
-                    .inflate(R.layout.media_bottom_sheet, (RelativeLayout) findViewById(R.id.bottomSheet_Media));
-
-            MediaList = bottomSheet.findViewById(R.id.Media_list);
-            MediaList.setHasFixedSize(true);
-            MediaList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-            DatabaseReference MediaRef = FirebaseDatabase.getInstance().getReference().child("Messages").child(msgSenderId);
-
-            FirebaseRecyclerOptions<Images> options = new FirebaseRecyclerOptions.Builder<Images>().setQuery(MediaRef, Images.class).build();
-
-            FirebaseRecyclerAdapter<Images, ImagesViewHolder> adapter = new FirebaseRecyclerAdapter<Images, ImagesViewHolder>(options) {
-                @Override
-                protected void onBindViewHolder(@NonNull ImagesViewHolder holder, int position, @NonNull Images model) {
-                    final String[] userImage = {"default_image"};
-
-                    MediaRef.child(msgReceiverId).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            List<String> ListMessage = new ArrayList<>();
-                            String messagetype = dataSnapshot.child("type").getValue(String.class);
-
-                            if (messagetype.equals("image"))
-                            {
-                                for (DataSnapshot imageSnapshot : dataSnapshot.getChildren())
-                                {
-                                    userImage[0] = imageSnapshot.child("image").getValue(String.class);
-                                    Picasso.get().load(userImage[0]).placeholder(R.drawable.profile_image).into(holder.imageView);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-                @NonNull
-                @Override
-                public ImagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_images, parent, false);
-                    return new ImagesViewHolder(view);
-                }
-
-            };
-            MediaList.setAdapter(adapter);
-            adapter.startListening();
-
-            bottomSheetDialog.setContentView(bottomSheet);
-            bottomSheetDialog.show();
-        }
-
-
-        if (item.getItemId() == R.id.Video_info)
-        {
-
-        }
-        */
 
         if (item.getItemId() == R.id.wallpaper_option)
         {
@@ -1023,34 +959,6 @@ public class Chat extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public static class VideosViewHolder extends RecyclerView.ViewHolder{
-
-        VideoView videoView;
-
-        public VideosViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            videoView = itemView.findViewById(R.id.video_media);
-        }
-    }
-
-    public static class ImagesViewHolder extends RecyclerView.ViewHolder{
-
-        ImageView imageView;
-
-        public ImagesViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imageView = itemView.findViewById(R.id.media_image);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-            //relativeLayout.setBackgroundResource(bgResource);
     }
 
     public void sendMessage()

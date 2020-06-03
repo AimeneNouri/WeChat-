@@ -259,7 +259,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.options_menu, menu);
-        getMenuInflater().inflate(R.menu.stories, menu);
 
         return true;
     }
@@ -285,9 +284,6 @@ public class MainActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.new_room){
            NewGroupRequest();
-        }
-        if (item.getItemId() == R.id.story){
-            startActivity(new Intent(MainActivity.this, Stories.class));
         }
         return true;
     }

@@ -7,24 +7,21 @@
     android:background="@drawable/bottom_sheet_chat_background"
     android:layout_marginTop="20dp">
 
-    <TextView
-        android:id="@+id/Titre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Medias"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
-
+    <View
+        android:id="@id/friend"
+        android:layout_width="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_height="5dp"
+        android:background="@drawable/corner"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/Media_list"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/friend"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_below="@+id/Titre"
-        android:layout_above="@+id/mLinearLayout">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
     </androidx.recyclerview.widget.RecyclerView>
 
