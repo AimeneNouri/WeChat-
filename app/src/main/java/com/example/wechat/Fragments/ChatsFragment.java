@@ -56,6 +56,11 @@ public class ChatsFragment extends Fragment {
     private String currentUserId;
     private String lastMessage, MessageId;
 
+    private ImageView NoChat;
+    private TextView textView;
+
+    LinearLayoutManager mLinearLayoutManager;
+
     public ChatsFragment() {
         // Required empty public constructor
     }
@@ -74,7 +79,11 @@ public class ChatsFragment extends Fragment {
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mChatsList = ChatsView.findViewById(R.id.chats_list);
-        mChatsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mLinearLayoutManager = new LinearLayoutManager(getContext());
+        mChatsList.setLayoutManager(mLinearLayoutManager);
+
+        NoChat = ChatsView.findViewById(R.id.no_chat);
+        textView = ChatsView.findViewById(R.id.textView);
 
         return ChatsView;
     }
@@ -82,6 +91,25 @@ public class ChatsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        ChatsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    NoChat.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                }
+                else {
+                    NoChat.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Contacts>().setQuery(ChatsRef, Contacts.class).build();
 
@@ -111,47 +139,52 @@ public class ChatsFragment extends Fragment {
                             MessagesRef.limitToLast(1).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            for (DataSnapshot ds: dataSnapshot.getChildren())
-                                            {
-                                                String message =  ""+ds.child("message").getValue();
-                                                String messageTime =  ""+ds.child("time").getValue();
-                                                String type =  ""+ds.child("type").getValue();
 
-                                                if (message.length() > 34) {
-                                                    message = message.substring(0, 33) + "...";
-                                                }
+                                            if (dataSnapshot.exists()){
+                                                for (DataSnapshot ds: dataSnapshot.getChildren())
+                                                {
+                                                    String message =  ""+ds.child("message").getValue();
+                                                    String messageTime =  ""+ds.child("time").getValue();
+                                                    String type =  ""+ds.child("type").getValue();
 
-                                                if (type.equals("text"))
-                                                {
-                                                    holder.userStatus.setText(message);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("image"))
-                                                {
-                                                    holder.userStatus.setText("Photo");
-                                                    holder.imageMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("video"))
-                                                {
-                                                    holder.userStatus.setText("Video");
-                                                    holder.videoMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("docx"))
-                                                {
-                                                    holder.userStatus.setText("Word File");
-                                                    holder.fileMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("pdf"))
-                                                {
-                                                    holder.userStatus.setText("PDF File");
-                                                    holder.fileMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
+                                                    if (message.length() > 34) {
+                                                        message = message.substring(0, 33) + "...";
+                                                    }
+
+                                                    if (type.equals("text"))
+                                                    {
+                                                        holder.userStatus.setText(message);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("image"))
+                                                    {
+                                                        holder.userStatus.setText("Photo");
+                                                        holder.imageMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("video"))
+                                                    {
+                                                        holder.userStatus.setText("Video");
+                                                        holder.videoMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("docx"))
+                                                    {
+                                                        holder.userStatus.setText("Word File");
+                                                        holder.fileMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("pdf"))
+                                                    {
+                                                        holder.userStatus.setText("PDF File");
+                                                        holder.fileMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
                                                 }
                                             }
-
+                                            else {
+                                                holder.userStatus.setText("Say hello first!");
+                                            }
                                         }
 
                                         @Override
@@ -190,6 +223,7 @@ public class ChatsFragment extends Fragment {
                 ChatsViewHolder viewHolder = new ChatsViewHolder(view);
                 return viewHolder;
             }
+
         };
         mChatsList.setAdapter(adapter);
         adapter.startListening();

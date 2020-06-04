@@ -56,6 +56,9 @@ public class GroupsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String currentUserId;
 
+    private ImageView NoRoom;
+    private TextView textView;
+
     public GroupsFragment() {
         // Required empty public constructor
     }
@@ -65,6 +68,7 @@ public class GroupsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         groupsView = inflater.inflate(R.layout.fragment_groups, container, false);
+
         mGroupsList = groupsView.findViewById(R.id.group_list);
         mGroupsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -72,12 +76,35 @@ public class GroupsFragment extends Fragment {
         GroupsRef = FirebaseDatabase.getInstance().getReference().child("Groups");
         currentUserId = mAuth.getCurrentUser().getUid();
 
+        NoRoom = groupsView.findViewById(R.id.No_room);
+        textView = groupsView.findViewById(R.id.textView);
+
         return groupsView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        GroupsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    NoRoom.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                }
+                else {
+                    NoRoom.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Groups>().setQuery(GroupsRef, Groups.class).build();
         FirebaseRecyclerAdapter<Groups, GroupsViewHolder> adapter = new FirebaseRecyclerAdapter<Groups, GroupsViewHolder>(options) {
@@ -107,72 +134,84 @@ public class GroupsFragment extends Fragment {
                                     .addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            for (DataSnapshot ds: dataSnapshot.getChildren())
-                                            {
-                                                String message =  ""+ds.child("message").getValue();
-                                                String messageTime =  ""+ds.child("time").getValue();
-                                                String from =  ""+ds.child("from").getValue();
-                                                String type =  ""+ds.child("type").getValue();
 
-                                                if (message.length() > 34) {
-                                                    message = message.substring(0, 33) + "...";
-                                                }
+                                            if (dataSnapshot.exists()){
+                                                for (DataSnapshot ds: dataSnapshot.getChildren())
+                                                {
+                                                    String message =  ""+ds.child("message").getValue();
+                                                    String messageTime =  ""+ds.child("time").getValue();
+                                                    String from =  ""+ds.child("from").getValue();
+                                                    String type =  ""+ds.child("type").getValue();
 
-                                                if (type.equals("text"))
-                                                {
-                                                    holder.groupMember.setText(message);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("image"))
-                                                {
-                                                    holder.groupMember.setText(" Photo");
-                                                    holder.imageMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("video"))
-                                                {
-                                                    holder.groupMember.setText("Video");
-                                                    holder.videoMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("docx"))
-                                                {
-                                                    holder.groupMember.setText("Word File");
-                                                    holder.fileMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
-                                                else if (type.equals("pdf"))
-                                                {
-                                                    holder.groupMember.setText("PDF File");
-                                                    holder.fileMessage.setVisibility(View.VISIBLE);
-                                                    holder.messageTime.setText(messageTime);
-                                                }
+                                                    if (message.length() > 34) {
+                                                        message = message.substring(0, 33) + "...";
+                                                    }
 
-                                                DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
-                                                UserRef.orderByChild("uid").equalTo(from)
-                                                        .addValueEventListener(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                for (DataSnapshot ds: dataSnapshot.getChildren())
-                                                                {
-                                                                    String name = ""+ds.child("name").getValue();
-                                                                    if (from.equals(currentUserId))
+                                                    if (message != null)
+                                                    {
+                                                        holder.groupMember.setText("Say Hello first!");
+                                                    }
+
+                                                    if (type.equals("text"))
+                                                    {
+                                                        holder.groupMember.setText(message);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("image"))
+                                                    {
+                                                        holder.groupMember.setText(" Photo");
+                                                        holder.imageMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("video"))
+                                                    {
+                                                        holder.groupMember.setText("Video");
+                                                        holder.videoMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("docx"))
+                                                    {
+                                                        holder.groupMember.setText("Word File");
+                                                        holder.fileMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+                                                    else if (type.equals("pdf"))
+                                                    {
+                                                        holder.groupMember.setText("PDF File");
+                                                        holder.fileMessage.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
+
+                                                    DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+                                                    UserRef.orderByChild("uid").equalTo(from)
+                                                            .addValueEventListener(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                    for (DataSnapshot ds: dataSnapshot.getChildren())
                                                                     {
-                                                                        holder.senderName.setText("You:");
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        holder.senderName.setText(name+": ");
+                                                                        String name = ""+ds.child("name").getValue();
+                                                                        if (from.equals(currentUserId))
+                                                                        {
+                                                                            holder.senderName.setText("You:");
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            holder.senderName.setText(name+": ");
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
 
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                            }
-                                                        });
+                                                                }
+                                                            });
+                                                }
                                             }
+                                            else {
+                                                holder.groupMember.setText("Say hello first!");
+                                            }
+
                                         }
 
                                         @Override

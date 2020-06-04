@@ -10,7 +10,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".activities.Chat"
-    android:background="@drawable/background_discussion">
+    android:background="@drawable/background_chat">
 
     <include
         android:id="@+id/chat_toolbar"
@@ -20,6 +20,7 @@
         android:id="@+id/private_msg_list_of_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
         android:layout_below="@+id/chat_toolbar"
         android:layout_above="@+id/mLinearLayout">
     </androidx.recyclerview.widget.RecyclerView>

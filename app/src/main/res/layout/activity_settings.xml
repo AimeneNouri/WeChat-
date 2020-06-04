@@ -2,10 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutSettings"
     android:layout_width="match_parent"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".activities.SettingsActivity">
+    tools:context=".activities.SettingsActivity"
+    android:descendantFocusability="beforeDescendants">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,6 +21,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
+            android:focusableInTouchMode="true"
             android:background="@drawable/ic_keyboard_backspace_black_24dp"/>
     </RelativeLayout>
 
@@ -41,6 +44,7 @@
         android:textAlignment="center"
         android:textSize="20sp"
         android:textColor="@color/white"
+        android:focusableInTouchMode="true"
         android:background="@drawable/username"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp" />
@@ -49,19 +53,22 @@
     <EditText
         android:id="@+id/profile_status"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Profile_username"
         android:inputType="textMultiLine"
-        android:hint="je suis disponible maintenant"
+        android:hint="Available Now"
         android:textAlignment="center"
         android:textSize="17sp"
+        android:minLines="1"
+        android:maxLines="2"
         android:textColor="@color/black"
+        android:isScrollContainer="true"
         android:backgroundTint="@color/colorPrimaryDark"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-
+        android:focusableInTouchMode="true"
         android:drawableStart="@drawable/ic_event_note_black_24dp"
-        android:padding="5dp"
+        android:padding="12dp"
         android:layout_marginTop="40dp"/>
 
     <TextView
@@ -108,6 +115,6 @@
         android:background="@drawable/btn_update"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="45dp"/>
 
 </RelativeLayout>

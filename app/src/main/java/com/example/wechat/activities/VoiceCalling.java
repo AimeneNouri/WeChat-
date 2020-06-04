@@ -43,8 +43,6 @@ public class VoiceCalling extends AppCompatActivity {
     private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver;
     private SinchClient sinchClient;
 
-    private FirebaseAuth mAuth;
-
     private ImageButton endCall, acceptCall;
     private TextView callState, ReceiverName;
     private Call call;
@@ -61,8 +59,7 @@ public class VoiceCalling extends AppCompatActivity {
         receiverCallId = getIntent().getStringExtra("visit_user_id");
         DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
-        mAuth = FirebaseAuth.getInstance();
-        SenderCallId = mAuth.getCurrentUser().getUid();
+        SenderCallId = FirebaseInstanceId.getInstance().getToken();
 
         endCall = findViewById(R.id.buttonEndCall);
         callState = findViewById(R.id.callState);
@@ -110,6 +107,9 @@ public class VoiceCalling extends AppCompatActivity {
                 if (call != null)
                 {
                     call.hangup();
+                    onBackPressed();
+                }
+                else {
                     onBackPressed();
                 }
             }

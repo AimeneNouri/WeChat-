@@ -12,4 +12,29 @@
         android:layout_height="match_parent" />
 
 
+    <ImageView
+        android:id="@+id/No_room"
+        android:layout_width="57dp"
+        android:layout_height="57dp"
+        android:background="@drawable/group_image2"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:alpha=".3"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Room "
+        android:layout_marginTop="5dp"
+        android:textColor="#000000"
+        android:textSize="13dp"
+        android:alpha=".2"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/No_room"
+        android:visibility="gone"/>
+
 </RelativeLayout>

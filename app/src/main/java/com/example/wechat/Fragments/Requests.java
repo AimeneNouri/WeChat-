@@ -68,12 +68,35 @@ public class Requests extends Fragment {
         mRequestsLists = RequestsView.findViewById(R.id.chat_request_lists);
         mRequestsLists.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        NotificationsOff = RequestsView.findViewById(R.id.No_request);
+        textView = RequestsView.findViewById(R.id.textView);
+
         return  RequestsView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        ChatRequestsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                {
+                    NotificationsOff.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                }
+                else {
+                    NotificationsOff.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         FirebaseRecyclerOptions<Contacts> options =
                 new FirebaseRecyclerOptions.Builder<Contacts>()
@@ -199,28 +222,28 @@ public class Requests extends Fragment {
                                                     }
                                                 });
 
-                                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        CharSequence options[] = new CharSequence[]
+                                                                {
+                                                                        "Accept",
+                                                                        "Cancel"
+                                                                };
+
+                                                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                        builder.setTitle(requestUserName + " Chat Request");
+                                                        builder.setItems(options, new DialogInterface.OnClickListener() {
                                                             @Override
-                                                            public void onClick(View v) {
-                                                                CharSequence options[] = new CharSequence[]
-                                                                        {
-                                                                                "Accept",
-                                                                                "Cancel"
-                                                                        };
+                                                            public void onClick(DialogInterface dialog, int which)
+                                                            {
 
-                                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                                                builder.setTitle(requestUserName + " Chat Request");
-                                                                builder.setItems(options, new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which)
-                                                                    {
-
-                                                                    }
-                                                                });
-
-                                                                builder.show();
                                                             }
                                                         });
+
+                                                        builder.show();
+                                                    }
+                                                });
 
                                             }
 

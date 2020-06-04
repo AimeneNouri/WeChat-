@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
        saveCurrentDate = currentDate.format(calendar.getTime());
 
-       SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm aa");
+       SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
        saveCurrentTime = currentTime.format(calendar.getTime());
 
        HashMap<String, Object> onlineStatusMap = new HashMap<>();

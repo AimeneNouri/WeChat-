@@ -189,7 +189,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.senTime.setVisibility(View.VISIBLE);
 
                 holder.senderMsgText.setBackgroundResource(R.drawable.sender_message);
-                holder.senderMsgText.setText(messages.getMessage());
+                holder.senderMsgText.setText(messages.getMessage() +" ");
                 holder.senTime.setText(messages.getTime());
                 holder.senderMsgText.setTextColor(Color.BLACK);
 

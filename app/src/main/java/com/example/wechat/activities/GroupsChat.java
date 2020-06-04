@@ -86,7 +86,7 @@ public class GroupsChat extends AppCompatActivity {
     private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef, RootRef;
 
     private String currentGroupName, currentGroupId, msgSenderId, groupAdminId,currentUserName, currentDate, currentTime, checker = "", groupImage, msgReceiverId;
-    String senderName = "";
+    String senderName = "",calledBy = "";
     public static boolean isDiscussionActivityRunning;
 
     private ProgressDialog loadingBar;
@@ -137,6 +137,8 @@ public class GroupsChat extends AppCompatActivity {
                 startActivity(profileIntent);
             }
         });
+
+        checkForReceivingCall();
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -435,7 +437,7 @@ public class GroupsChat extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
 
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
     }
 
@@ -693,6 +695,7 @@ public class GroupsChat extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isDiscussionActivityRunning = false;
+        checkForReceivingCall();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (!MainActivity.isMainActivityRunning){
@@ -783,7 +786,7 @@ public class GroupsChat extends AppCompatActivity {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
         saveCurrentDate = currentDate.format(calendar.getTime());
 
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
 
         HashMap<String, Object> onlineStatusMap = new HashMap<>();
@@ -881,5 +884,30 @@ public class GroupsChat extends AppCompatActivity {
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
+    }
+
+    private void checkForReceivingCall()
+    {
+        RootRef.child("Users").child(msgSenderId)
+                .child("Ringing")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.hasChild("ringing"))
+                        {
+                            calledBy = dataSnapshot.child("ringing").getValue(String.class);
+
+                            Intent CallIntent = new Intent(GroupsChat.this, CallingActivity.class);
+                            CallIntent.putExtra("visit_user_id", calledBy);
+                            startActivity(CallIntent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 }

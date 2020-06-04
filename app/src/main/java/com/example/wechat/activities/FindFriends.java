@@ -22,6 +22,7 @@ import com.example.wechat.Contacts;
 import com.example.wechat.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +37,7 @@ public class FindFriends extends AppCompatActivity{
 
     private Toolbar mToolbar;
     private RecyclerView FindFriendsRecyclerList;
-    private String currentUserId,calledBy = "";
+    private String currentUserId, calledBy = "";
 
     FirebaseRecyclerOptions<Contacts> options;
     FirebaseRecyclerAdapter<Contacts, FindFriendViewHolder> adapter;
@@ -49,7 +50,7 @@ public class FindFriends extends AppCompatActivity{
         setContentView(R.layout.activity_find_friends);
 
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FindFriendsRecyclerList = findViewById(R.id.find_friends_recycler_list);
         FindFriendsRecyclerList.setHasFixedSize(true);
@@ -63,13 +64,11 @@ public class FindFriends extends AppCompatActivity{
         actionBar.setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Users");
 
+
+        checkForReceivingCall();
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
+
 
     @Override
     protected void onStart()
@@ -122,6 +121,12 @@ public class FindFriends extends AppCompatActivity{
             userStatus = itemView.findViewById(R.id.user_status);
             profileImage = itemView.findViewById(R.id.users_profile_image);
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void checkForReceivingCall()

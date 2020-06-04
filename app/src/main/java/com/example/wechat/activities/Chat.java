@@ -88,7 +88,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Chat extends AppCompatActivity {
 
     private Toolbar mToolbar;
-    private String msgReceiverId, msgReceiverName, msgReceiverImage, msgSenderId;
+    private String msgReceiverId, msgReceiverName, msgReceiverImage, msgSenderId, senderToken;
     private TextView userName, userLastSeen;
     private CircleImageView userImage;
     Animation slideFromRight, slideToRight;
@@ -143,15 +143,6 @@ public class Chat extends AppCompatActivity {
         relativeLayout = findViewById(R.id.layout);
         Initialisation();
         floatingActionButton = findViewById(R.id.BackToLastMessage);
-
-        if (bgResource == R.drawable.bg_item1 || bgResource == R.drawable.bg_item1 ||  bgResource == R.drawable.background_discussion)
-        {
-            relativeLayout.setBackgroundResource(bgResource);
-        }else
-        {
-            relativeLayout.setBackgroundColor(Color.parseColor("#DCDCDC"));
-        }
-
 
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
@@ -368,6 +359,7 @@ public class Chat extends AppCompatActivity {
                 {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    msgInput.clearFocus();
                 }
             }
         });
@@ -441,7 +433,7 @@ public class Chat extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
 
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
     }
 
@@ -713,7 +705,7 @@ public class Chat extends AppCompatActivity {
         super.onStart();
         isDiscussionActivityRunning = true;
         checkForReceivingCall();
-        relativeLayout.setBackgroundResource(bgResource);
+        //relativeLayout.setBackgroundResource(bgResource);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){
@@ -729,7 +721,7 @@ public class Chat extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         isDiscussionActivityRunning = false;
-        relativeLayout.setBackgroundResource(bgResource);
+        //relativeLayout.setBackgroundResource(bgResource);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
@@ -742,7 +734,7 @@ public class Chat extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isDiscussionActivityRunning = false;
-        relativeLayout.setBackgroundResource(bgResource);
+        //relativeLayout.setBackgroundResource(bgResource);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (!MainActivity.isMainActivityRunning){
@@ -808,7 +800,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.call, menu);
+        getMenuInflater().inflate(R.menu.call, menu);
         getMenuInflater().inflate(R.menu.chat_setting, menu);
         return true;
     }
@@ -818,12 +810,14 @@ public class Chat extends AppCompatActivity {
 
         if (item.getItemId() == R.id.voice_call_icon_option){
 
-           Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
+            Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
             VoiceIntent.putExtra("visit_user_id", msgReceiverId);
             VoiceIntent.putExtra("recipientToken", deviceToken);
             VoiceIntent.putExtra("visit_user_name", msgReceiverName);
             VoiceIntent.putExtra("visit_user_image", msgReceiverImage);
             startActivity(VoiceIntent);
+
+
 
             return true;
         }
@@ -835,7 +829,7 @@ public class Chat extends AppCompatActivity {
         }
 
 
-        if (item.getItemId() == R.id.wallpaper_option)
+        /*if (item.getItemId() == R.id.wallpaper_option)
         {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);
 
@@ -895,7 +889,7 @@ public class Chat extends AppCompatActivity {
 
             bottomSheetDialog.setContentView(bottomSheet);
             bottomSheetDialog.show();
-        }
+        }*/
 
         if (item.getItemId() == R.id.remove_option)
         {
@@ -1041,7 +1035,7 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
         saveCurrentDate = currentDate.format(calendar.getTime());
 
-        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
 
         HashMap<String, Object> onlineStatusMap = new HashMap<>();

@@ -44,6 +44,9 @@ public class ContactsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String currentUserId;
 
+    private ImageView NoContact;
+    private TextView textView;
+
     public ContactsFragment() {
         // Required empty public constructor
     }
@@ -64,12 +67,34 @@ public class ContactsFragment extends Fragment {
         ContactsRef = FirebaseDatabase.getInstance().getReference().child("Contacts").child(currentUserId);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
+        NoContact = ContactView.findViewById(R.id.no_contact);
+        textView = ContactView.findViewById(R.id.textView);
+
         return ContactView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        ContactsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    NoContact.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                }
+                else {
+                    NoContact.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Contacts>().setQuery(ContactsRef, Contacts.class).build();
 

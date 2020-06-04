@@ -1,6 +1,7 @@
 package com.example.wechat.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -8,9 +9,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +54,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int galleryPick = 1;
-    private String photoUrl = " ";
+    private String photoUrl = " ", calledBy = "";
     private StorageTask uploadTask;
 
     private CircleImageView UserImage;
@@ -67,6 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
     private FirebaseUser user;
     private StorageReference UserImageRef;
 
+    private RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,13 +84,29 @@ public class SettingsActivity extends AppCompatActivity {
         UserImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         BackToMain = findViewById(R.id.backToMainActivity);
-        UserImage = (CircleImageView) findViewById(R.id.profile_image);
-        UserName = (EditText) findViewById(R.id.Profile_username);
-        UserEmail = (TextView) findViewById(R.id.User_mail_profile);
-        phone_number = (TextView) findViewById(R.id.User_phoneNumber_profile);
-        UserStatus = (EditText) findViewById(R.id.profile_status);
-        UpdateAccount = (Button) findViewById(R.id.updateSetting_button);
+        UserImage = findViewById(R.id.profile_image);
+        UserName = findViewById(R.id.Profile_username);
+        UserEmail = findViewById(R.id.User_mail_profile);
+        phone_number = findViewById(R.id.User_phoneNumber_profile);
+        UserStatus = findViewById(R.id.profile_status);
+        UpdateAccount = findViewById(R.id.updateSetting_button);
         loadingBar = new ProgressDialog(this);
+
+        relativeLayout = findViewById(R.id.layoutSettings);
+
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = SettingsActivity.this.getCurrentFocus();
+                if (view != null)
+                {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    UserName.clearFocus();
+                    UserStatus.clearFocus();
+                }
+            }
+        });
 
         //check for email existing
         if (TextUtils.isEmpty(user.getEmail()))
@@ -135,6 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        checkForReceivingCall();
     }
 
     @Override
@@ -309,4 +330,28 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    private void checkForReceivingCall()
+    {
+        RootRef.child("Users").child(currentUserId)
+                .child("Ringing")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if (dataSnapshot.hasChild("ringing"))
+                        {
+                            calledBy = dataSnapshot.child("ringing").getValue(String.class);
+
+                            Intent CallIntent = new Intent(SettingsActivity.this, CallingActivity.class);
+                            CallIntent.putExtra("visit_user_id", calledBy);
+                            startActivity(CallIntent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 }
