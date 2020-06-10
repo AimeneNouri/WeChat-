@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/bottom_create_new_group">
+
+    <RelativeLayout
+        android:id="@+id/linearNewGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/grad">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/groupPhoto"
+            android:layout_width="110dp"
+            android:layout_height="120dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/group_image3" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mLinearLayout2"
+        android:background="@color/white"
+        android:layout_below="@id/linearNewGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/groupName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:gravity="center"
+            android:hint="Room name"
+            android:textColor="@color/black"
+            android:textColorHint="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"
+            android:inputType="textEmailAddress"
+            android:padding="4dp"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/createGroup"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/groupName"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="50dp"
+            android:layout_alignParentLeft="true"
+            android:padding="4dp"
+            android:text="Create"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_accepter"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/groupName"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:padding="4dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:background="@drawable/btn_annuler"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
