@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_discussion"
+    android:background="@drawable/background_chat"
     tools:context=".activities.GroupsChat">
 
     <include
@@ -16,7 +16,6 @@
         android:id="@+id/private_msg_list_of_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
         android:layout_below="@+id/group_chat_bar"
         android:layout_above="@+id/mLinearLayout">
     </androidx.recyclerview.widget.RecyclerView>
@@ -28,7 +27,7 @@
         android:layout_alignBottom="@+id/private_msg_list_of_users"
         android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|right"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         android:alpha=".2"
         app:borderWidth="0dp"
@@ -51,39 +50,43 @@
 
         <ImageView
             android:id="@+id/send_files_btn"
-            android:layout_width="30dp"
+            android:layout_width="25dp"
             android:layout_height="30dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
             android:layout_gravity="bottom"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:layout_marginBottom="5.8dp"
+            android:src="@drawable/attach_icon1" />
 
-        <EditText
-            android:id="@+id/input_groups_message"
-            android:layout_width="315dp"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter The Text Message..."
-            android:background="@drawable/inputdiscussion"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:maxLines="6"
-            android:isScrollContainer="true"
-            android:padding="10dp"
             android:layout_marginTop="2dp"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/send_files_btn"
-            android:layout_marginEnd="2dp"/>
+            android:layout_marginEnd="2dp">
+
+            <EditText
+                android:id="@+id/input_groups_message"
+                android:layout_width="295dp"
+                android:layout_height="wrap_content"
+                android:hint="Enter The Text Message..."
+                android:background="@drawable/inputdiscussion"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="6"
+                android:isScrollContainer="true"
+                android:padding="7dp" />
+
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/send_msg_button"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="2dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginStart="1dp"
             android:layout_gravity="bottom"
-            android:background="@drawable/btn_send_message"
-            android:visibility="gone"/>
+            android:background="@drawable/btn_send_message" />
 
     </LinearLayout>
 

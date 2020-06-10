@@ -42,8 +42,8 @@
         android:text="Last Seen"
         android:layout_below="@+id/receiverName"
         android:textSize="9dp"
-        android:textColor="#E6E6E6"
+        android:textColor="#F1F1F1"
         android:textStyle="bold"
-        android:layout_marginStart="68dp" />
+        android:layout_marginStart="70.5dp" />
 
 </RelativeLayout>

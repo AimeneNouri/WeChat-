@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,8 +12,10 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +38,8 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference Rootref;
     private ProgressDialog loadingBar;
 
+    private RelativeLayout relativeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
         AlreadyAccount = (TextView) findViewById(R.id.already_have_account_link);
         loadingBar = new ProgressDialog(this) ;
         TogglePassword = findViewById(R.id.togglePassword);
+        relativeLayout = findViewById(R.id.register_relativeLayout);
 
         TogglePassword.setVisibility(View.GONE);
         UserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -108,6 +114,20 @@ public class RegisterActivity extends AppCompatActivity {
                 CreateNewAccount();
             }
         });
+
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = RegisterActivity.this.getCurrentFocus();
+                if (view != null)
+                {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    UserEmail.clearFocus();
+                    UserPassword.clearFocus();
+                }
+            }
+        });
     }
 
     private void sendUserToLoginActivity() {
@@ -115,6 +135,12 @@ public class RegisterActivity extends AppCompatActivity {
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void CreateNewAccount() {

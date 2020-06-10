@@ -22,7 +22,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:text="Enter your Phone number"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:textSize="25sp"
         android:layout_centerHorizontal="true"
@@ -45,7 +45,7 @@
         android:inputType="phone"
         android:padding="15dp"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="18dp" />
 
     <Button
@@ -59,7 +59,7 @@
         android:text="GO"
         android:layout_below="@+id/phone_number_input"
         android:textAllCaps="false"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="17sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"/>
@@ -75,7 +75,7 @@
         android:layout_marginTop="-1dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="1dp"
-        android:indeterminateTint="@color/colorPrimaryDark"
+        android:indeterminateTint="@color/colorPrimary"
         android:visibility="invisible" />
 
     <EditText
@@ -85,7 +85,7 @@
         android:layout_alignTop="@+id/your_phone_number"
         android:layout_alignParentStart="true"
         android:layout_marginStart="21dp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:layout_marginTop="64dp"
         android:background="@drawable/phone_number"
         android:ems="10"

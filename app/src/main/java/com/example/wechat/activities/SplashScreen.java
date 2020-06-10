@@ -15,7 +15,7 @@ import com.example.wechat.R;
 
 public class SplashScreen extends AppCompatActivity {
 
-    public static int TIME_OUT = 5000;
+    public static int TIME_OUT = 4000;
     Animation topAnim, bottomAnim;
     ImageView logo;
     TextView we, chat;
@@ -44,6 +44,7 @@ public class SplashScreen extends AppCompatActivity {
                 Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         },TIME_OUT);
     }

@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("WeChat");
+        getSupportActionBar().setIcon(R.drawable.logo_wecht_main);
 
         myFrameLayout = (FrameLayout) findViewById(R.id.main_frame);
         myBottomNavigationView = (BottomNavigationView) findViewById(R.id.main_tabs);
@@ -251,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @Override

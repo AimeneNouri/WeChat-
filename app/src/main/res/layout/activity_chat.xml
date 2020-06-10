@@ -20,7 +20,6 @@
         android:id="@+id/private_msg_list_of_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
         android:layout_below="@+id/chat_toolbar"
         android:layout_above="@+id/mLinearLayout">
     </androidx.recyclerview.widget.RecyclerView>
@@ -32,12 +31,12 @@
         android:layout_alignBottom="@+id/private_msg_list_of_users"
         android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|right"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         android:alpha=".15"
         app:borderWidth="0dp"
         app:fabCustomSize="40dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_keyboard_arrow_down_black_96dp"
         app:maxImageSize="33dp"
         android:clickable="true"
@@ -55,41 +54,44 @@
 
         <ImageView
             android:id="@+id/send_files_btn"
-            android:layout_width="30dp"
+            android:layout_width="25dp"
             android:layout_height="30dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
             android:layout_gravity="bottom"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/send_files"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:layout_marginBottom="5.8dp"
+            android:src="@drawable/attach_icon1" />
 
-        <EditText
-            android:id="@+id/input_chat_message"
-            android:layout_width="315dp"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter The Text Message..."
-            android:background="@drawable/inputdiscussion"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:maxLines="6"
-            android:isScrollContainer="true"
-            android:padding="10dp"
             android:layout_marginTop="2dp"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/send_files_btn"
-            android:layout_marginEnd="2dp" />
+            android:layout_marginEnd="2dp">
+
+            <EditText
+                android:id="@+id/input_chat_message"
+                android:layout_width="295dp"
+                android:layout_height="wrap_content"
+                android:hint="Enter The Text Message..."
+                android:background="@drawable/inputdiscussion"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="6"
+                android:isScrollContainer="true"
+                android:padding="7dp" />
+
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/send_msg_button"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="7dp"
             android:layout_gravity="bottom"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="1dp"
             android:background="@drawable/btn_send_message"
-            android:layout_toEndOf="@+id/input_chat_message"
-            android:visibility="gone"/>
+            android:layout_toEndOf="@+id/input_chat_message" />
 
     </LinearLayout>
 </RelativeLayout>

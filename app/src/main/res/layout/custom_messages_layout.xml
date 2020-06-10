@@ -16,25 +16,13 @@
         android:src="@drawable/profile_image"
         />
 
-    <TextView
-        android:id="@+id/receiverUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_toEndOf="@+id/message_profile_image"
-        android:text=""
-        android:textColor="#6A6A6A"
-        android:alpha=".8"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
     <RelativeLayout
         android:layout_below="@+id/receiverUsername"
         android:id="@+id/receiver_message_text_layout"
         android:layout_width="210dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_toEndOf="@+id/message_profile_image"
         android:background="@drawable/receiver_message"
         android:layout_marginLeft="5dp"
@@ -303,7 +291,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_toEndOf="@+id/icon_pdf"
                 android:fontFamily="@font/open_sans_semibold"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:text="PDF File "
                 android:textColor="#434343"
                 android:textSize="17.5sp" />
@@ -316,8 +304,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/sender_pdf_overflow"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="3dp"
             android:text="12:00"
             android:textColor="#6A6A6A"
             android:textSize="10sp"
@@ -358,11 +346,10 @@
                 android:layout_height="wrap_content"
                 android:text="PDF File "
                 android:layout_toEndOf="@+id/icon_pdf_receiver"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:fontFamily="@font/open_sans_semibold"
                 android:textColor="@color/white"
                 android:textSize="17.5sp"
-                android:background="#23A8A8A8"
                 />
 
         </RelativeLayout>
@@ -373,8 +360,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/receiver_pdf_overflow"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="3dp"
             android:textStyle="bold"
             android:text="12:00"
             android:textColor="@color/white"

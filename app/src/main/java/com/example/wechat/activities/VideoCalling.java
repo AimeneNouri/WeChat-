@@ -42,7 +42,7 @@ public class VideoCalling extends AppCompatActivity{
     private static final String LOG_TAG = VideoCalling.class.getSimpleName();
     private static final int RC_VIDEO_APP_PERM = 124;
 
-    private ImageView closeVideoChat;
+    private ImageView closeVideoChat, switchCam_btn, mute_btn, unMute_btn;
 
     private DatabaseReference UsersRef;
     private String UserId = "";
@@ -62,6 +62,9 @@ public class VideoCalling extends AppCompatActivity{
         UserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         closeVideoChat = findViewById(R.id.end_video_chat_btn);
+        switchCam_btn = findViewById(R.id.swap_video_cam_btn);
+        mute_btn = findViewById(R.id.mute_video_chat_btn);
+        unMute_btn = findViewById(R.id.unMute_video_chat_btn);
 
         closeVideoChat.setOnClickListener(new View.OnClickListener() {
             @Override

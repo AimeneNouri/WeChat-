@@ -255,6 +255,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.receive_time.setVisibility(View.GONE);
                 holder.sent_time_image.setVisibility(View.GONE);
                 holder.receiver_time_image.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.imageSenderLayout.setVisibility(View.GONE);
                 holder.imageReceiverLayout.setVisibility(View.VISIBLE);
 
@@ -307,6 +308,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.playOne.setVisibility(View.VISIBLE);
                 holder.sent_time_video.setVisibility(View.GONE);
                 holder.videoSenderLayout.setVisibility(View.GONE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.receiver_time_video.setVisibility(View.VISIBLE);
                 holder.videoReceiverLayout.setVisibility(View.VISIBLE);
 
@@ -360,6 +362,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.iconReceiverPdf.setVisibility(View.VISIBLE);
                 holder.iconSenderPdf.setVisibility(View.GONE);
                 holder.receivePdfMessage.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.sentPdfMessage.setVisibility(View.GONE);
                 holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
                 holder.overflow_pdf_sender.setVisibility(View.GONE);
@@ -417,6 +420,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 holder.iconSenderPdf.setVisibility(View.GONE);
                 holder.receivePdfMessage.setVisibility(View.VISIBLE);
                 holder.sentPdfMessage.setVisibility(View.GONE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.overflow_pdf_receiver.setVisibility(View.VISIBLE);
                 holder.overflow_pdf_sender.setVisibility(View.GONE);
 

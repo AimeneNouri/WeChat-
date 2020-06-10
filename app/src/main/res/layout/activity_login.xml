@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/login_relativeLayout"
     android:layout_height="match_parent"
     android:background="@drawable/gradientlogin"
-    tools:context=".activities.LoginActivity">
+    tools:context=".activities.LoginActivity"
+    android:descendantFocusability="beforeDescendants">
 
 
             <ImageView
@@ -39,6 +41,7 @@
             android:hint="Email"
             android:textColorHint="@color/grayblack"
             android:textColor="@color/white"
+            android:focusableInTouchMode="true"
             android:textSize="22sp"
             android:padding="10dp"
             android:background="@drawable/et_bg"/>
@@ -54,6 +57,7 @@
             android:ems="12"
             android:background="@drawable/et_bg"
             android:inputType="textPassword"
+            android:focusableInTouchMode="true"
             android:hint="Password"
             android:textColorHint="@color/grayblack"
             android:textColor="@color/white"
@@ -72,18 +76,7 @@
             android:textColor="@color/white"
             android:textAllCaps="false"/>
 
-        <TextView
-            android:id="@+id/forget_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="250dp"
-            android:layout_below="@+id/button_login"
-            android:layout_marginTop="10dp"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:text="Forget Password?"
-            android:textColor="@color/white"
-            />
+
 
         <TextView
             android:id="@+id/login_using_phone"
@@ -127,15 +120,31 @@
             android:drawableStart="@drawable/ic_smartphone_black_24dp"/>
 
         <TextView
-            android:id="@+id/need_new_account"
-            android:layout_width="match_parent"
+            android:id="@+id/forget_password"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/phone_login_button"
-            android:layout_marginTop="40dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:text="Forget Password?"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="@color/white"
+            />
+
+        <TextView
+            android:id="@+id/need_new_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="13sp"
             android:textStyle="bold"
             android:text="Need new Account ?"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="3dp"
             android:textColor="@color/white"/>
 
         <TextView

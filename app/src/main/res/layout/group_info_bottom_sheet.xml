@@ -27,7 +27,7 @@
             android:layout_below="@id/group_profile_image"
             android:layout_centerHorizontal="true"
             android:text="room name"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             android:textAllCaps="false"
             android:textSize="24sp"
             android:textStyle="bold"/>
@@ -38,7 +38,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:layout_height="1dp"
-            android:background="@color/colorPrimaryDark"/>
+            android:background="@color/colorPrimary"/>
 
     </RelativeLayout>
 
@@ -70,7 +70,7 @@
             android:layout_marginStart="40dp"
             android:text="room admin"
             android:layout_below="@id/text_admin"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:layout_marginBottom="20dp"
@@ -96,48 +96,6 @@
             android:textStyle="bold"
             android:visibility="gone"/>
 
-       <!-- <TextView
-            android:id="@+id/text_member"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="50dp"
-            android:text="Room members :"
-            android:layout_below="@id/group_admin"
-            android:textColor="#46144C"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:layout_marginBottom="5dp"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/group_member"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="55dp"
-            android:text="room admin"
-            android:layout_below="@id/text_member"
-            android:textColor="@color/colorPrimaryDark"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textSize="20sp"
-            android:textStyle="bold"/>-->
-
     </RelativeLayout>
-
-    <!--<Button
-        android:id="@+id/cancel_delete_button"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_below="@+id/mLinearLayout2"
-        android:text="Cancel"
-        android:layout_marginTop="10dp"
-        android:textStyle="bold"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="20sp"
-        android:textAllCaps="false"
-        android:background="@drawable/deletefor_me"
-        android:gravity="center"/>!-->
 
 </RelativeLayout>

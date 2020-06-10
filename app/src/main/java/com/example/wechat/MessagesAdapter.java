@@ -57,7 +57,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     public class MessagesViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
+        public TextView senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
         public CircleImageView receiverProfileImage;
         public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo, iconReceiverPdf, iconSenderPdf;
         public VideoView messageSenderVideo, messageReceiverVideo;
@@ -69,7 +69,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             senderMsgText = itemView.findViewById(R.id.sender_message_text);
             receiverMsgText = itemView.findViewById(R.id.receiver_message_text);
             receiverProfileImage = itemView.findViewById(R.id.message_profile_image);
-            receiverName = itemView.findViewById(R.id.receiverUsername);
             messageSenderImage = itemView.findViewById(R.id.message_sender_image);
             messageReceiverImage = itemView.findViewById(R.id.message_receiver_image);
             messageSenderVideo = itemView.findViewById(R.id.message_sender_video);
@@ -134,8 +133,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     String ReceiverImage = dataSnapshot.child("image").getValue().toString();
                     Picasso.get().load(ReceiverImage).placeholder(R.drawable.profile_image).into(holder.receiverProfileImage);
                 }
-                String ReceiverName = dataSnapshot.child("name").getValue().toString();
-                holder.receiverName.setText(ReceiverName);
             }
 
             @Override
@@ -146,7 +143,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
         holder.receiverMsgText.setVisibility(View.GONE);
         holder.receiverProfileImage.setVisibility(View.GONE);
-        holder.receiverName.setVisibility(View.GONE);
         holder.senderMsgText.setVisibility(View.GONE);
         holder.messageReceiverImage.setVisibility(View.GONE);
         holder.messageSenderImage.setVisibility(View.GONE);
@@ -210,7 +206,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 holder.messageReceiver.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
-                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.receiverMsgText.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.INVISIBLE);
 
@@ -807,7 +802,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(messageHolder.itemView.getContext(), "Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(messageHolder.itemView.getContext(), "Deleted for me.", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -829,7 +824,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             {
                 if (task.isSuccessful())
                 {
-                    Toast.makeText(messageHolder.itemView.getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(messageHolder.itemView.getContext(), "Deleted for me", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(messageHolder.itemView.getContext(), "Error", Toast.LENGTH_SHORT).show();
@@ -841,10 +836,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private void deleteMessagesForEveryOne(final int position, final MessagesViewHolder messageHolder)
     {
         final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        if (!userMessagesList.get(position).getFrom().equals(userMessagesList.get(position).getTo()))
-        {
-            rootRef.child("Messages")
-                    .child(userMessagesList.get(position).getTo())
+            rootRef.child("Messages").child(userMessagesList.get(position).getTo())
                     .child(userMessagesList.get(position).getFrom())
                     .child(userMessagesList.get(position).getMessageID())
                     .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -873,6 +865,4 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 }
             });
         }
-    }
-
 }

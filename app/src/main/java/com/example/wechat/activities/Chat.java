@@ -25,6 +25,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -334,6 +335,7 @@ public class Chat extends AppCompatActivity {
 
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
+                msgInput.clearFocus();
             }
         });
     }
@@ -384,10 +386,10 @@ public class Chat extends AppCompatActivity {
 
         loadingBar = new ProgressDialog(this);
 
-        final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
+        /*final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(635, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParam.setMargins(0,4,0, 4);
-        layoutParams.setMargins(0,4,0, 4);
+        layoutParams.setMargins(0,4,0, 4);*/
 
         msgInput.setHint("Message "+ msgReceiverName +"'s chat");
         msgInput.addTextChangedListener(new TextWatcher() {
@@ -402,21 +404,17 @@ public class Chat extends AppCompatActivity {
 
                 if (s.length() != 0)
                 {
-                    send_msg.setVisibility(View.VISIBLE);
-                    //send_msg.setAnimation(slideFromRight);
-                    msgInput.setLayoutParams(layoutParam);
                     RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                    uploadFilesBtn.setVisibility(View.GONE);
                 }
                 if (s.length() == 0)
                 {
-                    send_msg.setVisibility(View.GONE);
-                    //send_msg.setAnimation(slideToRight);
-                    msgInput.setLayoutParams(layoutParams);
+                    uploadFilesBtn.setVisibility(View.VISIBLE);
                 }
             }
 
             private Timer timer = new Timer();
-            private final long DELAY = 500; // milliseconds
+            private final long DELAY = 500;
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -998,7 +996,6 @@ public class Chat extends AppCompatActivity {
 
                                 /*try {
                                     Jsoup.connect("https://fcm.googleapis.com/fcm/send")
-                                            .method(Connection.Method.POST)
                                             .header("Content-type", "application/json")
                                             .header("Authorization", "key=AAAAqKZPPWs:APA91bHvxLeeuN_WaIHOxGpV1j3_VGuKJW1Zzsdbch6BY5bRM-Nf6xYRxAAtfuu3JuVOSpS3HyRJEpiovEC3WlcK0XQtInNd92EIcXit52HYzgbqw-Tq9zn4f1z0iHlE7G0udY1aE3w4")
                                             .requestBody("{\"notification\":{\"title\":\"" + senderName + "\",\"body\":\"" + messageText + "\"},\"to\" : \"" + deviceToken + "\"}")

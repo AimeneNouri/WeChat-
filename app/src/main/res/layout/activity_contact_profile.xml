@@ -23,7 +23,7 @@
         android:layout_height="140dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="90dp"
         android:src="@drawable/profile_image"/>
 
     <TextView
@@ -59,15 +59,15 @@
         android:id="@+id/remove_friend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/visit_profile_status"
         android:layout_marginLeft="65dp"
-        android:layout_marginTop="170dp"
         android:layout_marginRight="65dp"
         android:elevation="4dp"
         android:background="@drawable/send_message_request"
         android:text="Remove Contact"
+        android:layout_marginBottom="130dp"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
+        android:layout_alignParentBottom="true"
         android:textSize="20sp"
         android:padding="4dp"
         android:textStyle="bold"/>

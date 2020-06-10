@@ -11,10 +11,10 @@
 
     <ImageView
         android:id="@+id/logo_wechat"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/logo_wechat"
+        android:src="@drawable/logowechat"
         />
 
     <TextView
@@ -22,9 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="We"
-        android:layout_marginRight="85sp"
+        android:layout_marginRight="73sp"
         android:textAlignment="center"
-        android:textSize="38sp"
+        android:textSize="35sp"
         android:textColor="#EACD98"
         android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
@@ -36,13 +36,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo_wechat"
-        android:layout_marginLeft="49sp"
+        android:layout_marginLeft="50sp"
         android:alpha=".9"
         android:fontFamily="sans-serif-medium"
         android:text="Chat"
         android:textAlignment="center"
         android:textColor="#CED9ED"
-        android:textSize="38sp"
+        android:textSize="35sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

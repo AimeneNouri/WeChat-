@@ -225,6 +225,7 @@ public class GroupsChat extends AppCompatActivity {
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
 
+                userMessageInput.clearFocus();
             }
         });
 
@@ -320,8 +321,8 @@ public class GroupsChat extends AppCompatActivity {
         GroupInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                groupName.setAlpha((float) 0.6);
-                memberNumber.setAlpha((float) 0.6);
+                //groupName.setAlpha((float) 0.6);
+                //memberNumber.setAlpha((float) 0.6);
                 final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(GroupsChat.this, R.style.BottomSheet);
 
                 View bottomSheet = LayoutInflater.from(getApplicationContext())
@@ -376,8 +377,8 @@ public class GroupsChat extends AppCompatActivity {
 
                 bottomSheetDialog.setContentView(bottomSheet);
                 bottomSheetDialog.show();
-                groupName.setAlpha(1);
-                memberNumber.setAlpha(1);
+                /*groupName.setAlpha(1);
+                memberNumber.setAlpha(1);*/
             }
         });
 
@@ -391,10 +392,10 @@ public class GroupsChat extends AppCompatActivity {
             }
         });
 
-        final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
+        /*final LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(570, LinearLayout.LayoutParams.WRAP_CONTENT);
         final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(635, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParam.setMargins(0,4,0, 4);
-        layoutParams.setMargins(0,4,0, 4);
+        layoutParams.setMargins(0,4,0, 4);*/
 
         userMessageInput.setHint("Message "+ currentGroupName +"'s chat");
         userMessageInput.addTextChangedListener(new TextWatcher() {
@@ -408,14 +409,16 @@ public class GroupsChat extends AppCompatActivity {
             {
                 if (s.length() != 0)
                 {
-                    sendMessageButton.setVisibility(View.VISIBLE);
-                    userMessageInput.setLayoutParams(layoutParam);
-                    RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                    //sendMessageButton.setVisibility(View.VISIBLE);
+                    //userMessageInput.setLayoutParams(layoutParam);
+                    //RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
+                    Send_File_Btn.setVisibility(View.GONE);
                 }
                 if (s.length() == 0)
                 {
-                    sendMessageButton.setVisibility(View.GONE);
-                    userMessageInput.setLayoutParams(layoutParams);
+                    //sendMessageButton.setVisibility(View.GONE);
+                    //userMessageInput.setLayoutParams(layoutParams);
+                    Send_File_Btn.setVisibility(View.VISIBLE);
                 }
             }
 

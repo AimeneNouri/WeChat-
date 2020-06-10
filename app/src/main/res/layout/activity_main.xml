@@ -21,6 +21,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        app:labelVisibilityMode="labeled"
         android:id="@+id/main_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -28,7 +29,7 @@
         android:background="@drawable/nav_bottom"
         app:menu="@menu/bottom_nav"
         app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/white"
+        app:itemTextColor="@color/nav_item_color"
         app:itemIconSize="26dp"/>
 
     <FrameLayout

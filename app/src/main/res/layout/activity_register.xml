@@ -4,8 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/register_relativeLayout"
     android:background="@drawable/gradientlogin"
-    tools:context=".activities.RegisterActivity">
+    tools:context=".activities.RegisterActivity"
+    android:descendantFocusability="beforeDescendants">
 
 
     <ImageView
@@ -41,6 +43,7 @@
         android:hint="Email"
         android:textColorHint="@color/grayblack"
         android:textColor="@color/white"
+        android:focusableInTouchMode="true"
         android:textSize="22sp"
         android:padding="10dp"
         android:background="@drawable/et_bg"/>
@@ -56,6 +59,7 @@
         android:ems="12"
         android:background="@drawable/et_bg"
         android:inputType="textPassword"
+        android:focusableInTouchMode="true"
         android:hint="Password"
         android:textColorHint="@color/grayblack"
         android:textColor="@color/white"
@@ -67,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/pass_register"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/btn"
         android:text="Sign Up"
         android:textSize="18sp"
@@ -79,12 +83,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/button_Register"
+
         android:layout_marginTop="13dp"
         android:textAlignment="center"
         android:textSize="15sp"
         android:textStyle="bold"
         android:text="Already have an Account?"
+        android:layout_alignParentBottom="true"
         android:textColor="@color/white"
         />
 

@@ -10,33 +10,68 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <FrameLayout
+            android:id="@+id/subscriber_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/remoteBackground">
+
             <FrameLayout
-                android:id="@+id/subscriber_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/remoteBackground">
-
-                <FrameLayout
-                    android:id="@+id/publisher_container"
-                    android:layout_width="110dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="top|end"
-                    android:background="@color/gradStart"
-                    android:layout_margin="12dp">
-                </FrameLayout>
-
+                android:id="@+id/publisher_container"
+                android:layout_width="115dp"
+                android:layout_height="150dp"
+                android:layout_gravity="top|end"
+                android:background="@color/gradStart"
+                android:layout_margin="12dp">
             </FrameLayout>
 
         </FrameLayout>
 
+    </FrameLayout>
+
+
         <ImageView
             android:id="@+id/end_video_chat_btn"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:background="@drawable/btn_endcall"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="20dp">
+            android:layout_marginBottom="20dp">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/swap_video_cam_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_switch_camera"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="15dp"
+            android:layout_toStartOf="@+id/end_video_chat_btn"
+            android:layout_marginBottom="25dp">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/mute_video_chat_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_unmute"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/end_video_chat_btn"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="25dp">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/unMute_video_chat_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_mute"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/end_video_chat_btn"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="25dp"
+            android:visibility="invisible">
         </ImageView>
 
 </RelativeLayout>

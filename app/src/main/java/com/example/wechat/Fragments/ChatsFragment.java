@@ -135,7 +135,7 @@ public class ChatsFragment extends Fragment {
                             final String device_token = dataSnapshot.child("device_token").getValue().toString();
                             holder.userName.setText(profileName);
 
-                            DatabaseReference MessagesRef = FirebaseDatabase.getInstance().getReference().child("Messages").child(userIDs).child(currentUserId);
+                            DatabaseReference MessagesRef = FirebaseDatabase.getInstance().getReference().child("Messages").child(currentUserId).child(userIDs);
                             MessagesRef.limitToLast(1).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

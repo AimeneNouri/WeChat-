@@ -158,6 +158,7 @@ public class CallingActivity extends AppCompatActivity {
                 if (dataSnapshot.child(senderUserId).hasChild("Ringing") && !dataSnapshot.child(senderUserId).hasChild("Calling"))
                 {
                     acceptCallBtn.setVisibility(View.VISIBLE);
+                    TypeOfCall.setText("ringing...");
                 }
                 if (dataSnapshot.child(receiverUserId).child("Ringing").hasChild("picked"))
                 {
@@ -183,7 +184,7 @@ public class CallingActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("calling"))
                         {
-                            callingId = dataSnapshot.child("calling").getValue().toString();
+                            callingId = dataSnapshot.child("calling").getValue(String.class);
 
                             UsersRef.child(callingId).child("Ringing")
                                     .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -198,7 +199,10 @@ public class CallingActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task)
                                             {
-                                                onBackPressed();
+                                                if (task.isSuccessful())
+                                                {
+                                                    onBackPressed();
+                                                }
                                             }
                                         });
                                     }
@@ -225,7 +229,7 @@ public class CallingActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing"))
                         {
-                            ringingId = dataSnapshot.child("ringing").getValue().toString();
+                            ringingId = dataSnapshot.child("ringing").getValue(String.class);
 
                             UsersRef.child(ringingId).child("Calling")
                                     .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -234,11 +238,15 @@ public class CallingActivity extends AppCompatActivity {
                                 {
                                     if (task.isSuccessful())
                                     {
-                                        UsersRef.child(senderUserId).child("Ringing")
+                                        UsersRef.child(senderUserId)
+                                                .child("Ringing")
                                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                onBackPressed();
+                                                if (task.isSuccessful())
+                                                {
+                                                    onBackPressed();
+                                                }
                                             }
                                         });
                                     }
