@@ -23,11 +23,11 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/visit_profile_image"
-        android:layout_width="140dp"
+        android:layout_width="130dp"
         android:layout_height="140dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/profile_image"/>
 
     <TextView
@@ -59,40 +59,42 @@
         android:textSize="17sp"
         android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/send_message_request_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/visit_profile_status"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="65dp"
-        android:layout_marginTop="130dp"
-        android:layout_marginRight="65dp"
-        android:elevation="4dp"
-        android:background="@drawable/send_message_request"
-        android:text="Send Friend Request"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="20sp"
-        android:padding="4dp"
-        android:textStyle="bold"/>
+        android:layout_marginRight="65dp">
 
-    <Button
-        android:padding="4dp"
-        android:id="@+id/decline_message_request_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/send_message_request_button"
-        android:layout_marginLeft="65dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="65dp"
-        android:elevation="4dp"
-        android:background="@drawable/send_message_request"
-        android:text="Cancel Friend Request"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="invisible"/>
+        <Button
+            android:id="@+id/send_message_request_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:background="@drawable/send_message_request"
+            android:text="Send Friend Request"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_light"
+            android:textSize="20sp"
+            android:padding="4dp"
+            android:textStyle="bold"/>
 
+        <Button
+            android:padding="4dp"
+            android:id="@+id/decline_message_request_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/send_message_request_button"
+            android:layout_marginTop="10dp"
+            android:elevation="4dp"
+            android:background="@drawable/send_message_request"
+            android:text="Cancel Friend Request"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_light"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="invisible"/>
+    </LinearLayout>
 
 </RelativeLayout>

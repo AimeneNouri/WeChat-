@@ -40,7 +40,7 @@ public class VoiceCalling extends AppCompatActivity {
     private static final String APP_SECRET = "HJr/Bus8VUukF3DnRnZ5lg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
 
-    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver, currentUserId;
+    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver;
     private SinchClient sinchClient;
 
     private ImageButton endCall, acceptCall, acceptCallReceiver;
@@ -60,7 +60,6 @@ public class VoiceCalling extends AppCompatActivity {
         DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
         SenderCallId = FirebaseInstanceId.getInstance().getToken();
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         endCall = findViewById(R.id.buttonEndCall);
         callState = findViewById(R.id.callState);
@@ -87,7 +86,7 @@ public class VoiceCalling extends AppCompatActivity {
             public void onClick(View v) {
                 if (call == null){
 
-                    call = sinchClient.getCallClient().callUser(receiverCallId);
+                    call = sinchClient.getCallClient().callUser(DeviceTokenReceiver);
                     call.addCallListener(new SinchCallListener());
                     callState.setText("Calling...");
                 }

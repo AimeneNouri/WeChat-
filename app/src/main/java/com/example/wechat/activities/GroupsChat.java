@@ -64,9 +64,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,6 +103,8 @@ public class GroupsChat extends AppCompatActivity {
     private String currentGroupName, currentGroupId, msgSenderId, groupAdminId,currentUserName, currentDate, currentTime, checker = "", groupImage, msgReceiverId;
     String senderName = "",calledBy = "";
     public static boolean isDiscussionActivityRunning;
+
+    private CircleImageView group_image;
 
     private ProgressDialog loadingBar;
     private final List<Messages> messagesList = new ArrayList<>();
@@ -504,9 +511,10 @@ public class GroupsChat extends AppCompatActivity {
                         .inflate(R.layout.group_info_bottom_sheet, findViewById(R.id.group_bottom_sheet));
 
                 Button remove_room = bottomSheet.findViewById(R.id.remove_room);
-                CircleImageView group_image = bottomSheet.findViewById(R.id.group_profile_image);
+                group_image = bottomSheet.findViewById(R.id.group_profile_image);
                 TextView group_name = bottomSheet.findViewById(R.id.group_name);
                 TextView group_admin_name = bottomSheet.findViewById(R.id.group_admin);
+                CircleImageView update_image = bottomSheet.findViewById(R.id.update_image);
 
                 if (msgSenderId.equals(groupAdminId))
                 {
@@ -547,6 +555,26 @@ public class GroupsChat extends AppCompatActivity {
                                 }
                             });
                         }
+                    }
+                });
+
+                group_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setAspectRatio(1, 1)
+                                .start(GroupsChat.this);
+                    }
+                });
+
+                update_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setAspectRatio(1, 1)
+                                .start(GroupsChat.this);
                     }
                 });
 
@@ -823,6 +851,78 @@ public class GroupsChat extends AppCompatActivity {
             {
                 loadingBar.dismiss();
                 Toast.makeText(this, "Nothing Selected, Error", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if(resultCode == RESULT_OK)
+            {
+                loadingBar.setTitle("Profile Image");
+                loadingBar.setMessage("Please wait until we update your profile image");
+                loadingBar.setCanceledOnTouchOutside(false);
+                loadingBar.show();
+
+                Uri resultUri = result.getUri();
+
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
+
+                final StorageReference ImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
+
+                InputStream stream = null;
+                try {
+                    stream = new FileInputStream(new File(resultUri.getPath()));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                UploadTask = ImagesRef.putStream(stream);
+                UploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(GroupsChat.this, "Failed", Toast.LENGTH_SHORT).show();
+                        String message = e.toString();
+                        Toast.makeText(GroupsChat.this, "ERROR: " + message, Toast.LENGTH_SHORT).show();
+                        loadingBar.dismiss();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Toast.makeText(GroupsChat.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                        ImagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String link = uri.toString();
+                                Picasso.get().load(link).into(group_image);
+
+                                RootRef.child("Groups").child(currentGroupId).child("photo")
+                                        .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            loadingBar.dismiss();
+                                            Toast.makeText(GroupsChat.this, "Photo Updated", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            String message = task.getException().toString();
+                                            loadingBar.dismiss();
+                                            Toast.makeText(GroupsChat.this, "Error: " + message,Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         }
     }

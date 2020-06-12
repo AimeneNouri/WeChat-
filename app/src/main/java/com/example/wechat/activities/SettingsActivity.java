@@ -57,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String photoUrl = " ", calledBy = "";
     private StorageTask uploadTask;
 
-    private CircleImageView UserImage;
+    private CircleImageView UserImage, updateImage;
     private TextView UserEmail, phone_number;
     private EditText UserName, UserStatus;
     private Button UpdateAccount;
@@ -90,6 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
         phone_number = findViewById(R.id.User_phoneNumber_profile);
         UserStatus = findViewById(R.id.profile_status);
         UpdateAccount = findViewById(R.id.updateSetting_button);
+        updateImage = findViewById(R.id.update_picture);
         loadingBar = new ProgressDialog(this);
 
         relativeLayout = findViewById(R.id.layoutSettings);
@@ -146,6 +147,16 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         UserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(SettingsActivity.this);
+            }
+        });
+
+        updateImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CropImage.activity()

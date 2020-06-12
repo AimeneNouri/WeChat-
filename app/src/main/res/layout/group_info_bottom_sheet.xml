@@ -20,6 +20,16 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/group_image3" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/update_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@+id/group_profile_image"
+            android:layout_marginStart="-26dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toEndOf="@+id/group_profile_image"
+            android:src="@drawable/add_image2" />
+
         <TextView
             android:id="@+id/group_name"
             android:layout_width="wrap_content"
