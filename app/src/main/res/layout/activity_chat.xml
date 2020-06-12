@@ -41,9 +41,9 @@
         app:maxImageSize="33dp"
         android:clickable="true"
         android:visibility="invisible"/>
-
+    
     <LinearLayout
-        android:padding="3dp"
+        android:padding="2dp"
         android:id="@+id/mLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,27 +61,49 @@
             android:layout_marginBottom="5.8dp"
             android:src="@drawable/attach_icon1" />
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/input_chat_message"
+            android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginEnd="2dp">
+            android:layout_marginEnd="2dp"
+            android:hint="Enter The Text Message..."
+            android:background="@drawable/inputdiscussion"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:maxLines="6"
+            android:isScrollContainer="true"
+            android:padding="7dp" />
 
-            <EditText
-                android:id="@+id/input_chat_message"
-                android:layout_width="295dp"
-                android:layout_height="wrap_content"
-                android:hint="Enter The Text Message..."
-                android:background="@drawable/inputdiscussion"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:maxLines="6"
-                android:isScrollContainer="true"
-                android:padding="7dp" />
+        <Chronometer
+            android:id="@+id/record_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:fontFamily="@font/open_sans_semibold"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center"
+            android:visibility="gone"/>
 
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/cancel_audio"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="#3E3E3E"
+            android:alpha=".6"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginTop="3dp"
+            android:visibility="gone"
+            />
 
         <ImageButton
             android:id="@+id/send_msg_button"
@@ -91,7 +113,15 @@
             android:layout_gravity="bottom"
             android:layout_marginStart="1dp"
             android:background="@drawable/btn_send_message"
-            android:layout_toEndOf="@+id/input_chat_message" />
+            android:layout_toEndOf="@+id/input_chat_message"
+            android:visibility="gone"/>
 
+        <ImageButton
+            android:id="@+id/record_audio"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="4dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/micro_btn" />
     </LinearLayout>
 </RelativeLayout>

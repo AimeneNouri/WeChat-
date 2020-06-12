@@ -85,11 +85,20 @@
                     android:background="@drawable/ic_insert_drive_file_black_24dp"
                     android:visibility="gone"/>
 
+                <ImageView
+                    android:id="@+id/audio_file"
+                    android:layout_width="20dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/audio_icon2"
+                    android:visibility="gone"/>
+
                 <TextView
                     android:id="@+id/user_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:text=" "
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="3dp"
                     android:textAlignment="textStart"

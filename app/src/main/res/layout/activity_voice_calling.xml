@@ -65,4 +65,17 @@
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="50dp"
         android:background="@drawable/btn_startcall"/>
+
+    <ImageButton
+        android:id="@+id/btn_accept_call_receiver"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/btn_startcall"
+        android:visibility="gone"/>
 </RelativeLayout>

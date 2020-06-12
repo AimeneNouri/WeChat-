@@ -180,6 +180,12 @@ public class ChatsFragment extends Fragment {
                                                         holder.fileMessage.setVisibility(View.VISIBLE);
                                                         holder.messageTime.setText(messageTime);
                                                     }
+                                                    else if (type.equals("audio"))
+                                                    {
+                                                        holder.userStatus.setText("Audio");
+                                                        holder.audioFile.setVisibility(View.VISIBLE);
+                                                        holder.messageTime.setText(messageTime);
+                                                    }
                                                 }
                                             }
                                             else {
@@ -233,7 +239,7 @@ public class ChatsFragment extends Fragment {
 
         TextView userName, userStatus, messageTime;
         CircleImageView profileImage;
-        ImageView videoMessage, imageMessage, fileMessage;
+        ImageView videoMessage, imageMessage, fileMessage, audioFile;
 
 
         public ChatsViewHolder(@NonNull View itemView) {
@@ -246,6 +252,7 @@ public class ChatsFragment extends Fragment {
             videoMessage = itemView.findViewById(R.id.videoMessage);
             imageMessage = itemView.findViewById(R.id.imagePhoto);
             fileMessage = itemView.findViewById(R.id.documentFile);
+            audioFile = itemView.findViewById(R.id.audio_file);
         }
     }
 }

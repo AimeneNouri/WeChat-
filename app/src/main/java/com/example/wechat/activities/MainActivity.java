@@ -136,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
                         setFragment(contactsFragment);
                         return true;
 
-                    case R.id.nav_calls:
+                    /*case R.id.nav_calls:
                         setFragment(callFragment);
-                        return true;
+                        return true;*/
 
                     case R.id.requests:
                         setFragment(chatRequestFragment);

@@ -1,16 +1,12 @@
 package com.example.wechat;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +19,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wechat.activities.ImageViewer;
-import com.example.wechat.activities.MainActivity;
 import com.example.wechat.activities.PdfReader;
 import com.example.wechat.activities.videoView;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -57,11 +52,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     public class MessagesViewHolder extends RecyclerView.ViewHolder
     {
-        public TextView senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
+        public TextView senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf, sentAudioMessage, receiveAudioMessage, sent_time_audio, receive_time_audio;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo, iconReceiverPdf, iconSenderPdf;
+        public ImageView messageSenderImage, messageReceiverImage, playOne, playTwo, iconReceiverPdf, iconSenderPdf, icon_audio, icon_audio_receiver;
         public VideoView messageSenderVideo, messageReceiverVideo;
-        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender;
+        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender, receiver_audio_overflow, receiver_message_audio_layout, sender_audio_overflow, sender_message_audio_Layout;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +97,18 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
             receive_time = itemView.findViewById(R.id.receive_time);
+
+            sentAudioMessage = itemView.findViewById(R.id.sender_message_audio);
+            icon_audio = itemView.findViewById(R.id.icon_audio);
+            sender_audio_overflow = itemView.findViewById(R.id.sender_audio_overflow);
+            sender_message_audio_Layout = itemView.findViewById(R.id.sender_message_audio_Layout);
+            sent_time_audio = itemView.findViewById(R.id.sent_time_audio);
+            receiveAudioMessage = itemView.findViewById(R.id.receiver_message_audio);
+            receiver_message_audio_layout = itemView.findViewById(R.id.receiver_message_audio_layout);
+            receiver_audio_overflow = itemView.findViewById(R.id.receiver_audio_overflow);
+            receive_time_audio = itemView.findViewById(R.id.receive_time_audio);
+            icon_audio_receiver = itemView.findViewById(R.id.icon_audio_receiver);
+
         }
     }
 
@@ -173,6 +180,17 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.sentPdfMessage.setVisibility(View.GONE);
         holder.overflow_pdf_receiver.setVisibility(View.GONE);
         holder.overflow_pdf_sender.setVisibility(View.GONE);
+
+        holder.sentAudioMessage.setVisibility(View.GONE);
+        holder.receiveAudioMessage.setVisibility(View.GONE);
+        holder.sent_time_audio.setVisibility(View.GONE);
+        holder.receive_time_audio.setVisibility(View.GONE);
+        holder.receiver_audio_overflow.setVisibility(View.GONE);
+        holder.sender_audio_overflow.setVisibility(View.GONE);
+        holder.icon_audio.setVisibility(View.GONE);
+        holder.icon_audio_receiver.setVisibility(View.GONE);
+        holder.receiver_message_audio_layout.setVisibility(View.GONE);
+        holder.sender_message_audio_Layout.setVisibility(View.GONE);
 
 
         if (fromMsgType.equals("text"))
@@ -444,6 +462,81 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             }
         }
 
+        else if (fromMsgType.equals("audio"))
+        {
+            if (fromUserId.equals(msgSenderId))
+            {
+                holder.sentAudioMessage.setVisibility(View.VISIBLE);
+                holder.receiveAudioMessage.setVisibility(View.GONE);
+                holder.sent_time_audio.setVisibility(View.VISIBLE);
+                holder.receive_time_audio.setVisibility(View.GONE);
+                holder.receiver_audio_overflow.setVisibility(View.GONE);
+                holder.sender_audio_overflow.setVisibility(View.VISIBLE);
+                holder.icon_audio.setVisibility(View.VISIBLE);
+                holder.icon_audio_receiver.setVisibility(View.GONE);
+                holder.receiver_message_audio_layout.setVisibility(View.GONE);
+                holder.sender_message_audio_Layout.setVisibility(View.VISIBLE);
+
+                holder.sentAudioMessage.setText("Audio ");
+                holder.sent_time_audio.setText(messages.getTime());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MediaPlayer mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mediaPlayer.setDataSource(userMessagesList.get(position).getMessage());
+                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.start();
+                                }
+                            });
+                            mediaPlayer.prepareAsync();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else
+            {
+                holder.sentAudioMessage.setVisibility(View.GONE);
+                holder.receiveAudioMessage.setVisibility(View.VISIBLE);
+                holder.sent_time_audio.setVisibility(View.GONE);
+                holder.receive_time_audio.setVisibility(View.VISIBLE);
+                holder.receiver_audio_overflow.setVisibility(View.VISIBLE);
+                holder.sender_audio_overflow.setVisibility(View.GONE);
+                holder.icon_audio.setVisibility(View.GONE);
+                holder.icon_audio_receiver.setVisibility(View.VISIBLE);
+                holder.receiver_message_audio_layout.setVisibility(View.VISIBLE);
+                holder.sender_message_audio_Layout.setVisibility(View.GONE);
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+
+                holder.receiveAudioMessage.setText("Audio ");
+                holder.receive_time_audio.setText(messages.getTime());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MediaPlayer mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mediaPlayer.setDataSource(userMessagesList.get(position).getMessage());
+                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.start();
+                                }
+                            });
+                            mediaPlayer.prepareAsync();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        }
+
         if (fromUserId.equals(msgSenderId))
         {
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -452,8 +545,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 {
                     if (userMessagesList.get(position).getType().equals("pdf") || userMessagesList.get(position).getType().equals("docx")) {
                         CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
+                                "Delete",
                                 "Download and View this Document",
                                 "Cancel"
                         };
@@ -463,7 +555,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                             @Override
                             public void onClick(DialogInterface dialog, int which)
                             {
-                                //Delete For me
+                                //Delete
                                 if (which == 0)
                                 {
                                     deleteSentMessages(position, holder);
@@ -473,19 +565,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                     notifyItemRangeChanged(position,userMessagesList.size());
                                 }
 
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
                                 //Download and View this Document
-                                else if (which == 2)
+                                else if (which == 1)
                                 {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
                                     holder.itemView.getContext().startActivity(intent);
@@ -496,8 +577,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                     }
                     else if (userMessagesList.get(position).getType().equals("text")) {
                         CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
+                                "Delete",
                                 "Cancel"
                         };
                         AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
@@ -517,26 +597,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                                     notifyItemRangeChanged(position,userMessagesList.size());
 
                                 }
-
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
-
                             }
                         });
                         builder.show();
                     }
                     else if (userMessagesList.get(position).getType().equals("image") ) {
                         CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
+                                "Delete",
                                 "Download this Image",
                                 "Cancel"
                         };
@@ -558,18 +625,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
                                 }
 
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
                                 //Download this Image
-                                else if (which == 2)
+                                else if (which == 1)
                                 {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(userMessagesList.get(position).getMessage()));
                                     holder.itemView.getContext().startActivity(intent);
@@ -579,10 +636,35 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                         });
                         builder.show();
                     }
+                    else if (userMessagesList.get(position).getType().equals("audio")) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Delete",
+                                "Cancel"
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        builder.setTitle("Message Options:");
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //Delete For me
+                                if (which == 0)
+                                {
+                                    deleteSentMessages(position, holder);
+
+                                    userMessagesList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position,userMessagesList.size());
+
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
                     else if (userMessagesList.get(position).getType().equals("video") ) {
                         CharSequence options[] = new CharSequence[]{
-                                "Delete For me",
-                                "Delete For everyone",
+                                "Delete",
                                 "View this video",
                                 "Cancel"
                         };
@@ -604,18 +686,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
                                 }
 
-                                //Delete For everyone
-                                else if (which == 1)
-                                {
-                                    deleteMessagesForEveryOne(position, holder);
-
-                                    userMessagesList.remove(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeChanged(position,userMessagesList.size());
-
-                                }
                                 //View this Video
-                                else if (which == 2)
+                                else if (which == 1)
                                 {
                                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -677,6 +749,32 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                         builder.show();
                     }
                     else if (userMessagesList.get(position).getType().equals("text")) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Delete For me",
+                                "Cancel"
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                        builder.setTitle("Message Options:");
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //Delete For me
+                                if (which == 0)
+                                {
+                                    deleteReceiveMessages(position, holder);
+
+                                    userMessagesList.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position,userMessagesList.size());
+
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
+                    else if (userMessagesList.get(position).getType().equals("audio")) {
                         CharSequence options[] = new CharSequence[]{
                                 "Delete For me",
                                 "Cancel"

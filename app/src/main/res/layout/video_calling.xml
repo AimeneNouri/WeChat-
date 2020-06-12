@@ -71,7 +71,7 @@
             android:layout_toEndOf="@+id/end_video_chat_btn"
             android:layout_marginLeft="15dp"
             android:layout_marginBottom="25dp"
-            android:visibility="invisible">
+            android:visibility="gone">
         </ImageView>
 
 </RelativeLayout>

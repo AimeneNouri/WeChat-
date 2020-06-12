@@ -40,10 +40,10 @@ public class VoiceCalling extends AppCompatActivity {
     private static final String APP_SECRET = "HJr/Bus8VUukF3DnRnZ5lg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
 
-    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver;
+    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver, currentUserId;
     private SinchClient sinchClient;
 
-    private ImageButton endCall, acceptCall;
+    private ImageButton endCall, acceptCall, acceptCallReceiver;
     private TextView callState, ReceiverName;
     private Call call;
     private CircleImageView receiverImage;
@@ -60,12 +60,14 @@ public class VoiceCalling extends AppCompatActivity {
         DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
         SenderCallId = FirebaseInstanceId.getInstance().getToken();
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         endCall = findViewById(R.id.buttonEndCall);
         callState = findViewById(R.id.callState);
         receiverImage = findViewById(R.id.receiver_profile_image);
         ReceiverName = findViewById(R.id.receiver_Name);
         acceptCall = findViewById(R.id.btn_accept_cal);
+        acceptCallReceiver = findViewById(R.id.btn_accept_call_receiver);
 
         ReceiverName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(receiverImage);
@@ -80,23 +82,14 @@ public class VoiceCalling extends AppCompatActivity {
                 .environmentHost(ENVIRONMENT)
                 .build();
 
-        sinchClient.setSupportCalling(true);
-        sinchClient.startListeningOnActiveConnection();
-        sinchClient.start();
-        sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
-        sinchClient.setSupportActiveConnectionInBackground(true);
-
-
-
         acceptCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (call == null){
 
-                    call = sinchClient.getCallClient().callUser(DeviceTokenReceiver);
+                    call = sinchClient.getCallClient().callUser(receiverCallId);
                     call.addCallListener(new SinchCallListener());
                     callState.setText("Calling...");
-
                 }
             }
         });
@@ -114,6 +107,13 @@ public class VoiceCalling extends AppCompatActivity {
                 }
             }
         });
+
+
+        sinchClient.setSupportCalling(true);
+        sinchClient.startListeningOnActiveConnection();
+        sinchClient.start();
+        sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+        sinchClient.setSupportActiveConnectionInBackground(true);
     }
 
     private class SinchCallListener implements CallListener{
@@ -126,13 +126,13 @@ public class VoiceCalling extends AppCompatActivity {
         @Override
         public void onCallEstablished(Call call) {
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-            Toast.makeText(VoiceCalling.this, "call established", Toast.LENGTH_SHORT).show();
+            Toast.makeText(VoiceCalling.this, "connected", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCallEnded(Call endedCall) {
             call = null;
-            SinchError a = endedCall.getDetails().getError();
+            //SinchError a = endedCall.getDetails().getError();
             callState.setText("");
             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             Toast.makeText(VoiceCalling.this, "call end", Toast.LENGTH_SHORT).show();
@@ -148,11 +148,14 @@ public class VoiceCalling extends AppCompatActivity {
     {
         @Override
         public void onIncomingCall(CallClient callClient, Call incomingCall) {
-            mediaPlayer.start();
-            acceptCall.setOnClickListener(new View.OnClickListener() {
+            //mediaPlayer.start();
+            acceptCallReceiver.setVisibility(View.VISIBLE);
+            acceptCall.setVisibility(View.GONE);
+
+            acceptCallReceiver.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mediaPlayer.stop();
+                    //mediaPlayer.stop();
                     call = incomingCall;
                     call.answer();
                     call.addCallListener(new SinchCallListener());

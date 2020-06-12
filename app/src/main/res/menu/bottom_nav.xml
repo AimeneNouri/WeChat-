@@ -15,10 +15,10 @@
         android:icon="@drawable/ic_contact"
         android:title="Contacts"/>
 
-    <item
+    <!--<item
         android:id="@+id/nav_calls"
         android:icon="@drawable/ic_call_black_24dp"
-        android:title="Calls"/>
+        android:title="Calls"/>-->
     <item
         android:id="@+id/requests"
         android:icon="@drawable/ic_notifications_black_24dp"

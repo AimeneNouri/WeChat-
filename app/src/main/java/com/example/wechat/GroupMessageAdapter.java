@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -51,11 +54,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     public class MessageViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf;
+        public TextView receiverName, senderMsgText, receiverMsgText, senTime, receive_time, sent_time_video, receiver_time_video,sent_time_image, receiver_time_image, sentPdfMessage, receivePdfMessage, sent_time_receiver_pdf, sent_time_sender_pdf, sentAudioMessage, receiveAudioMessage, sent_time_audio, receive_time_audio;
         public CircleImageView receiverProfileImage;
-        public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne, iconReceiverPdf, iconSenderPdf;
+        public ImageView messageSenderImage, messageReceiverImage, playTwo, playOne, iconReceiverPdf, iconSenderPdf, icon_audio, icon_audio_receiver;
         public VideoView messageSenderVideo, messageReceiverVideo;
-        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender;
+        public RelativeLayout messageSender, messageReceiver, videoSenderLayout, videoReceiverLayout, imageSenderLayout, imageReceiverLayout, pdfReceiverLayout, pdfSenderLayout, overflow_pdf_receiver, overflow_pdf_sender, receiver_audio_overflow, receiver_message_audio_layout, sender_audio_overflow, sender_message_audio_Layout;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,6 +99,17 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             playTwo = itemView.findViewById(R.id.playVideoSender);
             senTime = itemView.findViewById(R.id.sent_time);
             receive_time = itemView.findViewById(R.id.receive_time);
+
+            sentAudioMessage = itemView.findViewById(R.id.sender_message_audio);
+            icon_audio = itemView.findViewById(R.id.icon_audio);
+            sender_audio_overflow = itemView.findViewById(R.id.sender_audio_overflow);
+            sender_message_audio_Layout = itemView.findViewById(R.id.sender_message_audio_Layout);
+            sent_time_audio = itemView.findViewById(R.id.sent_time_audio);
+            receiveAudioMessage = itemView.findViewById(R.id.receiver_message_audio);
+            receiver_message_audio_layout = itemView.findViewById(R.id.receiver_message_audio_layout);
+            receiver_audio_overflow = itemView.findViewById(R.id.receiver_audio_overflow);
+            receive_time_audio = itemView.findViewById(R.id.receive_time_audio);
+            icon_audio_receiver = itemView.findViewById(R.id.icon_audio_receiver);
         }
     }
 
@@ -168,6 +182,17 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         holder.sentPdfMessage.setVisibility(View.GONE);
         holder.overflow_pdf_receiver.setVisibility(View.GONE);
         holder.overflow_pdf_sender.setVisibility(View.GONE);
+
+        holder.sentAudioMessage.setVisibility(View.GONE);
+        holder.receiveAudioMessage.setVisibility(View.GONE);
+        holder.sent_time_audio.setVisibility(View.GONE);
+        holder.receive_time_audio.setVisibility(View.GONE);
+        holder.receiver_audio_overflow.setVisibility(View.GONE);
+        holder.sender_audio_overflow.setVisibility(View.GONE);
+        holder.icon_audio.setVisibility(View.GONE);
+        holder.icon_audio_receiver.setVisibility(View.GONE);
+        holder.receiver_message_audio_layout.setVisibility(View.GONE);
+        holder.sender_message_audio_Layout.setVisibility(View.GONE);
 
         if (fromMsgType.equals("text"))
         {
@@ -435,6 +460,81 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                         intent.putExtra("url", userMessagesList.get(position).getMessage());
                         intent.putExtra("id", userMessagesList.get(position).getMessageID());
                         holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+        }
+
+        else if (fromMsgType.equals("audio"))
+        {
+            if (fromUserId.equals(msgSenderId))
+            {
+                holder.sentAudioMessage.setVisibility(View.VISIBLE);
+                holder.receiveAudioMessage.setVisibility(View.GONE);
+                holder.sent_time_audio.setVisibility(View.VISIBLE);
+                holder.receive_time_audio.setVisibility(View.GONE);
+                holder.receiver_audio_overflow.setVisibility(View.GONE);
+                holder.sender_audio_overflow.setVisibility(View.VISIBLE);
+                holder.icon_audio.setVisibility(View.VISIBLE);
+                holder.icon_audio_receiver.setVisibility(View.GONE);
+                holder.receiver_message_audio_layout.setVisibility(View.GONE);
+                holder.sender_message_audio_Layout.setVisibility(View.VISIBLE);
+
+                holder.sentAudioMessage.setText("Audio ");
+                holder.sent_time_audio.setText(messages.getTime());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MediaPlayer mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mediaPlayer.setDataSource(userMessagesList.get(position).getMessage());
+                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.start();
+                                }
+                            });
+                            mediaPlayer.prepareAsync();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else
+            {
+                holder.sentAudioMessage.setVisibility(View.GONE);
+                holder.receiveAudioMessage.setVisibility(View.VISIBLE);
+                holder.sent_time_audio.setVisibility(View.GONE);
+                holder.receive_time_audio.setVisibility(View.VISIBLE);
+                holder.receiver_audio_overflow.setVisibility(View.VISIBLE);
+                holder.sender_audio_overflow.setVisibility(View.GONE);
+                holder.icon_audio.setVisibility(View.GONE);
+                holder.icon_audio_receiver.setVisibility(View.VISIBLE);
+                holder.receiver_message_audio_layout.setVisibility(View.VISIBLE);
+                holder.sender_message_audio_Layout.setVisibility(View.GONE);
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+
+                holder.receiveAudioMessage.setText("Audio ");
+                holder.receive_time_audio.setText(messages.getTime());
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MediaPlayer mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            mediaPlayer.setDataSource(userMessagesList.get(position).getMessage());
+                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    mp.start();
+                                }
+                            });
+                            mediaPlayer.prepareAsync();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
                     }
                 });
             }

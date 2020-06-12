@@ -6,20 +6,26 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.MenuPopupWindow;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -29,11 +35,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -74,12 +82,18 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -90,12 +104,16 @@ public class Chat extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private String msgReceiverId, msgReceiverName, msgReceiverImage, msgSenderId, senderToken;
-    private TextView userName, userLastSeen;
+    private TextView userName, userLastSeen, cancel_audio_btn;
+    private Chronometer record_timer;
     private CircleImageView userImage;
     Animation slideFromRight, slideToRight;
+    Animation topAnim, bottomAnim;
+
+    private boolean isRecording = true;
 
     private ImageButton backSpace;
-    private ImageButton send_msg;
+    private ImageButton send_msg, record_btn;
     private ImageView uploadFilesBtn;
     private EditText msgInput;
 
@@ -121,8 +139,11 @@ public class Chat extends AppCompatActivity {
 
     private ProgressDialog loadingBar;
     private FloatingActionButton floatingActionButton;
-    private DatabaseReference ImageMsgKeyRef;
+    private DatabaseReference ImageMsgKeyRef, AudioMsgKeyRef;
     RelativeLayout relativeLayout;
+
+    private MediaRecorder mediaRecorder;
+    private String recordFile;
 
     public static int bgResource;
 
@@ -148,6 +169,8 @@ public class Chat extends AppCompatActivity {
         userName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
+        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
         /*
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -338,6 +361,156 @@ public class Chat extends AppCompatActivity {
                 msgInput.clearFocus();
             }
         });
+
+
+        record_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording){
+
+                    msgInput.setVisibility(View.GONE);
+                    uploadFilesBtn.setVisibility(View.GONE);
+                    record_timer.setVisibility(View.VISIBLE);
+                    cancel_audio_btn.setVisibility(View.VISIBLE);
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
+                    String currentDate = formatter.format(new Date());
+
+                    recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    recordFile += "/Recording_" + currentDate + ".3gp";
+
+                    startRecording();
+                    record_btn.setBackgroundResource(R.drawable.stop_record);
+                    isRecording = false;
+                }
+                else{
+                    isRecording = true;
+                    stopRecording();
+
+                    msgInput.setAnimation(bottomAnim);
+                    uploadFilesBtn.setAnimation(bottomAnim);
+                    msgInput.setVisibility(View.VISIBLE);
+                    uploadFilesBtn.setVisibility(View.VISIBLE);
+                    record_timer.setVisibility(View.GONE);
+                    cancel_audio_btn.setVisibility(View.GONE);
+                    record_btn.setBackgroundResource(R.drawable.micro_btn);
+
+                    uploadAudio(recordFile);
+                }
+            }
+        });
+
+        cancel_audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isRecording = true;
+                stopRecording();
+
+                File file = new File(recordFile);
+                file.delete();
+
+                msgInput.setAnimation(bottomAnim);
+                uploadFilesBtn.setAnimation(bottomAnim);
+                msgInput.setVisibility(View.VISIBLE);
+                uploadFilesBtn.setVisibility(View.VISIBLE);
+                record_timer.setVisibility(View.GONE);
+                cancel_audio_btn.setVisibility(View.GONE);
+                record_btn.setBackgroundResource(R.drawable.micro_btn);
+            }
+        });
+    }
+
+    private void uploadAudio(String fileName) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        StorageReference AudioRef = storageRef.child("Audio Files");
+        Uri uri = Uri.fromFile(new File(recordFile));
+
+        final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+        final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+        AudioMsgKeyRef = RootRef.child("Messages").child(msgSenderId)
+                .child(msgReceiverId).push();
+
+        PushMsg = AudioMsgKeyRef.getKey();
+
+        final StorageReference filePath = AudioRef.child(PushMsg + "." + "3gp");
+
+        UploadTask = filePath.putFile(uri);
+        UploadTask.continueWithTask(new Continuation() {
+            @Override
+            public Object then(@NonNull Task task) throws Exception
+            {
+                if (!task.isSuccessful())
+                {
+                    throw  task.getException();
+                }
+
+                return filePath.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful())
+                {
+                    Uri downloadUri = task.getResult();
+                    myUrl = downloadUri.toString();
+
+                    Map msgTextBody  = new HashMap();
+                    msgTextBody.put("message", myUrl);
+                    msgTextBody.put("type", "audio");
+                    msgTextBody.put("from", msgSenderId);
+                    msgTextBody.put("to", msgReceiverId);
+                    msgTextBody.put("messageID", PushMsg);
+                    msgTextBody.put("time", saveCurrentTime);
+
+                    Map messageBodyDetails = new HashMap();
+                    messageBodyDetails.put(messageSenderRef + "/" + PushMsg, msgTextBody);
+                    messageBodyDetails.put(messageReceiverRef + "/" + PushMsg, msgTextBody);
+
+                    RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful())
+                            {
+                                Toast.makeText(Chat.this, "Audio has been sent", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Toast.makeText(Chat.this, "Error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void startRecording() {
+        record_timer.setBase(SystemClock.elapsedRealtime());
+        record_timer.start();
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setOutputFile(recordFile);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mediaRecorder.start();
+    }
+
+    private void stopRecording() {
+        record_timer.stop();
+        mediaRecorder.stop();
+        mediaRecorder.release();
+        mediaRecorder = null;
     }
 
 
@@ -375,8 +548,11 @@ public class Chat extends AppCompatActivity {
         slideToRight = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
 
         send_msg =  findViewById(R.id.send_msg_button);
+        record_btn =  findViewById(R.id.record_audio);
         msgInput = findViewById(R.id.input_chat_message);
         uploadFilesBtn = findViewById(R.id.send_files_btn);
+        record_timer = findViewById(R.id.record_timer);
+        cancel_audio_btn = findViewById(R.id.cancel_audio);
 
         messagesAdapter = new MessagesAdapter(messagesList);
         UsersMessagesList = findViewById(R.id.private_msg_list_of_users);
@@ -404,12 +580,14 @@ public class Chat extends AppCompatActivity {
 
                 if (s.length() != 0)
                 {
+                    send_msg.setVisibility(View.VISIBLE);
+                    record_btn.setVisibility(View.GONE);
                     RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
-                    uploadFilesBtn.setVisibility(View.GONE);
                 }
                 if (s.length() == 0)
                 {
-                    uploadFilesBtn.setVisibility(View.VISIBLE);
+                    send_msg.setVisibility(View.GONE);
+                    record_btn.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -434,7 +612,6 @@ public class Chat extends AppCompatActivity {
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
         saveCurrentTime = currentTime.format(calendar.getTime());
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
@@ -814,10 +991,6 @@ public class Chat extends AppCompatActivity {
             VoiceIntent.putExtra("visit_user_name", msgReceiverName);
             VoiceIntent.putExtra("visit_user_image", msgReceiverImage);
             startActivity(VoiceIntent);
-
-
-
-            return true;
         }
 
         if (item.getItemId() == R.id.video_call_icon_option){

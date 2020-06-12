@@ -57,7 +57,8 @@
             android:name=".activities.GroupsChat"
             android:parentActivityName=".activities.MainActivity" />
         <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.SplashScreen"
+        <activity
+            android:name=".activities.SplashScreen"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

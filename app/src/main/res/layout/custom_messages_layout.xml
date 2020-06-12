@@ -369,4 +369,117 @@
 
     </RelativeLayout>
 
+
+    <RelativeLayout
+        android:id="@+id/sender_message_audio_Layout"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sender_message"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="@+id/receiver_message_text_layout"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+
+        <RelativeLayout
+            android:id="@+id/sender_audio_overflow"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/overflow_sender">
+
+            <ImageView
+                android:id="@+id/icon_audio"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/ic_mic_none_black_24dp"/>
+
+            <TextView
+                android:id="@+id/sender_message_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_toEndOf="@+id/icon_audio"
+                android:fontFamily="@font/open_sans_semibold"
+                android:padding="7dp"
+                android:text="Audio "
+                android:textColor="#434343"
+                android:textSize="17.5sp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/sent_time_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sender_audio_overflow"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="3dp"
+            android:text="12:00"
+            android:textColor="#6A6A6A"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/receiver_message_audio_layout"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/message_profile_image"
+        android:background="@drawable/receiver_message"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="10dp">
+
+        <RelativeLayout
+            android:id="@+id/receiver_audio_overflow"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/overflow_receiver">
+
+            <ImageView
+                android:id="@+id/icon_audio_receiver"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/recv_ic_mic_white"/>
+
+            <TextView
+                android:id="@+id/receiver_message_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Audio "
+                android:layout_toEndOf="@+id/icon_audio_receiver"
+                android:padding="7dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:textColor="@color/white"
+                android:textSize="17.5sp"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/receive_time_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/receiver_audio_overflow"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="3dp"
+            android:textStyle="bold"
+            android:text="12:00"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
+
+    </RelativeLayout>
 </RelativeLayout>

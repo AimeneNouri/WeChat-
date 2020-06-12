@@ -77,8 +77,11 @@ public class CallingActivity extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(CallingActivity.this, VideoCalling.class);
-                                startActivity(intent);
+                                if (task.isComplete())
+                                {
+                                    Intent intent = new Intent(CallingActivity.this, VideoCalling.class);
+                                    startActivity(intent);
+                                }
                             }
                         });
             }
@@ -118,6 +121,8 @@ public class CallingActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        mp.start();
 
         UsersRef.child(receiverUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -178,8 +183,9 @@ public class CallingActivity extends AppCompatActivity {
     private void cancelCallingUser() {
 
         //senderCall
-        UsersRef.child(senderUserId).child("Calling")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        UsersRef.child(senderUserId)
+                .child("Calling")
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("calling"))
@@ -187,7 +193,8 @@ public class CallingActivity extends AppCompatActivity {
                             callingId = dataSnapshot.child("calling").getValue(String.class);
 
                             UsersRef.child(callingId).child("Ringing")
-                                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task)
                                 {
@@ -199,10 +206,7 @@ public class CallingActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task)
                                             {
-                                                if (task.isSuccessful())
-                                                {
-                                                    onBackPressed();
-                                                }
+                                                onBackPressed();
                                             }
                                         });
                                     }
@@ -224,7 +228,7 @@ public class CallingActivity extends AppCompatActivity {
         //receiverCall
         UsersRef.child(senderUserId)
                 .child("Ringing")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("ringing"))
@@ -242,11 +246,9 @@ public class CallingActivity extends AppCompatActivity {
                                                 .child("Ringing")
                                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful())
-                                                {
-                                                    onBackPressed();
-                                                }
+                                            public void onComplete(@NonNull Task<Void> task)
+                                            {
+                                                onBackPressed();
                                             }
                                         });
                                     }

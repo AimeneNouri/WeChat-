@@ -14,8 +14,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -23,7 +26,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -59,12 +65,16 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -83,7 +93,7 @@ public class GroupsChat extends AppCompatActivity {
     private CircleImageView GroupImage;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef, RootRef;
+    private DatabaseReference usersRef, GroupNameRef, GroupMessageKeyRef, RootRef, AudioMsgKeyRef;
 
     private String currentGroupName, currentGroupId, msgSenderId, groupAdminId,currentUserName, currentDate, currentTime, checker = "", groupImage, msgReceiverId;
     String senderName = "",calledBy = "";
@@ -102,6 +112,15 @@ public class GroupsChat extends AppCompatActivity {
 
     private FloatingActionButton floatingActionButton;
     private RelativeLayout GroupInfo;
+
+    private MediaRecorder mediaRecorder;
+    private String recordFile;
+    Animation topAnim, bottomAnim;
+    private TextView cancel_audio_btn;
+    private ImageButton record_btn;
+    private Chronometer record_timer;
+
+    private boolean isRecording = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +145,9 @@ public class GroupsChat extends AppCompatActivity {
 
         groupName.setText(currentGroupName);
         Picasso.get().load(groupImage).placeholder(R.drawable.group_image3).into(GroupImage);
+
+        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
 
         DisplayGroupInfos();
 
@@ -288,6 +310,156 @@ public class GroupsChat extends AppCompatActivity {
                 floatingActionButton.hide();
             }
         });
+
+        record_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording){
+
+                    userMessageInput.setVisibility(View.GONE);
+                    Send_File_Btn.setVisibility(View.GONE);
+                    record_timer.setVisibility(View.VISIBLE);
+                    cancel_audio_btn.setVisibility(View.VISIBLE);
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
+                    String currentDate = formatter.format(new Date());
+
+                    recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    recordFile += "/Recording_" + currentDate + ".3gp";
+
+                    startRecording();
+                    record_btn.setBackgroundResource(R.drawable.stop_record);
+                    isRecording = false;
+                }
+                else{
+                    isRecording = true;
+                    stopRecording();
+
+                    userMessageInput.setAnimation(bottomAnim);
+                    Send_File_Btn.setAnimation(bottomAnim);
+                    userMessageInput.setVisibility(View.VISIBLE);
+                    Send_File_Btn.setVisibility(View.VISIBLE);
+                    record_timer.setVisibility(View.GONE);
+                    cancel_audio_btn.setVisibility(View.GONE);
+                    record_btn.setBackgroundResource(R.drawable.micro_btn);
+
+                    uploadAudio(recordFile);
+                }
+            }
+        });
+
+        cancel_audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isRecording = true;
+                stopRecording();
+
+                File file = new File(recordFile);
+                file.delete();
+
+                userMessageInput.setAnimation(bottomAnim);
+                Send_File_Btn.setAnimation(bottomAnim);
+                userMessageInput.setVisibility(View.VISIBLE);
+                Send_File_Btn.setVisibility(View.VISIBLE);
+                record_timer.setVisibility(View.GONE);
+                cancel_audio_btn.setVisibility(View.GONE);
+                record_btn.setBackgroundResource(R.drawable.micro_btn);
+            }
+        });
+    }
+
+    private void uploadAudio(String fileName) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        StorageReference AudioRef = storageRef.child("Audio Files");
+        Uri uri = Uri.fromFile(new File(recordFile));
+
+        final String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
+        //final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+        //final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+        AudioMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                .child("Messages").push();
+
+        final String PushMsg = AudioMsgKeyRef.getKey();
+
+        final StorageReference filePath = AudioRef.child(PushMsg + "." + "3gp");
+
+        UploadTask = filePath.putFile(uri);
+        UploadTask.continueWithTask(new Continuation() {
+            @Override
+            public Object then(@NonNull Task task) throws Exception
+            {
+                if (!task.isSuccessful())
+                {
+                    throw  task.getException();
+                }
+
+                return filePath.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful())
+                {
+                    Uri downloadUri = task.getResult();
+                    myUrl = downloadUri.toString();
+
+                    Map msgTextBody  = new HashMap();
+                    msgTextBody.put("message", myUrl);
+                    msgTextBody.put("type", "audio");
+                    msgTextBody.put("from", msgSenderId);
+                    msgTextBody.put("to", "ALL");
+                    msgTextBody.put("messageID", PushMsg);
+                    msgTextBody.put("time", saveCurrentTime);
+
+                    Map messageBodyDetails = new HashMap();
+                    messageBodyDetails.put(messageSenderRef + "/" + PushMsg, msgTextBody);
+                    //messageBodyDetails.put(messageReceiverRef + "/" + PushMsg, msgTextBody);
+
+                    RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful())
+                            {
+                                Toast.makeText(GroupsChat.this, "Audio has been sent", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Toast.makeText(GroupsChat.this, "Error", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void startRecording() {
+        record_timer.setBase(SystemClock.elapsedRealtime());
+        record_timer.start();
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setOutputFile(recordFile);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mediaRecorder.start();
+    }
+
+    private void stopRecording() {
+        record_timer.stop();
+        mediaRecorder.stop();
+        mediaRecorder.release();
+        mediaRecorder = null;
     }
 
     private void Initialisation() {
@@ -310,6 +482,9 @@ public class GroupsChat extends AppCompatActivity {
         sendMessageButton = findViewById(R.id.send_msg_button);
         userMessageInput = findViewById(R.id.input_groups_message);
         Send_File_Btn = findViewById(R.id.send_files_btn);
+        record_timer = findViewById(R.id.record_timer);
+        cancel_audio_btn = findViewById(R.id.cancel_audio);
+        record_btn =  findViewById(R.id.record_audio);
 
         GroupMessageAdapter = new GroupMessageAdapter(this, messagesList);
         userMessagesList = findViewById(R.id.private_msg_list_of_users);
