@@ -46,6 +46,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -62,7 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
     private EditText UserName, UserStatus;
     private Button UpdateAccount;
     private ProgressDialog loadingBar;
-    private ImageButton BackToMain;
+    private ImageButton BackToMain, LogOut;
 
     private String currentUserId;
     private FirebaseAuth mAuth;
@@ -91,6 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
         UserStatus = findViewById(R.id.profile_status);
         UpdateAccount = findViewById(R.id.updateSetting_button);
         updateImage = findViewById(R.id.update_picture);
+        LogOut = findViewById(R.id.LogOut);
         loadingBar = new ProgressDialog(this);
 
         relativeLayout = findViewById(R.id.layoutSettings);
@@ -166,7 +169,45 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        LogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateUserStatus("offline");
+                mAuth.signOut();
+                sendUserToLoginActivity();
+            }
+        });
+
         checkForReceivingCall();
+    }
+
+    private void sendUserToLoginActivity() {
+        Intent loginIntent = new Intent(SettingsActivity.this, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(loginIntent);
+        finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void updateUserStatus(String state)
+    {
+        String saveCurrentTime, saveCurrentDate;
+
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd/MM/yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+
+        HashMap<String, Object> onlineStatusMap = new HashMap<>();
+        onlineStatusMap.put("time", saveCurrentTime);
+        onlineStatusMap.put("date", saveCurrentDate);
+        onlineStatusMap.put("state", state);
+
+        RootRef.child("Users").child(currentUserId).child("UsersState")
+                .updateChildren(onlineStatusMap);
     }
 
     @Override

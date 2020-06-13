@@ -519,6 +519,27 @@ public class GroupsChat extends AppCompatActivity {
                 if (msgSenderId.equals(groupAdminId))
                 {
                     remove_room.setVisibility(View.VISIBLE);
+                    update_image.setVisibility(View.VISIBLE);
+
+                    group_image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CropImage.activity()
+                                    .setGuidelines(CropImageView.Guidelines.ON)
+                                    .setAspectRatio(1, 1)
+                                    .start(GroupsChat.this);
+                        }
+                    });
+
+                    update_image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CropImage.activity()
+                                    .setGuidelines(CropImageView.Guidelines.ON)
+                                    .setAspectRatio(1, 1)
+                                    .start(GroupsChat.this);
+                        }
+                    });
                 }
 
                 RootRef.child("Users").child(groupAdminId).addValueEventListener(new ValueEventListener() {
@@ -555,26 +576,6 @@ public class GroupsChat extends AppCompatActivity {
                                 }
                             });
                         }
-                    }
-                });
-
-                group_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CropImage.activity()
-                                .setGuidelines(CropImageView.Guidelines.ON)
-                                .setAspectRatio(1, 1)
-                                .start(GroupsChat.this);
-                    }
-                });
-
-                update_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CropImage.activity()
-                                .setGuidelines(CropImageView.Guidelines.ON)
-                                .setAspectRatio(1, 1)
-                                .start(GroupsChat.this);
                     }
                 });
 
