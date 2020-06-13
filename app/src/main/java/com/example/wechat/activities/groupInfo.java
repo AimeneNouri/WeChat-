@@ -149,6 +149,19 @@ public class groupInfo extends AppCompatActivity {
                 });
             }
         });
+
+        updateGroupInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent groupChatIntent = new Intent(groupInfo.this, updateGroup_info.class);
+                groupChatIntent.putExtra("group_Name", currentGroupName);
+                groupChatIntent.putExtra("group_Id", currentGroupId);
+                groupChatIntent.putExtra("visit_group_Picture", groupImage);
+                groupChatIntent.putExtra("groupStatus", groupStatus);
+                startActivity(groupChatIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
     }
 
     @Override

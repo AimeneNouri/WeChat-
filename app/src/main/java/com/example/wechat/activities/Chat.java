@@ -108,7 +108,7 @@ public class Chat extends AppCompatActivity {
     private Chronometer record_timer;
     private CircleImageView userImage;
     Animation slideFromRight, slideToRight;
-    Animation topAnim, bottomAnim;
+    Animation topAnim, bottomAnim, bottomAnimation;
 
     private boolean isRecording = true;
 
@@ -170,7 +170,8 @@ public class Chat extends AppCompatActivity {
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(userImage);
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
-        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_anim_chat);
+        bottomAnimation = AnimationUtils.loadAnimation(this, R.anim.bottom_anim_chat);
         /*
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -881,6 +882,9 @@ public class Chat extends AppCompatActivity {
         isDiscussionActivityRunning = true;
         checkForReceivingCall();
         //relativeLayout.setBackgroundResource(bgResource);
+
+        //userName.setAnimation(bottomAnimation);
+        //userLastSeen.setAnimation(bottomAnimation);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null){

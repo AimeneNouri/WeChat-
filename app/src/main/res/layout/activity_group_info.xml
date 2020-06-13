@@ -109,9 +109,9 @@
                 android:layout_height="wrap_content"
                 android:text="Remove Room"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@android:color/holo_red_light"
                 android:background="@drawable/relatve_remove_group_btn"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:padding="4dp"
                 android:textStyle="bold"
                 android:visibility="gone"/>
@@ -135,9 +135,9 @@
                 android:layout_height="wrap_content"
                 android:text="Report Room"
                 android:textAllCaps="false"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@android:color/holo_red_light"
                 android:background="@drawable/relatve_remove_group_btn"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:padding="4dp"
                 android:textStyle="bold" />
 
@@ -163,7 +163,7 @@
             android:id="@+id/groupStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="100dp"
+            android:minHeight="120dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:gravity="top"

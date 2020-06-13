@@ -57,12 +57,15 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_done_black_24dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
         android:background="@color/colorPrimary"
         android:backgroundTint="@color/colorPrimary"
-        app:fabCustomSize="50dp"
         app:borderWidth="0dp"
+        app:fabCustomSize="49dp"
+        app:maxImageSize="32dp"
         android:clickable="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"/>
 
 
 </RelativeLayout>

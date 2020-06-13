@@ -30,8 +30,8 @@
             android:id="@+id/LogOut"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="16.5dp"
+            android:layout_marginEnd="15dp"
             android:layout_alignParentRight="true"
             android:focusableInTouchMode="true"
             android:background="@drawable/ic_exit_to_app_black_24dp"/>

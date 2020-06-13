@@ -210,6 +210,7 @@ public class ChatsFragment extends Fragment {
                                     chatIntent.putExtra("visit_user_image", userImage[0]);
                                     chatIntent.putExtra("device_token", device_token);
                                     startActivity(chatIntent);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
                             });
                         }

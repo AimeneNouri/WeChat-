@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layoutUpdate"
+    tools:context=".activities.updateGroup_info"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="#FFFFFF">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/update_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradientlogin"
+        android:elevation="5dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/update_toolbar"
+        android:padding="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/groupPhoto"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/group_icon1" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/update_picture"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_alignBottom="@+id/groupPhoto"
+            android:layout_marginStart="-21dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toEndOf="@+id/groupPhoto"
+            android:src="@drawable/add_image2" />
+
+        <EditText
+            android:id="@+id/groupName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/groupPhoto"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginTop="-58dp"
+            android:layout_marginRight="17dp"
+            android:layout_toEndOf="@+id/groupPhoto"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="top"
+            android:hint="Room name"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textColorHint="#A3A3A3"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/groupStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:gravity="top"
+            android:hint="Room Subject"
+            android:textColor="@color/black"
+            android:textColorHint="#A3A3A3"
+            android:background="@drawable/border_subject"
+            android:isScrollContainer="true"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:layout_below="@+id/groupName"
+            android:layout_marginTop="35dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/createGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_done_black_24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:background="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"
+            app:borderWidth="0dp"
+            app:fabCustomSize="49dp"
+            app:maxImageSize="32dp"
+            android:clickable="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
