@@ -288,12 +288,14 @@ public class MainActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
         if (item.getItemId() == R.id.new_room){
-           NewGroupRequest();
+           //NewGroupRequest();
+           startActivity(new Intent(MainActivity.this, newGroup.class));
+           overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
         return true;
     }
 
-    private void NewGroupRequest() {
+    /*private void NewGroupRequest() {
 
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MainActivity.this, R.style.BottomSheet);
 
@@ -325,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                 String groupName = name.getText().toString();
                 if(TextUtils.isEmpty(groupName))
                 {
-                    Toast.makeText(MainActivity.this, "Please write a name for your group", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please write a name for your room", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
     private void sendUserToSettingsActivity() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);

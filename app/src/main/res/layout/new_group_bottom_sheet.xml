@@ -41,7 +41,6 @@
             android:textColor="@color/black"
             android:textColorHint="@color/colorPrimary"
             android:backgroundTint="@color/colorPrimary"
-            android:inputType="textEmailAddress"
             android:padding="4dp"
             android:textSize="20sp" />
 

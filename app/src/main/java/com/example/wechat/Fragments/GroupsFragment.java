@@ -128,6 +128,7 @@ public class GroupsFragment extends Fragment {
                             final String groupId = dataSnapshot.getKey();
                             final String groupName = dataSnapshot.child("name").getValue(String.class);
                             final String groupAdminId = dataSnapshot.child("adminId").getValue(String.class);
+                            final String groupStatus = dataSnapshot.child("groupStatus").getValue(String.class);
                             holder.group_Name.setText(groupName);
 
                             GroupsRef.child(groupId).child("Messages").limitToLast(1)
@@ -228,6 +229,7 @@ public class GroupsFragment extends Fragment {
                                     groupChatIntent.putExtra("groupName", currentGroupName);
                                     groupChatIntent.putExtra("groupId", groupId);
                                     groupChatIntent.putExtra("groupAdminId", groupAdminId);
+                                    groupChatIntent.putExtra("groupStatus", groupStatus);
                                     groupChatIntent.putExtra("visit_group_image", group_image[0] );
                                     startActivity(groupChatIntent);
                                 }

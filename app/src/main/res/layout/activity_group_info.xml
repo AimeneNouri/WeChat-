@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<ScrollView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,82 +9,205 @@
     tools:context=".activities.groupInfo">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="@drawable/gradientlogin">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#ffffff">
+
+        <ImageButton
+            android:id="@+id/backToGroupActivity"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:focusableInTouchMode="true"
+            android:background="@drawable/back_btn"
+            android:elevation="2dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:id="@+id/linearLayout1"
+            android:background="@drawable/gradient2"
+            android:layout_marginBottom="5dp"
+            android:elevation="1dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/group_profile_image"
+                android:layout_centerVertical="true"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/group_icon"
+                android:elevation="1dp"/>
+
+        </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/UpdateGroupInfo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignEnd="@+id/linearLayout1"
+            android:layout_marginTop="218dp"
+            android:layout_marginEnd="22dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:clickable="true"
+            android:src="@drawable/ic_create_black_24dp"
+            app:borderWidth="0dp"
+            app:fabCustomSize="49dp"
+            app:maxImageSize="32dp" />
+
+        <TextView
+            android:id="@+id/group_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="6dp"
+            android:layout_below="@id/linearLayout1"
+            android:layout_marginTop="45dp"
+            android:text="Room Name "
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:alpha=".4"
+            android:textSize="13sp"
+            android:fontFamily="@font/open_sans_semibold" />
 
         <TextView
             android:id="@+id/group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="100dp"
             android:layout_marginRight="15dp"
             android:text="room name"
-            android:textColor="@color/white"
+            android:textColor="#333333"
+            android:layout_below="@+id/group_name_textview"
+            android:background="@drawable/border_group_name"
             android:textAlignment="center"
             android:textAllCaps="false"
-            android:textSize="32sp"
-            android:textStyle="bold"/>
+            android:padding="9dp"
+            android:textSize="19sp"
+            android:fontFamily="@font/open_sans_semibold"/>
+
+
+        <RelativeLayout
+            android:id="@+id/mLinearLayout"
+            android:layout_below="@+id/group_admin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="70dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/relatve_remove_group_btn"
+            android:elevation="1dp">
+
+            <Button
+                android:id="@+id/remove_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remove Room"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/relatve_remove_group_btn"
+                android:textSize="20sp"
+                android:padding="4dp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_below="@+id/mLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/relatve_remove_group_btn"
+            android:elevation="1dp">
+
+            <Button
+                android:id="@+id/Report_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Report Room"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/relatve_remove_group_btn"
+                android:textSize="20sp"
+                android:padding="4dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textView_groupStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="6dp"
+            android:layout_below="@id/group_name"
+            android:layout_marginTop="20dp"
+            android:text="Room Status "
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:alpha=".4"
+            android:textSize="13sp"
+            android:fontFamily="@font/open_sans_semibold" />
+
+        <TextView
+            android:id="@+id/groupStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="top"
+            android:hint="Room Subject"
+            android:minLines="1"
+            android:maxLines="4"
+            android:textColor="#333333"
+            android:textColorHint="#A3A3A3"
+            android:background="@drawable/border_group_name"
+            android:padding="12dp"
+            android:textSize="20sp"
+            android:layout_below="@+id/textView_groupStatus" />
+
+        <TextView
+            android:id="@+id/textView_groupAdmin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="6dp"
+            android:layout_below="@id/groupStatus"
+            android:layout_marginTop="20dp"
+            android:text="Room Admin "
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:alpha=".4"
+            android:textSize="13sp"
+            android:fontFamily="@font/open_sans_semibold" />
+
+        <TextView
+            android:id="@+id/group_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_below="@id/textView_groupAdmin"
+            android:elevation="1dp"
+            android:text="admin"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/group_profile_image"
-        android:layout_width="130dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="170dp"
-        android:layout_marginBottom="15dp"
-        android:src="@drawable/group_image3" />
+</ScrollView>
 
-    <TextView
-        android:id="@+id/text_admin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="50dp"
-        android:text="Room admin :"
-        android:layout_below="@id/group_profile_image"
-        android:textColor="#46144C"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:layout_marginBottom="5dp"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/group_admin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="55dp"
-        android:text="room admin"
-        android:layout_below="@id/text_admin"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/colorPrimaryDark"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
-
-    <Button
-        android:id="@+id/remove_room"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/group_admin"
-        android:layout_marginLeft="65dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginRight="65dp"
-        android:elevation="4dp"
-        android:background="@drawable/send_message_request"
-        android:text="Remove Room"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="20sp"
-        android:padding="4dp"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-
-</RelativeLayout>

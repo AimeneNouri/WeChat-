@@ -5,6 +5,15 @@ public class Groups {
     private String photo;
     private String  adminId;
     private String adminName;
+    private String groupStatus;
+
+    public String getGroupStatus() {
+        return groupStatus;
+    }
+
+    public void setGroupStatus(String groupStatus) {
+        this.groupStatus = groupStatus;
+    }
 
     public String getAdminName() {
         return adminName;
