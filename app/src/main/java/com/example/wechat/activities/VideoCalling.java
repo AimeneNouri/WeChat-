@@ -86,11 +86,11 @@ public class VideoCalling extends AppCompatActivity implements Session.SessionLi
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            startActivity(new Intent(VideoCalling.this, LoginActivity.class));
                             finish();
                         }
 
-                        if (dataSnapshot.child(UserId).hasChild("Ringing"))
+                        if (dataSnapshot.child(UserId).hasChild("Calling"))
                         {
                             UsersRef.child(UserId).child("Calling").removeValue();
 
@@ -103,7 +103,7 @@ public class VideoCalling extends AppCompatActivity implements Session.SessionLi
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            startActivity(new Intent(VideoCalling.this, LoginActivity.class));
                             finish();
                         }
                         else
@@ -117,7 +117,7 @@ public class VideoCalling extends AppCompatActivity implements Session.SessionLi
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoCalling.this, MainActivity.class));
+                            startActivity(new Intent(VideoCalling.this, LoginActivity.class));
                             finish();
                         }
                     }

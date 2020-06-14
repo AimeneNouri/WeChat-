@@ -42,7 +42,7 @@
         android:layout_marginLeft="1dp"
         android:layout_marginRight="1dp"
         android:gravity="top"
-        android:hint="Room Subject"
+        android:hint="Room Status"
         android:textColor="@color/black"
         android:textColorHint="#A3A3A3"
         android:background="@drawable/border_subject"

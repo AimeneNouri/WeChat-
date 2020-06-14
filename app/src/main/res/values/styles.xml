@@ -12,6 +12,12 @@
 
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog"/>
 
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+
+        <item name="colorAccent">@color/alertColor</item>
+
+    </style>
+
    <style name="BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
        <item name="bottomSheetStyle">@style/BottomSheet</item>
    </style>

@@ -232,6 +232,7 @@ public class GroupsFragment extends Fragment {
                                     groupChatIntent.putExtra("groupStatus", groupStatus);
                                     groupChatIntent.putExtra("visit_group_image", group_image[0] );
                                     startActivity(groupChatIntent);
+                                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                 }
                             });
                         }

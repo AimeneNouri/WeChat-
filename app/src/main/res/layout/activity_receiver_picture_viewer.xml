@@ -25,4 +25,26 @@
         android:layout_marginBottom="70dp"
         android:src="@drawable/crop_image_menu_flip"/>
 
+    <RelativeLayout
+        android:padding="3dp"
+        android:id="@+id/mLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/shareImageBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/save_image"
+            android:layout_marginBottom="5dp"
+            android:layout_centerHorizontal="true"
+            />
+
+    </RelativeLayout>
+
+
 </RelativeLayout>

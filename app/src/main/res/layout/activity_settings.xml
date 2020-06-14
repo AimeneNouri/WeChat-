@@ -82,7 +82,7 @@
         android:layout_below="@+id/linear1"
         android:inputType="textMultiLine"
         android:hint="Available Now"
-        android:minHeight="70dp"
+        android:minHeight="100dp"
         android:textAlignment="center"
         android:textSize="16sp"
         android:minLines="1"
@@ -140,7 +140,7 @@
         android:background="@drawable/btn_update"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="115dp"
+        android:layout_marginTop="100dp"
         android:layout_below="@+id/User_phoneNumber_profile"/>
 
 </RelativeLayout>

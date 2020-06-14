@@ -38,6 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -219,6 +220,30 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                         }
                     });
                 }
+
+                //check if email
+                if (isValid(messages.getMessage()))
+                {
+                    holder.senderMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
+                    holder.senderMsgText.setTextColor(Color.parseColor("#009AFF"));
+                    holder.senderMsgText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String recipient = messages.getMessage().trim();
+
+                            Intent mEmailIntent = new Intent(Intent.ACTION_SEND);
+                            mEmailIntent.setData(Uri.parse("mailto:"));
+                            mEmailIntent.setType("text/plain");
+                            mEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+
+                            try {
+                                holder.itemView.getContext().startActivity(Intent.createChooser(mEmailIntent, "Choose an Email Client"));
+                            }catch (Exception e){
+                                Toast.makeText(holder.itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
             else
             {
@@ -242,6 +267,30 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                         @Override
                         public void onClick(View v) {
                             holder.itemView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(messages.getMessage())));
+                        }
+                    });
+                }
+
+                //check if email
+                if (isValid(messages.getMessage()))
+                {
+                    holder.receiverMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
+                    holder.receiverMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.receiverMsgText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String recipient = messages.getMessage().trim();
+
+                            Intent mEmailIntent = new Intent(Intent.ACTION_SEND);
+                            mEmailIntent.setData(Uri.parse("mailto:"));
+                            mEmailIntent.setType("text/plain");
+                            mEmailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+
+                            try {
+                                holder.itemView.getContext().startActivity(Intent.createChooser(mEmailIntent, "Choose an Email Client"));
+                            }catch (Exception e){
+                                Toast.makeText(holder.itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 }
@@ -544,6 +593,19 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
     @Override
     public int getItemCount() {
         return userMessagesList.size();
+    }
+
+    public static boolean isValid(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
     }
 
 }

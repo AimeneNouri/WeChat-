@@ -113,10 +113,10 @@ public class groupInfo extends AppCompatActivity {
 
                     if (groupAdminId.equals(currentUserID))
                     {
-                        groupAdmin.setText("You");
+                        groupAdmin.setText("Created by you");
                     }
                     else {
-                        groupAdmin.setText(admin_name);
+                        groupAdmin.setText("Created by " + admin_name);
                     }
                 }
             }

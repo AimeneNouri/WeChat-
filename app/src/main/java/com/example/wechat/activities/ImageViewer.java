@@ -1,11 +1,16 @@
 package com.example.wechat.activities;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -47,6 +52,7 @@ public class ImageViewer extends AppCompatActivity {
     private ImageButton sharePictureBtn, back_btn;
     private String imageUrl;
 
+    private int STORAGE_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,30 +77,55 @@ public class ImageViewer extends AppCompatActivity {
         sharePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
+                if (ContextCompat.checkSelfPermission(ImageViewer.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                {
+                    Bitmap bitmap = ( (BitmapDrawable) myImageView.getDrawable()).getBitmap();
 
-                FileOutputStream outStream = null;
-                try {
-                    File sdCard = Environment.getExternalStorageDirectory();
-                    File dir = new File(sdCard.getAbsolutePath() + "/WECHAT");
-                    dir.mkdirs();
+                    FileOutputStream outStream = null;
+                    try {
+                        File sdCard = Environment.getExternalStorageDirectory();
+                        File dir = new File(sdCard.getAbsolutePath() + "/WECHAT/PICTURES/");
+                        dir.mkdirs();
 
-                    String fileName = String.format("%d.jpg", System.currentTimeMillis());
-                    File outFile = new File(dir, fileName);
+                        String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                        File outFile = new File(dir, fileName);
 
-                    outStream = new FileOutputStream(outFile);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                    outStream.flush();
-                    outStream.close();
+                        outStream = new FileOutputStream(outFile);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                        outStream.flush();
+                        outStream.close();
 
-                }catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    }catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    Toast.makeText(ImageViewer.this, "Image Saved", Toast.LENGTH_SHORT).show();
                 }
 
-                Toast.makeText(ImageViewer.this, "Image Saved", Toast.LENGTH_SHORT).show();
+                else {
+                    requestStoragePermissions();
+                }
             }
         });
+    }
+
+    private void requestStoragePermissions() {
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == STORAGE_PERMISSION_CODE)
+        {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                //
+            }
+            else {
+                //
+            }
+        }
     }
 }

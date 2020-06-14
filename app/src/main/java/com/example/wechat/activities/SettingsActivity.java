@@ -1,8 +1,11 @@
 package com.example.wechat.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -172,9 +175,31 @@ public class SettingsActivity extends AppCompatActivity {
         LogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateUserStatus("offline");
-                mAuth.signOut();
-                sendUserToLoginActivity();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this, R.style.AlertDialogTheme);
+                builder.setTitle("Confirm Logout ");
+                builder.setIcon(R.drawable.logout_icon);
+                builder.setMessage("Are you sure you want to logout");
+                builder.setCancelable(false);
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        updateUserStatus("offline");
+                        mAuth.signOut();
+                        sendUserToLoginActivity();
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                builder.show();
             }
         });
 

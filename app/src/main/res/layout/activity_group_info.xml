@@ -13,24 +13,23 @@
         android:layout_height="match_parent"
         android:background="#ffffff">
 
-        <ImageButton
-            android:id="@+id/backToGroupActivity"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:focusableInTouchMode="true"
-            android:background="@drawable/back_btn"
-            android:elevation="2dp"/>
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:id="@+id/linearLayout1"
             android:background="@drawable/gradient2"
             android:layout_marginBottom="5dp"
-            android:elevation="1dp">
+            android:elevation="2dp">
+
+            <ImageButton
+                android:id="@+id/backToGroupActivity"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:focusableInTouchMode="true"
+                android:background="@drawable/back_btn" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/group_profile_image"
@@ -39,7 +38,24 @@
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/group_icon"
-                android:elevation="1dp"/>
+                android:elevation="1dp"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/white"/>
+
+            <TextView
+                android:id="@+id/group_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="7dp"
+                android:elevation="1dp"
+                android:text="admin"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
@@ -93,11 +109,11 @@
 
         <RelativeLayout
             android:id="@+id/mLinearLayout"
-            android:layout_below="@+id/group_admin"
+            android:layout_below="@+id/groupStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="80dp"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:background="@drawable/relatve_remove_group_btn"
@@ -177,35 +193,6 @@
             android:textSize="20sp"
             android:layout_below="@+id/textView_groupStatus" />
 
-        <TextView
-            android:id="@+id/textView_groupAdmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="6dp"
-            android:layout_below="@id/groupStatus"
-            android:layout_marginTop="20dp"
-            android:text="Room Admin "
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:alpha=".4"
-            android:textSize="13sp"
-            android:fontFamily="@font/open_sans_semibold" />
-
-        <TextView
-            android:id="@+id/group_admin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_below="@id/textView_groupAdmin"
-            android:elevation="1dp"
-            android:text="admin"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
 
     </RelativeLayout>
 

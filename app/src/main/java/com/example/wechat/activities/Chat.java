@@ -14,12 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -27,6 +30,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.telecom.Call;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -146,6 +150,7 @@ public class Chat extends AppCompatActivity {
     private String recordFile;
 
     public static int bgResource;
+    private MediaPlayer mp, mpp, mppp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -381,12 +386,15 @@ public class Chat extends AppCompatActivity {
                     recordFile += "/Recording_" + currentDate + ".3gp";
 
                     startRecording();
+
+
                     record_btn.setBackgroundResource(R.drawable.stop_record);
                     isRecording = false;
                 }
                 else{
                     isRecording = true;
                     stopRecording();
+
 
                     msgInput.setAnimation(bottomAnim);
                     uploadFilesBtn.setAnimation(bottomAnim);
@@ -406,6 +414,7 @@ public class Chat extends AppCompatActivity {
             public void onClick(View v) {
                 isRecording = true;
                 stopRecording();
+
 
                 File file = new File(recordFile);
                 file.delete();
@@ -979,7 +988,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.call, menu);
+        //getMenuInflater().inflate(R.menu.call, menu);
         getMenuInflater().inflate(R.menu.chat_setting, menu);
         return true;
     }
@@ -987,7 +996,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == R.id.voice_call_icon_option){
+        /*if (item.getItemId() == R.id.voice_call_icon_option){
 
             Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
             VoiceIntent.putExtra("visit_user_id", msgReceiverId);
@@ -1004,7 +1013,7 @@ public class Chat extends AppCompatActivity {
         }
 
 
-        /*if (item.getItemId() == R.id.wallpaper_option)
+        if (item.getItemId() == R.id.wallpaper_option)
         {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);
 
@@ -1112,6 +1121,34 @@ public class Chat extends AppCompatActivity {
 
         if (item.getItemId() == R.id.Report_option)
         {
+            AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this, R.style.AlertDialogTheme);
+            builder.setTitle("Confirm Report ");
+            builder.setMessage("Are you sure you want to report");
+            builder.setCancelable(false);
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    updateUserStatus("offline");
+                    mAuth.signOut();
+                    sendUserToLoginActivity();
+                }
+            });
+
+            /*builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });*/
+
+            builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
             Report report = new Report();
             report.setFrom(msgSenderId);
             report.setTo(msgReceiverId);
@@ -1198,6 +1235,12 @@ public class Chat extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void updateUserStatus(String state)

@@ -81,6 +81,11 @@ public class VoiceCalling extends AppCompatActivity {
                 .environmentHost(ENVIRONMENT)
                 .build();
 
+        sinchClient.setSupportCalling(true);
+        sinchClient.startListeningOnActiveConnection();
+        sinchClient.start();
+        sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+
         acceptCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,13 +111,6 @@ public class VoiceCalling extends AppCompatActivity {
                 }
             }
         });
-
-
-        sinchClient.setSupportCalling(true);
-        sinchClient.startListeningOnActiveConnection();
-        sinchClient.start();
-        sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
-        sinchClient.setSupportActiveConnectionInBackground(true);
     }
 
     private class SinchCallListener implements CallListener{
@@ -150,12 +148,12 @@ public class VoiceCalling extends AppCompatActivity {
             //mediaPlayer.start();
             acceptCallReceiver.setVisibility(View.VISIBLE);
             acceptCall.setVisibility(View.GONE);
+            call = incomingCall;
 
             acceptCallReceiver.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //mediaPlayer.stop();
-                    call = incomingCall;
                     call.answer();
                     call.addCallListener(new SinchCallListener());
                     Toast.makeText(VoiceCalling.this, "Call started", Toast.LENGTH_SHORT).show();
