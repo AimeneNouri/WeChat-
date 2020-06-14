@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,10 +27,12 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.telecom.Call;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -106,6 +109,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Chat extends AppCompatActivity {
 
+    private static final int IMAGE_CAPTURE_CODE = 1001;
     private Toolbar mToolbar;
     private String msgReceiverId, msgReceiverName, msgReceiverImage, msgSenderId, senderToken;
     private TextView userName, userLastSeen, cancel_audio_btn;
@@ -150,7 +154,10 @@ public class Chat extends AppCompatActivity {
     private String recordFile;
 
     public static int bgResource;
-    private MediaPlayer mp, mpp, mppp;
+    private ImageView captureImage;
+    private static final int PERMISSION_CODE = 100;
+
+    Uri image_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,39 +379,48 @@ public class Chat extends AppCompatActivity {
         record_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording){
+                if (ContextCompat.checkSelfPermission(Chat.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)
+                {
+                    if (isRecording){
 
-                    msgInput.setVisibility(View.GONE);
-                    uploadFilesBtn.setVisibility(View.GONE);
-                    record_timer.setVisibility(View.VISIBLE);
-                    cancel_audio_btn.setVisibility(View.VISIBLE);
+                        msgInput.setVisibility(View.GONE);
+                        uploadFilesBtn.setVisibility(View.GONE);
+                        captureImage.setVisibility(View.GONE);
+                        record_timer.setVisibility(View.VISIBLE);
+                        cancel_audio_btn.setVisibility(View.VISIBLE);
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
-                    String currentDate = formatter.format(new Date());
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
+                        String currentDate = formatter.format(new Date());
 
-                    recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    recordFile += "/Recording_" + currentDate + ".3gp";
+                        recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        recordFile += "/Recording_" + currentDate + ".3gp";
 
-                    startRecording();
+                        startRecording();
 
 
-                    record_btn.setBackgroundResource(R.drawable.stop_record);
-                    isRecording = false;
+                        record_btn.setBackgroundResource(R.drawable.stop_record);
+                        isRecording = false;
                 }
-                else{
-                    isRecording = true;
-                    stopRecording();
+                    else{
+                        isRecording = true;
+                        stopRecording();
 
 
-                    msgInput.setAnimation(bottomAnim);
-                    uploadFilesBtn.setAnimation(bottomAnim);
-                    msgInput.setVisibility(View.VISIBLE);
-                    uploadFilesBtn.setVisibility(View.VISIBLE);
-                    record_timer.setVisibility(View.GONE);
-                    cancel_audio_btn.setVisibility(View.GONE);
-                    record_btn.setBackgroundResource(R.drawable.micro_btn);
+                        msgInput.setAnimation(bottomAnim);
+                        uploadFilesBtn.setAnimation(bottomAnim);
+                        captureImage.setAnimation(bottomAnim);
+                        msgInput.setVisibility(View.VISIBLE);
+                        uploadFilesBtn.setVisibility(View.VISIBLE);
+                        captureImage.setVisibility(View.VISIBLE);
+                        record_timer.setVisibility(View.GONE);
+                        cancel_audio_btn.setVisibility(View.GONE);
+                        record_btn.setBackgroundResource(R.drawable.micro_btn);
 
-                    uploadAudio(recordFile);
+                        uploadAudio(recordFile);
+                    }
+                }
+                else {
+                    requestStoragePermissions();
                 }
             }
         });
@@ -421,13 +437,65 @@ public class Chat extends AppCompatActivity {
 
                 msgInput.setAnimation(bottomAnim);
                 uploadFilesBtn.setAnimation(bottomAnim);
+                captureImage.setAnimation(bottomAnim);
                 msgInput.setVisibility(View.VISIBLE);
+                captureImage.setVisibility(View.VISIBLE);
                 uploadFilesBtn.setVisibility(View.VISIBLE);
                 record_timer.setVisibility(View.GONE);
                 cancel_audio_btn.setVisibility(View.GONE);
                 record_btn.setBackgroundResource(R.drawable.micro_btn);
             }
         });
+
+        captureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checker = "image";
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+                    {
+                        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(perms, PERMISSION_CODE);
+                    }
+                    else {
+                            openCamera();
+                    }
+                }
+                else {
+                    openCamera();
+                }
+            }
+        });
+    }
+
+    private void requestStoragePermissions() {
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, 1);
+    }
+
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    openCamera();
+                }
+                else {
+                    Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void uploadAudio(String fileName) {
@@ -563,6 +631,7 @@ public class Chat extends AppCompatActivity {
         uploadFilesBtn = findViewById(R.id.send_files_btn);
         record_timer = findViewById(R.id.record_timer);
         cancel_audio_btn = findViewById(R.id.cancel_audio);
+        captureImage = findViewById(R.id.capture_image);
 
         messagesAdapter = new MessagesAdapter(messagesList);
         UsersMessagesList = findViewById(R.id.private_msg_list_of_users);
@@ -577,7 +646,7 @@ public class Chat extends AppCompatActivity {
         layoutParam.setMargins(0,4,0, 4);
         layoutParams.setMargins(0,4,0, 4);*/
 
-        msgInput.setHint("Message "+ msgReceiverName +"'s chat");
+        msgInput.setHint("Message "+ msgReceiverName);
         msgInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -592,12 +661,14 @@ public class Chat extends AppCompatActivity {
                 {
                     send_msg.setVisibility(View.VISIBLE);
                     record_btn.setVisibility(View.GONE);
+                    captureImage.setVisibility(View.GONE);
                     RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
                 }
                 if (s.length() == 0)
                 {
                     send_msg.setVisibility(View.GONE);
                     record_btn.setVisibility(View.VISIBLE);
+                    captureImage.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -830,6 +901,72 @@ public class Chat extends AppCompatActivity {
                 loadingBar.dismiss();
                 Toast.makeText(this, "Nothing Selected, Error", Toast.LENGTH_SHORT).show();
             }
+        }
+        if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK)
+        {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+
+            final String messageSenderRef = "Messages/" + msgSenderId + "/" + msgReceiverId;
+            final String messageReceiverRef = "Messages/" + msgReceiverId + "/" + msgSenderId;
+
+            ImageMsgKeyRef = RootRef.child("Messages").child(msgSenderId)
+                    .child(msgReceiverId).push();
+
+            PushMsg = ImageMsgKeyRef.getKey();
+
+            final StorageReference filePath = storageReference.child(PushMsg + "." + "jpg");
+
+            UploadTask = filePath.putFile(image_uri);
+            UploadTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception
+                {
+                    if (!task.isSuccessful())
+                    {
+                        throw  task.getException();
+                    }
+
+                    return filePath.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful())
+                    {
+                        Uri downloadUri = task.getResult();
+                        myUrl = downloadUri.toString();
+
+                        Map msgTextBody  = new HashMap();
+                        msgTextBody.put("message", myUrl);
+                        msgTextBody.put("name", image_uri.getLastPathSegment());
+                        msgTextBody.put("type", "image");
+                        msgTextBody.put("from", msgSenderId);
+                        msgTextBody.put("to", msgReceiverId);
+                        msgTextBody.put("messageID", PushMsg);
+                        msgTextBody.put("time", saveCurrentTime);
+
+                        Map messageBodyDetails = new HashMap();
+                        messageBodyDetails.put(messageSenderRef + "/" + PushMsg, msgTextBody);
+                        messageBodyDetails.put(messageReceiverRef + "/" + PushMsg, msgTextBody);
+
+                        RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                            @Override
+                            public void onComplete(@NonNull Task task) {
+                                if (task.isSuccessful())
+                                {
+                                    loadingBar.dismiss();
+                                }
+                                else
+                                {
+                                    loadingBar.dismiss();
+                                    Toast.makeText(Chat.this, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                                msgInput.setText("");
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
@@ -1123,24 +1260,27 @@ public class Chat extends AppCompatActivity {
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(Chat.this, R.style.AlertDialogTheme);
             builder.setTitle("Confirm Report ");
-            builder.setMessage("Are you sure you want to report");
+            builder.setMessage("Are you sure you want to report " + msgReceiverName);
             builder.setCancelable(false);
 
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    updateUserStatus("offline");
-                    mAuth.signOut();
-                    sendUserToLoginActivity();
+                    Report report = new Report();
+                    report.setFrom(msgSenderId);
+                    report.setTo(msgReceiverId);
+                    DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference().child("Report").push();
+                    reportRef.setValue(report).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful())
+                            {
+                                Toast.makeText(Chat.this, "Your report has been saved", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             });
-
-            /*builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });*/
 
             builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
@@ -1149,19 +1289,8 @@ public class Chat extends AppCompatActivity {
                 }
             });
 
-            Report report = new Report();
-            report.setFrom(msgSenderId);
-            report.setTo(msgReceiverId);
-            DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference().child("Report").push();
-            reportRef.setValue(report).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful())
-                    {
-                        Toast.makeText(Chat.this, "Your report has been saved", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+            AlertDialog dialog = builder.create();
+            builder.show();
         }
 
         return super.onOptionsItemSelected(item);

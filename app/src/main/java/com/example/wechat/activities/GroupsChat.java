@@ -6,19 +6,26 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -128,6 +135,10 @@ public class GroupsChat extends AppCompatActivity {
     private Chronometer record_timer;
 
     private boolean isRecording = true;
+    private ImageView captureImage;
+    private static final int PERMISSION_CODE = 100;
+    private static final int IMAGE_CAPTURE_CODE = 1001;
+    Uri image_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,36 +333,44 @@ public class GroupsChat extends AppCompatActivity {
         record_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRecording){
+                if (ContextCompat.checkSelfPermission(GroupsChat.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)
+                {
+                    if (isRecording){
 
-                    userMessageInput.setVisibility(View.GONE);
-                    Send_File_Btn.setVisibility(View.GONE);
-                    record_timer.setVisibility(View.VISIBLE);
-                    cancel_audio_btn.setVisibility(View.VISIBLE);
+                        userMessageInput.setVisibility(View.GONE);
+                        Send_File_Btn.setVisibility(View.GONE);
+                        captureImage.setVisibility(View.GONE);
+                        record_timer.setVisibility(View.VISIBLE);
+                        cancel_audio_btn.setVisibility(View.VISIBLE);
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
-                    String currentDate = formatter.format(new Date());
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss", Locale.getDefault());
+                        String currentDate = formatter.format(new Date());
 
-                    recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    recordFile += "/Recording_" + currentDate + ".3gp";
+                        recordFile = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        recordFile += "/Recording_" + currentDate + ".3gp";
 
-                    startRecording();
-                    record_btn.setBackgroundResource(R.drawable.stop_record);
-                    isRecording = false;
+                        startRecording();
+                        record_btn.setBackgroundResource(R.drawable.stop_record);
+                        isRecording = false;
+                    }
+                    else{
+                        isRecording = true;
+                        stopRecording();
+
+                        userMessageInput.setAnimation(bottomAnim);
+                        Send_File_Btn.setAnimation(bottomAnim);
+                        captureImage.setAnimation(bottomAnim);
+                        userMessageInput.setVisibility(View.VISIBLE);
+                        Send_File_Btn.setVisibility(View.VISIBLE);
+                        record_timer.setVisibility(View.GONE);
+                        cancel_audio_btn.setVisibility(View.GONE);
+                        record_btn.setBackgroundResource(R.drawable.micro_btn);
+
+                        uploadAudio(recordFile);
+                    }
                 }
-                else{
-                    isRecording = true;
-                    stopRecording();
-
-                    userMessageInput.setAnimation(bottomAnim);
-                    Send_File_Btn.setAnimation(bottomAnim);
-                    userMessageInput.setVisibility(View.VISIBLE);
-                    Send_File_Btn.setVisibility(View.VISIBLE);
-                    record_timer.setVisibility(View.GONE);
-                    cancel_audio_btn.setVisibility(View.GONE);
-                    record_btn.setBackgroundResource(R.drawable.micro_btn);
-
-                    uploadAudio(recordFile);
+                else {
+                    requestStoragePermissions();
                 }
             }
         });
@@ -367,6 +386,7 @@ public class GroupsChat extends AppCompatActivity {
 
                 userMessageInput.setAnimation(bottomAnim);
                 Send_File_Btn.setAnimation(bottomAnim);
+                captureImage.setAnimation(bottomAnim);
                 userMessageInput.setVisibility(View.VISIBLE);
                 Send_File_Btn.setVisibility(View.VISIBLE);
                 record_timer.setVisibility(View.GONE);
@@ -374,6 +394,56 @@ public class GroupsChat extends AppCompatActivity {
                 record_btn.setBackgroundResource(R.drawable.micro_btn);
             }
         });
+
+        captureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checker = "image";
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+                    {
+                        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(perms, PERMISSION_CODE);
+                    }
+                    else {
+                        openCamera();
+                    }
+                }
+                else {
+                    openCamera();
+                }
+            }
+        });
+    }
+
+    private void requestStoragePermissions() {
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, 1);
+    }
+
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    openCamera();
+                }
+                else {
+                    Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void uploadAudio(String fileName) {
@@ -493,6 +563,7 @@ public class GroupsChat extends AppCompatActivity {
         record_timer = findViewById(R.id.record_timer);
         cancel_audio_btn = findViewById(R.id.cancel_audio);
         record_btn =  findViewById(R.id.record_audio);
+        captureImage = findViewById(R.id.capture_image);
 
         GroupMessageAdapter = new GroupMessageAdapter(this, messagesList);
         userMessagesList = findViewById(R.id.private_msg_list_of_users);
@@ -613,16 +684,18 @@ public class GroupsChat extends AppCompatActivity {
             {
                 if (s.length() != 0)
                 {
-                    //sendMessageButton.setVisibility(View.VISIBLE);
+                    sendMessageButton.setVisibility(View.VISIBLE);
                     //userMessageInput.setLayoutParams(layoutParam);
                     //RootRef.child("Users").child(msgSenderId).child("UsersState").child("state").setValue("Typing");
-                    Send_File_Btn.setVisibility(View.GONE);
+                    captureImage.setVisibility(View.GONE);
+                    record_btn.setVisibility(View.GONE);
                 }
                 if (s.length() == 0)
                 {
-                    //sendMessageButton.setVisibility(View.GONE);
+                    sendMessageButton.setVisibility(View.GONE);
                     //userMessageInput.setLayoutParams(layoutParams);
-                    Send_File_Btn.setVisibility(View.VISIBLE);
+                    record_btn.setVisibility(View.VISIBLE);
+                    captureImage.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -925,6 +998,70 @@ public class GroupsChat extends AppCompatActivity {
                     }
                 });
             }
+        }
+
+        if (requestCode == IMAGE_CAPTURE_CODE && resultCode == RESULT_OK){
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Image Files");
+
+            final String messageSenderRef = "Groups/" + currentGroupId + "/" + "Messages";
+
+            DatabaseReference userMsgKeyRef = RootRef.child("Groups").child(currentGroupId)
+                    .child("Messages").push();
+
+            final String msgPushID = userMsgKeyRef.getKey();
+
+            final StorageReference filePath = storageReference.child(msgPushID + "." + "jpg");
+
+            UploadTask = filePath.putFile(image_uri);
+            UploadTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+                    if (!task.isSuccessful())
+                    {
+                        throw  task.getException();
+                    }
+
+                    return filePath.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful())
+                    {
+                        Uri downloadUri = task.getResult();
+                        myUrl = downloadUri.toString();
+
+                        Map msgPictureBody = new HashMap();
+                        msgPictureBody.put("message", myUrl);
+                        msgPictureBody.put("name", image_uri.getLastPathSegment());
+                        msgPictureBody.put("type", "image");
+                        msgPictureBody.put("from", msgSenderId);
+                        msgPictureBody.put("to", "ALL");
+                        msgPictureBody.put("messageID", msgPushID);
+                        msgPictureBody.put("time", saveCurrentTime);
+
+                        Map messageBodyDetails = new HashMap();
+                        messageBodyDetails.put(messageSenderRef + "/" + msgPushID, msgPictureBody);
+
+                        RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
+                            @Override
+                            public void onComplete(@NonNull Task task) {
+                                if (task.isSuccessful())
+                                {
+                                    loadingBar.dismiss();
+                                }
+                                else
+                                {
+                                    loadingBar.dismiss();
+                                    Toast.makeText(GroupsChat.this, "Error", Toast.LENGTH_SHORT).show();
+                                }
+                                userMessageInput.setText("");
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 

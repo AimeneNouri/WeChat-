@@ -3,6 +3,8 @@ package com.example.wechat.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -137,31 +139,57 @@ public class groupInfo extends AppCompatActivity {
         ReportGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ReportRoom reportRoom = new ReportRoom();
-                reportRoom.setReporter(currentUserID);
-                reportRoom.setGroup(currentGroupId);
-                DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentGroupId).child("Report").push();
-                reportRef.setValue(reportRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(groupInfo.this, R.style.AlertDialogTheme);
+                builder.setTitle("Confirm Report ");
+                builder.setMessage("Are you sure you want to report this room");
+                builder.setCancelable(false);
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(groupInfo.this, "Your report has been saved", Toast.LENGTH_SHORT).show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        ReportRoom reportRoom = new ReportRoom();
+                        reportRoom.setReporter(currentUserID);
+                        reportRoom.setGroup(currentGroupId);
+                        DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference().child("Groups").child(currentGroupId).child("Report").push();
+                        reportRef.setValue(reportRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(groupInfo.this, "Your report has been saved", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
-            }
-        });
 
-        updateGroupInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent groupChatIntent = new Intent(groupInfo.this, updateGroup_info.class);
-                groupChatIntent.putExtra("group_Name", currentGroupName);
-                groupChatIntent.putExtra("group_Id", currentGroupId);
-                groupChatIntent.putExtra("visit_group_Picture", groupImage);
-                groupChatIntent.putExtra("groupStatus", groupStatus);
-                startActivity(groupChatIntent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                builder.show();
             }
         });
+        if (currentUserID.equals(groupAdminId))
+        {
+            updateGroupInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent groupChatIntent = new Intent(groupInfo.this, updateGroup_info.class);
+                    groupChatIntent.putExtra("group_Name", currentGroupName);
+                    groupChatIntent.putExtra("group_Id", currentGroupId);
+                    groupChatIntent.putExtra("visit_group_Picture", groupImage);
+                    groupChatIntent.putExtra("groupStatus", groupStatus);
+                    startActivity(groupChatIntent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
+        else {
+            updateGroupInfo.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
