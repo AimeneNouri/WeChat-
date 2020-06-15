@@ -1125,7 +1125,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.call, menu);
+        getMenuInflater().inflate(R.menu.call, menu);
         getMenuInflater().inflate(R.menu.chat_setting, menu);
         return true;
     }
@@ -1133,7 +1133,7 @@ public class Chat extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        /*if (item.getItemId() == R.id.voice_call_icon_option){
+        if (item.getItemId() == R.id.voice_call_icon_option){
 
             Intent VoiceIntent = new Intent(Chat.this, VoiceCalling.class);
             VoiceIntent.putExtra("visit_user_id", msgReceiverId);
@@ -1143,13 +1143,7 @@ public class Chat extends AppCompatActivity {
             startActivity(VoiceIntent);
         }
 
-        if (item.getItemId() == R.id.video_call_icon_option){
-            Intent Calling = new Intent(Chat.this, CallingActivity.class);
-            Calling.putExtra("visit_user_id", msgReceiverId);
-            startActivity(Calling);
-        }
-
-
+        /*
         if (item.getItemId() == R.id.wallpaper_option)
         {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(Chat.this, R.style.BottomSheet);

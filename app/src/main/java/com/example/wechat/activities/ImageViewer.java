@@ -72,7 +72,7 @@ public class ImageViewer extends AppCompatActivity {
         });
 
         imageUrl = getIntent().getStringExtra("url");
-        Picasso.get().load(imageUrl).into(myImageView);
+        Picasso.get().load(imageUrl).placeholder(R.drawable.profile_image).into(myImageView);
 
         sharePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override

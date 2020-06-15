@@ -43,39 +43,49 @@
         android:textSize="16sp"
         android:textAlignment="center"/>
 
-    <ImageButton
-        android:id="@+id/buttonEndCall"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="90dp"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/btn_endcall" />
-
-    <ImageButton
-        android:id="@+id/btn_accept_cal"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/btn_startcall"/>
-
-    <ImageButton
-        android:id="@+id/btn_accept_call_receiver"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/btn_startcall"
+    <Chronometer
+        android:id="@+id/call_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="7dp"
+        android:fontFamily="@font/open_sans_semibold"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/callState"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginBottom="40dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_accept_cal"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/btn_startcall"/>
+
+        <ImageButton
+            android:id="@+id/btn_accept_call_receiver"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/btn_startcall"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/buttonEndCall"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/btn_endcall" />
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -27,8 +27,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/groupPhoto"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:background="@drawable/group_icon1" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -36,8 +36,8 @@
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:layout_alignBottom="@+id/groupPhoto"
-            android:layout_marginStart="-21dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginStart="-20dp"
+            android:layout_marginBottom="2dp"
             android:layout_toEndOf="@+id/groupPhoto"
             android:src="@drawable/add_image2" />
 
@@ -68,6 +68,8 @@
             android:layout_marginRight="1dp"
             android:gravity="top"
             android:hint="Room Subject"
+            android:minLines="1"
+            android:maxLines="4"
             android:textColor="@color/black"
             android:textColorHint="#A3A3A3"
             android:background="@drawable/border_subject"

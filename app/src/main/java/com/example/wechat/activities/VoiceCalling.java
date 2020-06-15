@@ -15,7 +15,9 @@ import com.sinch.android.rtc.calling.CallClientListener;
 import com.sinch.android.rtc.calling.CallListener;
 import com.squareup.picasso.Picasso;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
@@ -24,8 +26,11 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +45,7 @@ public class VoiceCalling extends AppCompatActivity {
     private static final String APP_SECRET = "HJr/Bus8VUukF3DnRnZ5lg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
 
-    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver;
+    private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver, currentUserId;
     private SinchClient sinchClient;
 
     private ImageButton endCall, acceptCall, acceptCallReceiver;
@@ -48,6 +53,7 @@ public class VoiceCalling extends AppCompatActivity {
     private Call call;
     private CircleImageView receiverImage;
     private MediaPlayer mediaPlayer;
+    private Chronometer call_timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,8 @@ public class VoiceCalling extends AppCompatActivity {
         DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
         SenderCallId = FirebaseInstanceId.getInstance().getToken();
+        Log.d("tokenSende", SenderCallId);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         endCall = findViewById(R.id.buttonEndCall);
         callState = findViewById(R.id.callState);
@@ -67,15 +75,16 @@ public class VoiceCalling extends AppCompatActivity {
         ReceiverName = findViewById(R.id.receiver_Name);
         acceptCall = findViewById(R.id.btn_accept_cal);
         acceptCallReceiver = findViewById(R.id.btn_accept_call_receiver);
+        call_timer = findViewById(R.id.call_timer);
 
         ReceiverName.setText(msgReceiverName);
         Picasso.get().load(msgReceiverImage).placeholder(R.drawable.profile_image).into(receiverImage);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.whatsapp_ring);
+        mediaPlayer = MediaPlayer.create(this, R.raw.calling_outgoing);
 
         sinchClient = Sinch.getSinchClientBuilder()
                 .context(this)
-                .userId(SenderCallId)
+                .userId(currentUserId)
                 .applicationKey(APP_KEY)
                 .applicationSecret(APP_SECRET)
                 .environmentHost(ENVIRONMENT)
@@ -83,15 +92,16 @@ public class VoiceCalling extends AppCompatActivity {
 
         sinchClient.setSupportCalling(true);
         sinchClient.startListeningOnActiveConnection();
-        sinchClient.start();
         sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+        sinchClient.start();
 
         acceptCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (call == null){
+                    mediaPlayer.start();
 
-                    call = sinchClient.getCallClient().callUser(DeviceTokenReceiver);
+                    call = sinchClient.getCallClient().callUser(receiverCallId);
                     call.addCallListener(new SinchCallListener());
                     callState.setText("Calling...");
                 }
@@ -103,6 +113,7 @@ public class VoiceCalling extends AppCompatActivity {
             public void onClick(View v) {
                 if (call != null)
                 {
+                    mediaPlayer.stop();
                     call.hangup();
                     onBackPressed();
                 }
@@ -117,19 +128,26 @@ public class VoiceCalling extends AppCompatActivity {
 
         @Override
         public void onCallProgressing(Call call) {
-            callState.setText("Ringing...");
+            callState.setText("Calling...");
         }
 
         @Override
         public void onCallEstablished(Call call) {
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
             Toast.makeText(VoiceCalling.this, "connected", Toast.LENGTH_SHORT).show();
+            acceptCall.setVisibility(View.GONE);
+            callState.setVisibility(View.GONE);
+            call_timer.setVisibility(View.VISIBLE);
+            call_timer.setBase(SystemClock.elapsedRealtime());
+            call_timer.start();
         }
 
         @Override
         public void onCallEnded(Call endedCall) {
             call = null;
-            //SinchError a = endedCall.getDetails().getError();
+            call_timer.stop();
+            callState.setVisibility(View.VISIBLE);
+            call_timer.setVisibility(View.GONE);
             callState.setText("");
             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             Toast.makeText(VoiceCalling.this, "call end", Toast.LENGTH_SHORT).show();
@@ -144,29 +162,36 @@ public class VoiceCalling extends AppCompatActivity {
     private class SinchCallClientListener implements CallClientListener
     {
         @Override
-        public void onIncomingCall(CallClient callClient, Call incomingCall) {
-            //mediaPlayer.start();
-            acceptCallReceiver.setVisibility(View.VISIBLE);
-            acceptCall.setVisibility(View.GONE);
-            call = incomingCall;
-
-            acceptCallReceiver.setOnClickListener(new View.OnClickListener() {
+        public void onIncomingCall(CallClient callClient, final Call incomingCall) {
+            /*
+            AlertDialog alertDialog = new AlertDialog.Builder(VoiceCalling.this, R.style.AlertDialogTheme).create();
+            alertDialog.setTitle("Calling");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Reject", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    //mediaPlayer.stop();
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    call.hangup();
+                }
+            });
+
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Pick", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    call = incomingCall;
                     call.answer();
                     call.addCallListener(new SinchCallListener());
-                    Toast.makeText(VoiceCalling.this, "Call started", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VoiceCalling.this, "Call Started", Toast.LENGTH_SHORT).show();
                 }
             });
 
-            endCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    call.hangup();
-                    onBackPressed();
-                }
-            });
+            alertDialog.show();
+            */
+
+            call = incomingCall;
+            Toast.makeText(VoiceCalling.this, "Incoming call", Toast.LENGTH_SHORT).show();
+            call.answer();
+            call.addCallListener(new SinchCallListener());
+
         }
     }
 }

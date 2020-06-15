@@ -11,8 +11,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/groupPhoto"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/group_icon1"
         android:layout_marginTop="35dp" />
 
@@ -41,6 +41,8 @@
         android:minHeight="100dp"
         android:layout_marginLeft="1dp"
         android:layout_marginRight="1dp"
+        android:minLines="1"
+        android:maxLines="5"
         android:gravity="top"
         android:hint="Room Status"
         android:textColor="@color/black"

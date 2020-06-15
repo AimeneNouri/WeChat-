@@ -262,7 +262,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 if (URLUtil.isValidUrl(messages.getMessage()))
                 {
                     holder.receiverMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
-                    holder.receiverMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.receiverMsgText.setTextColor(Color.parseColor("#ffffff"));
                     holder.receiverMsgText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -275,7 +275,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
                 if (isValid(messages.getMessage()))
                 {
                     holder.receiverMsgText.setText(Html.fromHtml("<u>"+ messages.getMessage() +"</u>"));
-                    holder.receiverMsgText.setTextColor(Color.parseColor("#FFFFC800"));
+                    holder.receiverMsgText.setTextColor(Color.parseColor("#ffffff"));
                     holder.receiverMsgText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
