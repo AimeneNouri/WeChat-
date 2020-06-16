@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showRecoverPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         builder.setTitle("Reset Password");
 
         LinearLayout linearLayout = new LinearLayout(this);

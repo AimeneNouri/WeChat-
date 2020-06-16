@@ -173,7 +173,7 @@ public class GroupsChat extends AppCompatActivity {
         GroupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent profileIntent = new Intent(GroupsChat.this, ImageViewer.class);
+                Intent profileIntent = new Intent(GroupsChat.this, ReceiverPictureViewer.class);
                 profileIntent.putExtra("url", groupImage);
                 startActivity(profileIntent);
             }

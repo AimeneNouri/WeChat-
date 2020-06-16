@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 public class loginByPhone extends AppCompatActivity {
 
-    private EditText mPhoneNumber, countryCode;
-    private Button SendVerification_Btn;
+    private EditText mPhoneNumber, countryCode, OtpCode;
+    private Button SendVerification_Btn, verifyOtp;
     private ProgressBar mProgressBar;
     private TextView mLoginFeedback;
 
@@ -50,10 +51,20 @@ public class loginByPhone extends AppCompatActivity {
         SendVerification_Btn = findViewById(R.id.send_verification_btn);
         mProgressBar = findViewById(R.id.progressBar);
         mLoginFeedback = findViewById(R.id.login_form_feedback);
+        OtpCode = findViewById(R.id.otp_number_input);
+        verifyOtp = findViewById(R.id.verify_button);
 
         SendVerification_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /*SendVerification_Btn.setVisibility(View.GONE);
+                mPhoneNumber.setVisibility(View.GONE);
+                countryCode.setVisibility(View.GONE);
+
+                verifyOtp.setVisibility(View.VISIBLE);
+                OtpCode.setVisibility(View.GONE);*/
+
                 String country_code = countryCode.getText().toString();
                 String phone_number = mPhoneNumber.getText().toString();
 
@@ -108,7 +119,7 @@ public class loginByPhone extends AppCompatActivity {
                         Toast.makeText(loginByPhone.this, "Code has been sent, Please check and verify", Toast.LENGTH_SHORT).show();
                     }
                 },
-                10000);
+                5000);
             }
         };
     }
@@ -153,5 +164,6 @@ public class loginByPhone extends AppCompatActivity {
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(homeIntent);
         finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

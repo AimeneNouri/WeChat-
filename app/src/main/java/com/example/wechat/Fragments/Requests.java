@@ -78,7 +78,7 @@ public class Requests extends Fragment {
     public void onStart() {
         super.onStart();
 
-        ChatRequestsRef.addValueEventListener(new ValueEventListener() {
+        ChatRequestsRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())

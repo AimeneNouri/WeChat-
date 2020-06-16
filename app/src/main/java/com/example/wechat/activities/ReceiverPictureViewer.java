@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -58,7 +59,13 @@ public class ReceiverPictureViewer extends AppCompatActivity {
         });
 
         imageUrl = getIntent().getStringExtra("url");
-        Picasso.get().load(imageUrl).into(ReceiverImage);
+        if (imageUrl.equals("default_image"))
+        {
+            ReceiverImage.setImageResource(R.drawable.profile_image);
+        }
+        else {
+            Picasso.get().load(imageUrl).into(ReceiverImage);
+        }
 
         sharePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override

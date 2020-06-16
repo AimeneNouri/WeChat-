@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.updateGroup_info"></activity>
+        <activity android:name=".activities.PhoneLoginActivity"></activity>
+        <activity android:name=".activities.updateGroup_info" />
         <activity android:name=".activities.newGroup" />
         <activity android:name=".activities.PdfReader" />
         <activity android:name=".activities.Theme" />
@@ -68,10 +69,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RegisterActivity"
-            android:theme="@style/AppTheme.Launcher"/>
-        <activity android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.Launcher"/>
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:theme="@style/AppTheme.Launcher" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:theme="@style/AppTheme.Launcher" />
         <activity android:name=".activities.MainActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

@@ -28,6 +28,7 @@ public class videoView extends AppCompatActivity {
         Uri uri = Uri.parse(videoUrl);
         mVideoView.setMediaController(mediaController);
         mVideoView.setVideoURI(uri);
+        mVideoView.seekTo(1);
         mVideoView.start();
     }
 }

@@ -50,7 +50,7 @@
         android:padding="7dp"
         android:fontFamily="@font/open_sans_semibold"
         android:textSize="20sp"
-        android:textColor="@color/black"
+        android:textColor="#474747"
         android:layout_below="@+id/callState"
         android:layout_centerHorizontal="true"
         android:gravity="center"
@@ -61,30 +61,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="center"
         android:layout_marginBottom="40dp"
-        android:orientation="horizontal">
+        android:gravity="center">
 
         <ImageButton
             android:id="@+id/btn_accept_cal"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginRight="80dp"
-            android:background="@drawable/btn_startcall"/>
-
-        <ImageButton
-            android:id="@+id/btn_accept_call_receiver"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginRight="80dp"
-            android:background="@drawable/btn_startcall"
-            android:visibility="gone"/>
+            android:background="@drawable/btn_startcall" />
 
         <ImageButton
             android:id="@+id/buttonEndCall"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/btn_endcall" />
+            android:background="@drawable/btn_endcall"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

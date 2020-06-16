@@ -16,6 +16,7 @@ import com.sinch.android.rtc.calling.CallListener;
 import com.squareup.picasso.Picasso;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,7 +49,7 @@ public class VoiceCalling extends AppCompatActivity {
     private String SenderCallId, receiverCallId, msgReceiverName, msgReceiverImage, DeviceTokenReceiver, currentUserId;
     private SinchClient sinchClient;
 
-    private ImageButton endCall, acceptCall, acceptCallReceiver;
+    private ImageButton endCall, acceptCall;
     private TextView callState, ReceiverName;
     private Call call;
     private CircleImageView receiverImage;
@@ -65,8 +66,6 @@ public class VoiceCalling extends AppCompatActivity {
         receiverCallId = getIntent().getStringExtra("visit_user_id");
         DeviceTokenReceiver = getIntent().getExtras().get("recipientToken").toString();
 
-        SenderCallId = FirebaseInstanceId.getInstance().getToken();
-        Log.d("tokenSende", SenderCallId);
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         endCall = findViewById(R.id.buttonEndCall);
@@ -74,7 +73,6 @@ public class VoiceCalling extends AppCompatActivity {
         receiverImage = findViewById(R.id.receiver_profile_image);
         ReceiverName = findViewById(R.id.receiver_Name);
         acceptCall = findViewById(R.id.btn_accept_cal);
-        acceptCallReceiver = findViewById(R.id.btn_accept_call_receiver);
         call_timer = findViewById(R.id.call_timer);
 
         ReceiverName.setText(msgReceiverName);
@@ -100,6 +98,8 @@ public class VoiceCalling extends AppCompatActivity {
             public void onClick(View v) {
                 if (call == null){
                     mediaPlayer.start();
+                    endCall.setVisibility(View.VISIBLE);
+                    acceptCall.setVisibility(View.GONE);
 
                     call = sinchClient.getCallClient().callUser(receiverCallId);
                     call.addCallListener(new SinchCallListener());
@@ -133,6 +133,7 @@ public class VoiceCalling extends AppCompatActivity {
 
         @Override
         public void onCallEstablished(Call call) {
+            mediaPlayer.stop();
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
             Toast.makeText(VoiceCalling.this, "connected", Toast.LENGTH_SHORT).show();
             acceptCall.setVisibility(View.GONE);
@@ -145,6 +146,7 @@ public class VoiceCalling extends AppCompatActivity {
         @Override
         public void onCallEnded(Call endedCall) {
             call = null;
+            mediaPlayer.stop();
             call_timer.stop();
             callState.setVisibility(View.VISIBLE);
             call_timer.setVisibility(View.GONE);
@@ -163,35 +165,10 @@ public class VoiceCalling extends AppCompatActivity {
     {
         @Override
         public void onIncomingCall(CallClient callClient, final Call incomingCall) {
-            /*
-            AlertDialog alertDialog = new AlertDialog.Builder(VoiceCalling.this, R.style.AlertDialogTheme).create();
-            alertDialog.setTitle("Calling");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Reject", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    call.hangup();
-                }
-            });
-
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Pick", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    call = incomingCall;
-                    call.answer();
-                    call.addCallListener(new SinchCallListener());
-                    Toast.makeText(VoiceCalling.this, "Call Started", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            alertDialog.show();
-            */
-
             call = incomingCall;
-            Toast.makeText(VoiceCalling.this, "Incoming call", Toast.LENGTH_SHORT).show();
             call.answer();
             call.addCallListener(new SinchCallListener());
-
+            Toast.makeText(VoiceCalling.this, "Incoming call", Toast.LENGTH_SHORT).show();
         }
     }
 }
