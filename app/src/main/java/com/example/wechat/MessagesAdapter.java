@@ -248,7 +248,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             else
             {
                 holder.messageReceiver.setVisibility(View.VISIBLE);
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.receiverMsgText.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.INVISIBLE);
 
@@ -321,7 +321,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverImage.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
@@ -372,7 +372,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.messageReceiverVideo.setVisibility(View.VISIBLE);
                 holder.senTime.setVisibility(View.GONE);
                 holder.receive_time.setVisibility(View.GONE);
@@ -425,7 +425,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.sent_time_sender_pdf.setVisibility(View.GONE);
                 holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
                 holder.pdfSenderLayout.setVisibility(View.GONE);
@@ -482,7 +482,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             }
             else
             {
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.sent_time_sender_pdf.setVisibility(View.GONE);
                 holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
                 holder.pdfSenderLayout.setVisibility(View.GONE);
@@ -565,7 +565,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.icon_audio_receiver.setVisibility(View.VISIBLE);
                 holder.receiver_message_audio_layout.setVisibility(View.VISIBLE);
                 holder.sender_message_audio_Layout.setVisibility(View.GONE);
-                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                //holder.receiverProfileImage.setVisibility(View.VISIBLE);
 
                 holder.receiveAudioMessage.setText("Audio ");
                 holder.receive_time_audio.setText(messages.getTime());
