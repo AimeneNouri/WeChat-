@@ -429,6 +429,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             }
             else
             {
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.sent_time_sender_pdf.setVisibility(View.GONE);
                 holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
                 holder.pdfSenderLayout.setVisibility(View.GONE);
@@ -486,6 +488,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             }
             else
             {
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.sent_time_sender_pdf.setVisibility(View.GONE);
                 holder.sent_time_receiver_pdf.setVisibility(View.VISIBLE);
                 holder.pdfSenderLayout.setVisibility(View.GONE);
@@ -553,6 +557,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             }
             else
             {
+                holder.receiverProfileImage.setVisibility(View.VISIBLE);
+                holder.receiverName.setVisibility(View.VISIBLE);
                 holder.sentAudioMessage.setVisibility(View.GONE);
                 holder.receiveAudioMessage.setVisibility(View.VISIBLE);
                 holder.sent_time_audio.setVisibility(View.GONE);

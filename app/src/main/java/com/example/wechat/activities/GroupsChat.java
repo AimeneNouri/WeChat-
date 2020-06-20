@@ -173,7 +173,7 @@ public class GroupsChat extends AppCompatActivity {
         GroupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent profileIntent = new Intent(GroupsChat.this, ReceiverPictureViewer.class);
+                Intent profileIntent = new Intent(GroupsChat.this, groupImageViewer.class);
                 profileIntent.putExtra("url", groupImage);
                 startActivity(profileIntent);
             }
@@ -362,6 +362,7 @@ public class GroupsChat extends AppCompatActivity {
                         captureImage.setAnimation(bottomAnim);
                         userMessageInput.setVisibility(View.VISIBLE);
                         Send_File_Btn.setVisibility(View.VISIBLE);
+                        captureImage.setVisibility(View.VISIBLE);
                         record_timer.setVisibility(View.GONE);
                         cancel_audio_btn.setVisibility(View.GONE);
                         record_btn.setBackgroundResource(R.drawable.micro_btn);
@@ -389,6 +390,7 @@ public class GroupsChat extends AppCompatActivity {
                 captureImage.setAnimation(bottomAnim);
                 userMessageInput.setVisibility(View.VISIBLE);
                 Send_File_Btn.setVisibility(View.VISIBLE);
+                captureImage.setVisibility(View.VISIBLE);
                 record_timer.setVisibility(View.GONE);
                 cancel_audio_btn.setVisibility(View.GONE);
                 record_btn.setBackgroundResource(R.drawable.micro_btn);
@@ -672,7 +674,11 @@ public class GroupsChat extends AppCompatActivity {
         layoutParam.setMargins(0,4,0, 4);
         layoutParams.setMargins(0,4,0, 4);*/
 
-        userMessageInput.setHint("Message "+ currentGroupName +"'s chat");
+        if (currentGroupName.length() > 15) {
+            String messageHint = currentGroupName.substring(0, 15) + "...";
+        }
+
+        userMessageInput.setHint("Message "+ currentGroupName);
         userMessageInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
