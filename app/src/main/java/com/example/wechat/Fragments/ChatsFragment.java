@@ -147,8 +147,8 @@ public class ChatsFragment extends Fragment {
                                                     String messageTime =  ""+ds.child("time").getValue();
                                                     String type =  ""+ds.child("type").getValue();
 
-                                                    if (message.length() > 34) {
-                                                        message = message.substring(0, 33) + "...";
+                                                    if (message.length() > 18) {
+                                                        message = message.substring(0, 18) + "...";
                                                     }
 
                                                     if (type.equals("text"))

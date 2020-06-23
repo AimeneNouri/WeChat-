@@ -144,8 +144,8 @@ public class GroupsFragment extends Fragment {
                                                     String from =  ""+ds.child("from").getValue();
                                                     String type =  ""+ds.child("type").getValue();
 
-                                                    if (message.length() > 34) {
-                                                        message = message.substring(0, 33) + "...";
+                                                    if (message.length() > 18) {
+                                                        message = message.substring(0, 18) + "...";
                                                     }
 
                                                     if (message != null)

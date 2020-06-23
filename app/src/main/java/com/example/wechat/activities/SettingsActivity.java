@@ -62,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String photoUrl = " ", calledBy = "";
     private StorageTask uploadTask;
 
-    private CircleImageView UserImage, updateImage;
+    private CircleImageView UserImage, updateImage, ImageTest;
     private TextView UserEmail, phone_number;
     private EditText UserName, UserStatus;
     private Button UpdateAccount;
@@ -114,6 +114,8 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ImageTest = UserImage;
 
         //check for email existing
         if (TextUtils.isEmpty(user.getEmail()))
@@ -295,12 +297,10 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Uri resultUri = result.getUri();
 
-                //StorageReference filePath = UserImageRef.child(currentUserId + ".jpg");
-
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReference();
 
-                final StorageReference ImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
+                StorageReference ImagesRef = storageRef.child("WECHAT" + "/PROFILES/" + resultUri.toString().split("/")[resultUri.toString().split("/").length - 1]);
 
                 InputStream stream = null;
                 try {
@@ -328,10 +328,10 @@ public class SettingsActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Uri uri) {
                                 final String link = uri.toString();
-                                Picasso.get().load(link).into(UserImage);
+                                Picasso.get().load(link).into(ImageTest);
 
                                 RootRef.child("Users").child(currentUserId).child("image")
-                                        .setValue(uri.toString())
+                                        .setValue(link)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
