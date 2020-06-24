@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wechat.R;
+import com.example.wechat.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -31,7 +32,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 public class RegisterActivity extends AppCompatActivity {
 
     private Button SignUpButton;
-    private EditText UserEmail, UserPassword;
+    private EditText UserEmail, UserPassword, UserName;
     private TextView AlreadyAccount, TogglePassword;
 
     private FirebaseAuth mAuth;
@@ -55,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         loadingBar = new ProgressDialog(this) ;
         TogglePassword = findViewById(R.id.togglePassword);
         relativeLayout = findViewById(R.id.register_relativeLayout);
+        UserName = findViewById(R.id.UserName);
 
         TogglePassword.setVisibility(View.GONE);
         UserPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -146,6 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void CreateNewAccount() {
         String email = UserEmail.getText().toString();
         String password = UserPassword.getText().toString();
+        String userName = UserName.getText().toString();
 
         if(TextUtils.isEmpty(email))
         {
@@ -167,9 +170,14 @@ public class RegisterActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         String deviceToken = FirebaseInstanceId.getInstance().getToken();
                         String currentUserID = mAuth.getCurrentUser().getUid();
-                        Rootref.child("Users").child(currentUserID).setValue("");
 
-                        Rootref.child("Users").child(currentUserID).child("device_token").setValue(deviceToken);
+                        User userInfo = new User();
+                        userInfo.setEmail(email);
+                        userInfo.setUserName(userName);
+                        userInfo.setPassword(password);
+                        userInfo.setDevice_token(deviceToken);
+
+                        Rootref.child("Users").child(currentUserID).setValue(userInfo);
 
                         sendUserToMainActivity();
                         Toast.makeText(RegisterActivity.this, "Account Created Successfuly!", Toast.LENGTH_SHORT).show();

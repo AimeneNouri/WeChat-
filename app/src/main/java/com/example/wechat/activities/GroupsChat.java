@@ -130,6 +130,7 @@ public class GroupsChat extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     private String recordFile;
     Animation topAnim, bottomAnim;
+    Animation slideFromRight, slideToRight;
     private TextView cancel_audio_btn;
     private ImageButton record_btn;
     private Chronometer record_timer;
@@ -139,6 +140,8 @@ public class GroupsChat extends AppCompatActivity {
     private static final int PERMISSION_CODE = 100;
     private static final int IMAGE_CAPTURE_CODE = 1001;
     Uri image_uri;
+
+    String currentGroupNom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +170,8 @@ public class GroupsChat extends AppCompatActivity {
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
+        slideToRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+        slideFromRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
 
         DisplayGroupInfos();
 
@@ -675,10 +680,10 @@ public class GroupsChat extends AppCompatActivity {
         layoutParams.setMargins(0,4,0, 4);*/
 
         if (currentGroupName.length() > 15) {
-            String messageHint = currentGroupName.substring(0, 15) + "...";
+            currentGroupNom = currentGroupName.substring(0, 11) + "...";
         }
 
-        userMessageInput.setHint("Message "+ currentGroupName);
+        userMessageInput.setHint("Message "+ currentGroupNom);
         userMessageInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -702,6 +707,8 @@ public class GroupsChat extends AppCompatActivity {
                     //userMessageInput.setLayoutParams(layoutParams);
                     record_btn.setVisibility(View.VISIBLE);
                     captureImage.setVisibility(View.VISIBLE);
+                    captureImage.setAnimation(slideFromRight);
+                    captureImage.getAnimation().start();
                 }
             }
 

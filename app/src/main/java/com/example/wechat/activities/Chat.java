@@ -188,6 +188,8 @@ public class Chat extends AppCompatActivity {
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_anim_chat);
         bottomAnimation = AnimationUtils.loadAnimation(this, R.anim.bottom_anim_chat);
+        slideToRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+        slideFromRight = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
         /*
         userName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -650,6 +652,11 @@ public class Chat extends AppCompatActivity {
         layoutParam.setMargins(0,4,0, 4);
         layoutParams.setMargins(0,4,0, 4);*/
 
+        if (msgReceiverName.length() > 15 )
+        {
+            msgReceiverName = msgReceiverName.substring(0, 11) + "...";
+        }
+
         msgInput.setHint("Message "+ msgReceiverName);
         msgInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -663,6 +670,7 @@ public class Chat extends AppCompatActivity {
 
                 if (s.length() != 0)
                 {
+                    //captureImage.startAnimation(slideToRight);
                     send_msg.setVisibility(View.VISIBLE);
                     record_btn.setVisibility(View.GONE);
                     captureImage.setVisibility(View.GONE);
@@ -673,6 +681,8 @@ public class Chat extends AppCompatActivity {
                     send_msg.setVisibility(View.GONE);
                     record_btn.setVisibility(View.VISIBLE);
                     captureImage.setVisibility(View.VISIBLE);
+                    captureImage.setAnimation(slideFromRight);
+                    captureImage.getAnimation().start();
                 }
             }
 

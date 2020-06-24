@@ -61,25 +61,41 @@
             android:layout_marginBottom="5.8dp"
             android:src="@drawable/attach_icon1" />
 
-        <EditText
-            android:id="@+id/input_chat_message"
-            android:layout_width="290dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="2dp"
-            android:hint="Enter The Text Message..."
-            android:background="@drawable/inputdiscussion"
-            android:inputType="textMultiLine"
-            android:minLines="1"
-            android:maxLines="6"
-            android:isScrollContainer="true"
-            android:padding="7dp" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_chat_message"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="2dp"
+                android:hint="Enter The Text Message..."
+                android:background="@drawable/inputdiscussion"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="6"
+                android:isScrollContainer="true"
+                android:padding="7dp" />
+
+            <ImageView
+                android:id="@+id/capture_image"
+                android:layout_width="22dp"
+                android:layout_height="30dp"
+                android:layout_alignEnd="@+id/input_chat_message"
+                android:layout_marginTop="7.2dp"
+                android:layout_marginEnd="13dp"
+                android:layout_marginBottom="3dp"
+                android:src="@drawable/camera_icon_chat" />
+
+        </RelativeLayout>
 
         <Chronometer
             android:id="@+id/record_timer"
-            android:layout_width="315dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
             android:fontFamily="@font/open_sans_semibold"
@@ -91,6 +107,19 @@
             android:layout_marginEnd="2dp"
             android:gravity="center"
             android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/cancel_audio"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="#3E3E3E"
+            android:alpha=".6"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_marginTop="3dp"
+            android:visibility="gone"
+            />
 
         <ImageButton
             android:id="@+id/send_msg_button"
